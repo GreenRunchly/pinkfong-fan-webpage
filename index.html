@@ -1,65 +1,348 @@
-<html>
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="google" content="notranslate" />
-    	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="title" content="Pinkfong!">
-	<meta name="author" content="GreenRunchly">
-	<link rel="icon" href="assets/favicon.ico">
-	<title>Pinkfong!</title>
-</head>
-<style>
-body{
-	margin: 0px;
-	padding: 0px;
-	background-image: linear-gradient(38deg, rgba(98, 0, 255, 0.661) 17%, rgba(255, 0, 183, 0.408) 80%);
-    background-attachment: fixed;
-}
-.main{
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 100%;
-	height: 100vh;
-}
-.logo{
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 300px;
-	height: 300px;
-	border-radius: 50%;
-	transition: 0.3s;
-	border:1rem solid white;
-	transform: scale(1);
-	-webkit-tap-highlight-color: transparent;
-	cursor: pointer;
-}
-.logo img{
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	transition: 0.3s;
-	border-radius: 50%;
-	overflow: hidden;
-}
-.logo:active{
-	transform: scale(1.1);
-	filter: drop-shadow(10px 10px 4px #4444dd4c);
-	transition: 0s;
-	border:0.4rem solid white;
-}
-.logo:active img{
-	
-	transition: 0.05s;
-}
-</style>
-<body>	
-	<div class="main">
-		<a class="logo">
-			<img src="assets/pinkfong-concert-2.jpeg" draggable="false">
-		</a>
-	</div>
-</body>
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+
+    <title>Pinkfong: Rubah Fennec dari Staria | Fan Page</title>
+
+    <meta
+      name="description"
+      content="Kenalan dengan Pinkfong, rubah fennec dari Staria yang selalu penasaran, punya kekuatan sihir, dan suka membantu teman-temannya di Wonderville."
+    />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+    <meta name="theme-color" content="#9d72ec" />
+
+    <!-- Critical loader styles are inline so the loading screen can paint immediately. -->
+    <style id="critical-loader-style">
+      html, body { margin: 0; min-height: 100%; }
+      body.app-loading { overflow: hidden; }
+      body.app-loading .world { opacity: 0; visibility: hidden; }
+      body.app-ready .world { opacity: 1; visibility: visible; }
+
+      #site-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 2147483647;
+        display: grid;
+        place-items: center;
+        background:
+          radial-gradient(circle at 50% 42%, rgba(255,255,255,.28), transparent 28%),
+          linear-gradient(135deg, #8e78ff 0%, #d79bea 52%, #f4b7dc 100%);
+        font-family: ui-rounded, "Arial Rounded MT Bold", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        opacity: 1;
+        visibility: visible;
+        transition: opacity .32s ease, visibility .32s ease;
+      }
+      #site-loader.is-leaving {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      .site-loader-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        transform: translateY(-1vh);
+      }
+      .site-loader-brand {
+        color: #fff;
+        font-size: clamp(28px, 7vw, 52px);
+        font-weight: 900;
+        letter-spacing: -2.2px;
+        text-shadow: 0 7px 24px rgba(78, 42, 121, .18);
+      }
+      .site-loader-brand span { color: #643d91; }
+      .site-loader-dots {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        height: 12px;
+      }
+      .site-loader-dots i {
+        display: block;
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(255,255,255,.9);
+        animation: pf-loader-bounce .85s ease-in-out infinite alternate;
+      }
+      .site-loader-dots i:nth-child(2) { animation-delay: .12s; }
+      .site-loader-dots i:nth-child(3) { animation-delay: .24s; }
+      @keyframes pf-loader-bounce {
+        from { transform: translateY(2px) scale(.78); opacity: .55; }
+        to { transform: translateY(-4px) scale(1); opacity: 1; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .site-loader-dots i { animation: none; }
+      }
+    </style>
+
+    <script>
+      (() => {
+        const started = performance.now();
+        const ready = { css: false, hero: false, app: false };
+        let finished = false;
+
+        function finishLoader() {
+          if (finished) return;
+          if (!document.body) {
+            document.addEventListener("DOMContentLoaded", finishLoader, { once: true });
+            return;
+          }
+
+          finished = true;
+          const loader = document.getElementById("site-loader");
+          document.body.classList.remove("app-loading");
+          document.body.classList.add("app-ready");
+
+          if (loader) {
+            loader.classList.add("is-leaving");
+            window.setTimeout(() => loader.remove(), 380);
+          }
+        }
+
+        window.__pinkfongAssetReady = (key) => {
+          if (key in ready) ready[key] = true;
+          if (ready.css && ready.hero && ready.app) {
+            const minimum = Math.max(0, 320 - (performance.now() - started));
+            window.setTimeout(finishLoader, minimum);
+          }
+        };
+
+        // Never leave the visitor trapped behind a loader if a resource fails.
+        window.setTimeout(finishLoader, 3500);
+      })();
+    </script>
+
+
+    <!-- Search + social metadata -->
+    <link rel="canonical" href="https://pinkfong.my.id/" />
+    <link rel="sitemap" type="application/xml" href="https://pinkfong.my.id/sitemap.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Pinkfong Fan Page" />
+    <meta property="og:title" content="Pinkfong: Rubah Fennec dari Staria | Fan Page" />
+    <meta property="og:description" content="Kenalan dengan Pinkfong, rubah fennec dari Staria yang selalu penasaran, punya kekuatan sihir, dan suka membantu teman-temannya di Wonderville." />
+    <meta property="og:url" content="https://pinkfong.my.id/" />
+    <meta property="og:locale" content="id_ID" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:locale:alternate" content="ko_KR" />
+    <meta property="og:locale:alternate" content="ja_JP" />
+    <meta property="og:locale:alternate" content="zh_CN" />
+    <meta property="og:image" content="https://pinkfong.my.id/assets/pinkfong-share.jpg" />
+    <meta property="og:image:secure_url" content="https://pinkfong.my.id/assets/pinkfong-share.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Pinkfong mengintip sambil tersenyum pada latar ungu dan merah muda dengan orbit tipis dan bintang lembut." />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Pinkfong: Rubah Fennec dari Staria | Fan Page" />
+    <meta name="twitter:description" content="Kenalan dengan Pinkfong, rubah fennec dari Staria yang selalu penasaran, punya kekuatan sihir, dan suka membantu teman di Wonderville." />
+    <meta name="twitter:image" content="https://pinkfong.my.id/assets/pinkfong-share.jpg" />
+    <meta name="twitter:image:alt" content="Pinkfong mengintip sambil tersenyum pada latar ungu dan merah muda dengan orbit tipis dan bintang lembut." />
+
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://pinkfong.my.id/#website",
+            "url": "https://pinkfong.my.id/",
+            "name": "Pinkfong Fan Page",
+            "alternateName": "Pinkfong — Dunia Kecil, Keajaiban Besar",
+            "inLanguage": ["id-ID", "en", "ko", "ja", "zh-CN"]
+          },
+          {
+            "@type": "WebPage",
+            "@id": "https://pinkfong.my.id/#webpage",
+            "url": "https://pinkfong.my.id/",
+            "name": "Pinkfong: Rubah Fennec dari Staria | Fan Page",
+            "description": "Kenalan dengan Pinkfong, rubah fennec dari Staria yang selalu penasaran, punya kekuatan sihir, dan suka membantu teman-temannya di Wonderville.",
+            "isPartOf": {"@id": "https://pinkfong.my.id/#website"},
+            "primaryImageOfPage": {"@id": "https://pinkfong.my.id/#primaryimage"},
+            "about": {"@id": "https://pinkfong.my.id/#pinkfong"},
+            "isBasedOn": "https://www.pinkfong.com/en/characters",
+            "inLanguage": "id-ID",
+            "isFamilyFriendly": true
+          },
+          {
+            "@type": "ImageObject",
+            "@id": "https://pinkfong.my.id/#primaryimage",
+            "url": "https://pinkfong.my.id/assets/pinkfong-share.jpg",
+            "contentUrl": "https://pinkfong.my.id/assets/pinkfong-share.jpg",
+            "width": 1200,
+            "height": 630,
+            "caption": "Pinkfong mengintip sambil tersenyum pada latar ungu dan merah muda dengan orbit tipis dan bintang lembut."
+          },
+          {
+            "@type": "Thing",
+            "@id": "https://pinkfong.my.id/#pinkfong",
+            "name": "Pinkfong",
+            "description": "Rubah fennec dari Staria yang selalu penasaran, memiliki kekuatan sihir, dan suka membantu teman-temannya di Wonderville.",
+            "sameAs": "https://www.pinkfong.com/en/characters"
+          }
+        ]
+      }
+    </script>
+
+    <!-- Main visual CSS loads non-blocking; the inline loader above paints first. -->
+    <link
+      id="main-stylesheet"
+      rel="preload"
+      href="./css/style.css"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet';window.__pinkfongAssetReady?.('css')"
+      onerror="window.__pinkfongAssetReady?.('css')"
+    />
+    <noscript><link rel="stylesheet" href="./css/style.css" /></noscript>
+
+    <!-- Tailwind for on-the-fly developer editing. Preflight is disabled. -->
+    <script>
+      window.tailwind = window.tailwind || {};
+      window.tailwind.config = {
+        corePlugins: { preflight: false }
+      };
+    </script>
+    <script defer src="https://cdn.tailwindcss.com"></script>
+    <script defer src="./js/tailwind.config.js"></script>
+  </head>
+
+  <body class="app-loading">
+    <div id="site-loader" role="status" aria-label="Loading Pinkfong">
+      <div class="site-loader-inner">
+        <div class="site-loader-brand">pink<span>fong</span></div>
+        <div class="site-loader-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+      </div>
+    </div>
+
+    <div class="world">
+      <div class="sky" id="sky" aria-hidden="true">
+        <div class="orbit"></div>
+        <div class="orbit two"></div>
+      </div>
+
+      <header>
+        <a
+          class="brand no-underline text-inherit"
+          href="#main-content"
+          aria-label="Pinkfong fan page"
+        >
+          pink<span>fong</span>
+        </a>
+
+        <label class="sr-only" for="language">Pilih bahasa</label>
+
+        <select class="language" id="language" aria-label="Bahasa">
+          <option value="id">Bahasa Indonesia</option>
+          <option value="en">English</option>
+          <option value="ko">한국어</option>
+          <option value="ja">日本語</option>
+          <option value="zh">简体中文</option>
+        </select>
+      </header>
+
+      <main class="main" id="main-content">
+        <section class="intro" aria-labelledby="headline">
+          <div class="eyebrow" id="eyebrow">
+            Sepotong keajaiban
+          </div>
+
+          <h1 id="headline">
+            <span class="headline-line headline-lead">Dunia kecil.</span><br />
+            <span class="headline-line headline-emphasis">
+              <em>Keajaiban</em>
+              <span class="headline-secondary">besar.</span>
+            </span>
+          </h1>
+
+          <p id="intro-text">
+            Ikuti rasa ingin tahumu.<br />
+            Yuk, kenalan dengan si rubah pink dari negeri bintang!
+          </p>
+        </section>
+
+        <figure class="character">
+          <div class="halo" aria-hidden="true"></div>
+
+          <button
+            class="fox"
+            id="fox"
+            type="button"
+            aria-label="Cerita berikutnya — klik Pinkfong"
+          >
+            <img
+              src="./assets/pinkfong-pose-01.png"
+              alt="Pinkfong melambaikan tangan untuk menyapa."
+              width="909"
+              height="1049"
+              draggable="false"
+              decoding="async"
+              fetchpriority="high"
+              onload="window.__pinkfongAssetReady?.('hero')"
+              onerror="window.__pinkfongAssetReady?.('hero')"
+            />
+          </button>
+
+          <figcaption class="hello" id="hello" aria-hidden="true">
+            Hai, apa kabar!
+          </figcaption>
+        </figure>
+
+        <section
+          class="fact"
+          id="story-panel"
+          role="region"
+          aria-labelledby="title"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          <div class="fact-top">
+            <span id="category">Aku Pinkfong</span>
+            <span id="number">01 / 03</span>
+          </div>
+
+          <h2 id="title">Halo, aku Pinkfong!</h2>
+
+          <p id="description">
+            Aku rubah fennec dari Staria. Aku selalu penasaran!
+          </p>
+
+          <div class="paging" aria-label="Posisi cerita">
+            <div class="dots" aria-hidden="true">
+              <i class="active"></i>
+              <i></i>
+              <i></i>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="bottom">
+        <a
+          class="source"
+          href="https://www.pinkfong.com/en/characters"
+          target="_blank"
+          rel="noopener noreferrer external"
+        >Official Page</a>
+      </footer>
+    </div>
+
+    <script src="./js/content.js"></script>
+    <script src="./js/app.js"></script>
+  </body>
 </html>
