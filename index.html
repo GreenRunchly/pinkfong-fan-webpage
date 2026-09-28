@@ -110,11 +110,16 @@
     </style>
 <script>
       (() => {
-        const started = performance.now();
-        const EXIT_HOLD_MS = 3000;
+        // Use the same loader timing for every visitor.
+        // Once critical resources are ready, keep the loader for 1 second,
+        // then fade it out smoothly.
+        const EXIT_HOLD_MS = 1000;
         const EXIT_TRANSITION_MS = 620;
+        const FAILSAFE_MS = 7000;
+
         const ready = { css: false, hero: false, app: false, locale: false };
         let finished = false;
+        let exitScheduled = false;
 
         function finishLoader() {
           if (finished) return;
@@ -130,19 +135,25 @@
 
           if (loader) {
             loader.classList.add("is-leaving");
-            window.setTimeout(() => loader.remove(), EXIT_TRANSITION_MS + 80);
+            window.setTimeout(() => loader.remove(), EXIT_TRANSITION_MS + 40);
           }
+        }
+
+        function scheduleExit() {
+          if (exitScheduled || finished) return;
+          exitScheduled = true;
+          window.setTimeout(finishLoader, EXIT_HOLD_MS);
         }
 
         window.__pinkfongAssetReady = (key) => {
           if (key in ready) ready[key] = true;
           if (ready.css && ready.hero && ready.app && ready.locale) {
-            window.setTimeout(finishLoader, EXIT_HOLD_MS);
+            scheduleExit();
           }
         };
 
-        // Never leave the visitor trapped behind a loader if a resource fails.
-        window.setTimeout(finishLoader, 10000);
+        // Never leave the page trapped behind the loader.
+        window.setTimeout(finishLoader, FAILSAFE_MS);
       })();
     </script>
 <!-- First-visit locale routing. Manual language choice always wins. -->
