@@ -1865,3 +1865,12 @@ h1{font-size:34px;line-height:1.08}
 @media (max-width:640px){.brand-image{height:22px}.brand-image-loader{height:28px}}
 .site-loader-brand{display:flex;align-items:center;justify-content:center}
 .site-loader-brand span{color:inherit}
+
+
+/* v41 theme-aware wordmark */
+.brand-picture{display:inline-flex;align-items:center;line-height:1}
+.brand-picture source, .brand-picture img{display:block}
+
+
+/* v43: wordmark color follows the actually rendered headline accent via JS */
+.brand-theme-sync{transition:opacity .12s ease}
