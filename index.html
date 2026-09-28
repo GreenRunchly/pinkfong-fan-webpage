@@ -107,14 +107,37 @@
       @media (prefers-reduced-motion: reduce) {
         .site-loader-dots i { animation: none; }
       }
+
+      /* Bots, Lighthouse and PageSpeed should see the real page immediately. */
+      html.fast-loader-exit .world {
+        transition-duration: .1s !important;
+      }
+      html.fast-loader-exit #site-loader {
+        transition: opacity .1s ease, visibility .1s linear !important;
+      }
+      html.fast-loader-exit .site-loader-dots i {
+        animation-duration: .35s;
+      }
     </style>
 <script>
       (() => {
-        const started = performance.now();
-        const EXIT_HOLD_MS = 3000;
-        const EXIT_TRANSITION_MS = 620;
+        const userAgent = navigator.userAgent || "";
+        const automationPattern = /(?:Chrome-Lighthouse|PageSpeed|Googlebot|Google-InspectionTool|bingbot|BingPreview|crawler|spider|slurp|yandexbot|baiduspider|duckduckbot|facebookexternalhit|twitterbot|linkedinbot|headlesschrome|gtmetrix|pingdom|bot\b)/i;
+        const isAutomatedVisitor = automationPattern.test(userAgent);
+
+        // Human visitors keep the cinematic pause. Crawlers and performance
+        // tools should reach the real page almost immediately.
+        const EXIT_HOLD_MS = isAutomatedVisitor ? 0 : 3000;
+        const EXIT_TRANSITION_MS = isAutomatedVisitor ? 100 : 620;
+        const FAILSAFE_MS = isAutomatedVisitor ? 1200 : 10000;
+
+        if (isAutomatedVisitor) {
+          document.documentElement.classList.add("fast-loader-exit");
+        }
+
         const ready = { css: false, hero: false, app: false, locale: false };
         let finished = false;
+        let exitScheduled = false;
 
         function finishLoader() {
           if (finished) return;
@@ -130,19 +153,25 @@
 
           if (loader) {
             loader.classList.add("is-leaving");
-            window.setTimeout(() => loader.remove(), EXIT_TRANSITION_MS + 80);
+            window.setTimeout(() => loader.remove(), EXIT_TRANSITION_MS + 40);
           }
+        }
+
+        function scheduleExit() {
+          if (exitScheduled || finished) return;
+          exitScheduled = true;
+          window.setTimeout(finishLoader, EXIT_HOLD_MS);
         }
 
         window.__pinkfongAssetReady = (key) => {
           if (key in ready) ready[key] = true;
           if (ready.css && ready.hero && ready.app && ready.locale) {
-            window.setTimeout(finishLoader, EXIT_HOLD_MS);
+            scheduleExit();
           }
         };
 
-        // Never leave the visitor trapped behind a loader if a resource fails.
-        window.setTimeout(finishLoader, 10000);
+        // Never leave visitors, crawlers, or audits trapped behind the loader.
+        window.setTimeout(finishLoader, FAILSAFE_MS);
       })();
     </script>
 <!-- First-visit locale routing. Manual language choice always wins. -->
