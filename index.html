@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
-<title>Pinkfong: Fennec Fox from Staria | Fan Page</title>
-<meta content="Meet Pinkfong, the curious fennec fox from Staria with magical powers who loves helping friends in Wonderville." name="description"/>
+<title>Pinkfong: Rubah Fennec dari Staria | Fan Page</title>
+<meta content="Kenalan dengan Pinkfong, rubah fennec dari Staria yang selalu penasaran, punya kekuatan sihir, dan suka membantu teman-temannya di Wonderville." name="description"/>
 <meta content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" name="robots"/>
 <meta content="#9d72ec" name="theme-color"/>
 <!-- Critical loader styles are inline so the loading screen can paint immediately. -->
@@ -76,7 +76,7 @@
 <script>
       (() => {
         const started = performance.now();
-        const ready = { css: false, hero: false, app: false };
+        const ready = { css: false, hero: false, app: false, locale: false };
         let finished = false;
 
         function finishLoader() {
@@ -99,7 +99,7 @@
 
         window.__pinkfongAssetReady = (key) => {
           if (key in ready) ready[key] = true;
-          if (ready.css && ready.hero && ready.app) {
+          if (ready.css && ready.hero && ready.app && ready.locale) {
             const minimum = Math.max(0, 320 - (performance.now() - started));
             window.setTimeout(finishLoader, minimum);
           }
@@ -109,15 +109,86 @@
         window.setTimeout(finishLoader, 3500);
       })();
     </script>
+<!-- First-visit locale routing. Manual language choice always wins. -->
+<script>
+  (() => {
+    const STORAGE_KEY = "pinkfong-language-choice";
+    const supported = new Set(["id", "en", "ko", "ja", "zh"]);
+    const routes = { id: "/", en: "/en/", ko: "/ko/", ja: "/ja/", zh: "/zh/" };
+    const countryLanguage = { ID: "id", KR: "ko", JP: "ja", CN: "zh" };
+    const crawlerPattern = /bot|crawler|spider|slurp|google|bing|yandex|baidu|duckduck|facebookexternalhit|twitterbot|linkedinbot/i;
+
+    function releaseLocale() {
+      window.__pinkfongAssetReady?.("locale");
+    }
+
+    function redirectTo(code) {
+      if (!supported.has(code) || code === "id") {
+        releaseLocale();
+        return;
+      }
+
+      const target = routes[code];
+      if (window.location.pathname !== target) {
+        window.location.replace(target + window.location.search + window.location.hash);
+      } else {
+        releaseLocale();
+      }
+    }
+
+    function browserFallback() {
+      const locales = navigator.languages?.length ? navigator.languages : [navigator.language || "en"];
+      for (const locale of locales) {
+        const base = String(locale).toLowerCase().split(/[-_]/)[0];
+        if (supported.has(base)) return base;
+      }
+      return "en";
+    }
+
+    // Keep local/file preview stable and do not geo-route known crawlers.
+    if (window.location.protocol === "file:" || crawlerPattern.test(navigator.userAgent || "")) {
+      releaseLocale();
+      return;
+    }
+
+    try {
+      const manual = localStorage.getItem(STORAGE_KEY);
+      if (supported.has(manual)) {
+        redirectTo(manual);
+        return;
+      }
+    } catch (_) {}
+
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 900);
+
+    fetch("/cdn-cgi/trace", {
+      cache: "no-store",
+      credentials: "same-origin",
+      signal: controller.signal
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("geo unavailable");
+        return response.text();
+      })
+      .then((trace) => {
+        const match = trace.match(/^loc=([A-Z]{2})$/m);
+        const country = match?.[1];
+        redirectTo(countryLanguage[country] || "en");
+      })
+      .catch(() => redirectTo(browserFallback()))
+      .finally(() => window.clearTimeout(timeout));
+  })();
+</script>
 <!-- Search + social metadata -->
-<link href="https://pinkfong.my.id/" rel="canonical"/><link href="https://pinkfong.my.id/" hreflang="en" rel="alternate"/><link href="https://pinkfong.my.id/id/" hreflang="id" rel="alternate"/><link href="https://pinkfong.my.id/ko/" hreflang="ko" rel="alternate"/><link href="https://pinkfong.my.id/ja/" hreflang="ja" rel="alternate"/><link href="https://pinkfong.my.id/zh/" hreflang="zh-CN" rel="alternate"/><link href="https://pinkfong.my.id/" hreflang="x-default" rel="alternate"/>
+<link href="https://pinkfong.my.id/" rel="canonical"/><link href="https://pinkfong.my.id/" hreflang="id" rel="alternate"/><link href="https://pinkfong.my.id/en/" hreflang="en" rel="alternate"/><link href="https://pinkfong.my.id/ko/" hreflang="ko" rel="alternate"/><link href="https://pinkfong.my.id/ja/" hreflang="ja" rel="alternate"/><link href="https://pinkfong.my.id/zh/" hreflang="zh-CN" rel="alternate"/><link href="https://pinkfong.my.id/en/" hreflang="x-default" rel="alternate"/>
 <link href="https://pinkfong.my.id/sitemap.xml" rel="sitemap" type="application/xml"/>
 <meta content="website" property="og:type"/>
 <meta content="Pinkfong Fan Page" property="og:site_name"/>
-<meta content="Pinkfong: Fennec Fox from Staria | Fan Page" property="og:title"/>
-<meta content="Meet Pinkfong, the curious fennec fox from Staria with magical powers who loves helping friends in Wonderville." property="og:description"/>
+<meta content="Pinkfong: Rubah Fennec dari Staria | Fan Page" property="og:title"/>
+<meta content="Kenalan dengan Pinkfong, rubah fennec dari Staria yang selalu penasaran, punya kekuatan sihir, dan suka membantu teman-temannya di Wonderville." property="og:description"/>
 <meta content="https://pinkfong.my.id/" property="og:url"/>
-<meta content="en_US" property="og:locale"/><meta content="id_ID" property="og:locale:alternate"/><meta content="ko_KR" property="og:locale:alternate"/><meta content="ja_JP" property="og:locale:alternate"/><meta content="zh_CN" property="og:locale:alternate"/>
+<meta content="id_ID" property="og:locale"/><meta content="en_US" property="og:locale:alternate"/><meta content="ko_KR" property="og:locale:alternate"/><meta content="ja_JP" property="og:locale:alternate"/><meta content="zh_CN" property="og:locale:alternate"/>
 
 
 
@@ -127,12 +198,12 @@
 <meta content="image/webp" property="og:image:type"/>
 <meta content="1200" property="og:image:width"/>
 <meta content="630" property="og:image:height"/>
-<meta content="Pinkfong peeking with a cheerful smile on a soft purple and pink background with delicate orbit lines." property="og:image:alt"/>
+<meta content="Pinkfong mengintip sambil tersenyum pada latar ungu dan merah muda dengan orbit tipis dan bintang lembut." property="og:image:alt"/>
 <meta content="summary_large_image" name="twitter:card"/>
-<meta content="Pinkfong: Fennec Fox from Staria | Fan Page" name="twitter:title"/>
-<meta content="Meet Pinkfong, the curious fennec fox from Staria with magical powers who loves helping friends in Wonderville." name="twitter:description"/>
+<meta content="Pinkfong: Rubah Fennec dari Staria | Fan Page" name="twitter:title"/>
+<meta content="Kenalan dengan Pinkfong, rubah fennec dari Staria yang selalu penasaran, punya kekuatan sihir, dan suka membantu teman-temannya di Wonderville." name="twitter:description"/>
 <meta content="https://pinkfong.my.id/assets/pinkfong-share.webp" name="twitter:image"/>
-<meta content="Pinkfong peeking with a cheerful smile on a soft purple and pink background with delicate orbit lines." name="twitter:image:alt"/>
+<meta content="Pinkfong mengintip sambil tersenyum pada latar ungu dan merah muda dengan orbit tipis dan bintang lembut." name="twitter:image:alt"/>
 <link href="./favicon.ico" rel="icon" sizes="any"/>
 <link href="./assets/favicon-48.png" rel="icon" sizes="48x48" type="image/png"/>
 <link href="./assets/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
@@ -158,8 +229,8 @@
       "@type": "WebPage",
       "@id": "https://pinkfong.my.id/#webpage",
       "url": "https://pinkfong.my.id/",
-      "name": "Pinkfong: Fennec Fox from Staria | Fan Page",
-      "description": "Meet Pinkfong, the curious fennec fox from Staria with magical powers who loves helping friends in Wonderville.",
+      "name": "Pinkfong: Rubah Fennec dari Staria | Fan Page",
+      "description": "Kenalan dengan Pinkfong, rubah fennec dari Staria yang selalu penasaran, punya kekuatan sihir, dan suka membantu teman-temannya di Wonderville.",
       "isPartOf": {
         "@id": "https://pinkfong.my.id/#website"
       },
@@ -170,7 +241,7 @@
         "@id": "https://pinkfong.my.id/#pinkfong"
       },
       "isBasedOn": "https://www.pinkfong.com/en/characters",
-      "inLanguage": "en",
+      "inLanguage": "id",
       "isFamilyFriendly": true
     },
     {
@@ -180,13 +251,13 @@
       "contentUrl": "https://pinkfong.my.id/assets/pinkfong-share.webp",
       "width": 1200,
       "height": 630,
-      "caption": "Pinkfong peeking with a cheerful smile on a soft purple and pink background with delicate orbit lines."
+      "caption": "Pinkfong mengintip sambil tersenyum pada latar ungu dan merah muda dengan orbit tipis dan bintang lembut."
     },
     {
       "@type": "Thing",
       "@id": "https://pinkfong.my.id/#pinkfong",
       "name": "Pinkfong",
-      "description": "A curious fennec fox from Staria with magical powers who loves helping friends in Wonderville.",
+      "description": "Rubah fennec dari Staria yang selalu penasaran, memiliki kekuatan sihir, dan suka membantu teman-temannya di Wonderville.",
       "sameAs": "https://www.pinkfong.com/en/characters"
     }
   ]
@@ -207,7 +278,7 @@
 <body class="app-loading">
 <div aria-label="Loading Pinkfong" id="site-loader" role="status">
 <div class="site-loader-inner">
-<div class="site-loader-brand">pink<span>fong</span></div>
+<div class="site-loader-brand"><img src="./assets/pinkfong-wordmark.webp" alt="Pinkfong" class="brand-image brand-image-loader" loading="eager" decoding="async"></div>
 <div aria-hidden="true" class="site-loader-dots"><i></i><i></i><i></i></div>
 </div>
 </div>
@@ -217,11 +288,11 @@
 <div class="orbit two"></div>
 </div>
 <header>
-<a aria-label="Pinkfong fan page" class="brand no-underline text-inherit" href="#main-content">pink<span>fong</span></a>
-<label class="sr-only" for="language">Language</label>
-<select aria-label="Language" class="language" id="language">
-<option value="id">Bahasa Indonesia</option>
-<option selected="selected" value="en">English</option>
+<a aria-label="Pinkfong fan page" class="brand no-underline text-inherit" href="#main-content"><img src="./assets/pinkfong-wordmark.webp" alt="Pinkfong" class="brand-image" loading="eager" decoding="async"></a>
+<label class="sr-only" for="language">Bahasa</label>
+<select aria-label="Bahasa" class="language" id="language">
+<option selected="selected" value="id">Bahasa Indonesia</option>
+<option value="en">English</option>
 <option value="ko">한국어</option>
 <option value="ja">日本語</option>
 <option value="zh">简体中文</option>
@@ -229,24 +300,24 @@
 </header>
 <main class="main" id="main-content">
 <section aria-labelledby="headline" class="intro">
-<div class="eyebrow" id="eyebrow">A little everyday magic</div>
-<h1 id="headline"><span class="headline-line headline-lead">Little world.</span><br/><span class="headline-line headline-emphasis"><em>Big</em> <span class="headline-secondary">wonders.</span></span></h1>
-<p id="intro-text">Follow your curiosity.<br/>Meet the little pink fox from a world of stars!</p>
+<div class="eyebrow" id="eyebrow">Sepotong keajaiban</div>
+<h1 id="headline"><span class="headline-line headline-lead">Dunia kecil.</span><br/><span class="headline-line headline-emphasis"><em>Keajaiban</em> <span class="headline-secondary">besar.</span></span></h1>
+<p id="intro-text">Ikuti rasa ingin tahumu.<br/>Yuk, kenalan dengan si rubah pink dari negeri bintang!</p>
 </section>
 <figure class="character">
 <div aria-hidden="true" class="halo"></div>
 <button aria-label="Cerita berikutnya — klik Pinkfong" class="fox" id="fox" type="button">
-<img alt="Pinkfong waving a friendly hello." decoding="async" draggable="false" fetchpriority="high" height="1049" onerror="window.__pinkfongAssetReady?.('hero')" onload="window.__pinkfongAssetReady?.('hero')" src="./assets/pinkfong-pose-01.webp" width="909"/>
+<img alt="Pinkfong melambaikan tangan untuk menyapa." decoding="async" draggable="false" fetchpriority="high" height="1049" onerror="window.__pinkfongAssetReady?.('hero')" onload="window.__pinkfongAssetReady?.('hero')" src="./assets/pinkfong-pose-01.webp" width="909"/>
 </button>
-<figcaption aria-hidden="true" class="hello" id="hello">Hi, how are you!</figcaption>
+<figcaption aria-hidden="true" class="hello" id="hello">Hai, apa kabar!</figcaption>
 </figure>
 <section aria-atomic="true" aria-labelledby="title" aria-live="polite" class="fact" id="story-panel" role="region">
 <div class="fact-top">
-<span id="category">I'm Pinkfong</span>
+<span id="category">Aku Pinkfong</span>
 <span id="number">01 / 03</span>
 </div>
-<h2 id="title">Hi, I’m Pinkfong!</h2>
-<p id="description">I’m a fennec fox from Staria. I’m always curious!</p>
+<h2 id="title">Halo, aku Pinkfong!</h2>
+<p id="description">Aku rubah fennec dari Staria. Aku selalu penasaran!</p>
 <div aria-label="Posisi cerita" class="paging">
 <div aria-hidden="true" class="dots">
 <i class="active"></i>
@@ -260,7 +331,7 @@
 <a class="source" href="https://www.pinkfong.com/" rel="noopener noreferrer external" target="_blank">Check out the official page</a>
 </footer>
 </div>
-<script>window.PINKFONG_PAGE_LANG = "en"; window.PINKFONG_PAGE_ROOT = new URL("./", window.location.href);</script><script src="./js/content.js"></script>
+<script>window.PINKFONG_PAGE_LANG = "id"; window.PINKFONG_PAGE_ROOT = new URL("./", window.location.href);</script><script src="./js/content.js"></script>
 <script src="./js/app.js"></script>
 </body>
 </html>

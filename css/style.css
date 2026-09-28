@@ -1845,3 +1845,23 @@ h1{font-size:34px;line-height:1.08}
     max-width:min(130px, calc(100vw - 32px))!important;
   }
 }
+
+
+/* v36: speech bubbles use fully rounded corners; the separate tip is enough */
+.hello{
+  border-radius:20px!important;
+}
+
+@media (max-width:700px){
+  .hello{border-radius:16px!important;}
+}
+
+
+/* v38 wordmark image logo */
+.brand{display:inline-flex;align-items:center;line-height:1}
+.brand-image{display:block;height:28px;width:auto;max-width:none;object-fit:contain}
+.brand-image-loader{height:34px}
+@media (max-width:1024px){.brand-image{height:26px}.brand-image-loader{height:32px}}
+@media (max-width:640px){.brand-image{height:22px}.brand-image-loader{height:28px}}
+.site-loader-brand{display:flex;align-items:center;justify-content:center}
+.site-loader-brand span{color:inherit}
