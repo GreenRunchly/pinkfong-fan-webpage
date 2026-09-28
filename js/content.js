@@ -4,7 +4,7 @@ window.PINKFONG_CONTENT = {
     eyebrow: "Sepotong keajaiban",
     headline: '<span class="headline-line headline-lead">Dunia kecil.</span><br><span class="headline-line headline-emphasis"><em>Keajaiban</em> <span class="headline-secondary">besar.</span></span>',
     intro: "Ikuti rasa ingin tahumu.<br>Yuk, kenalan dengan si rubah pink dari negeri bintang!",
-    official: "Official Page",
+    official: "Check out the official page",
     previous: "Cerita sebelumnya",
     next: "Cerita berikutnya",
     metaTitle: "Pinkfong: Rubah Fennec dari Staria | Fan Page",
@@ -39,7 +39,7 @@ window.PINKFONG_CONTENT = {
     eyebrow: "A little everyday magic",
     headline: '<span class="headline-line headline-lead">Little world.</span><br><span class="headline-line headline-emphasis"><em>Big</em> <span class="headline-secondary">wonders.</span></span>',
     intro: "Follow your curiosity.<br>Meet the little pink fox from a world of stars!",
-    official: "Official Page",
+    official: "Check out the official page",
     previous: "Previous story",
     next: "Next story",
     metaTitle: "Pinkfong: Fennec Fox from Staria | Fan Page",
@@ -74,7 +74,7 @@ window.PINKFONG_CONTENT = {
     eyebrow: "일상 속 작은 마법",
     headline: '<span class="headline-line headline-lead">작은 세상.</span><br><span class="headline-line headline-emphasis"><em>커다란</em> <span class="headline-secondary">놀라움.</span></span>',
     intro: "호기심을 따라가요.<br>별나라에서 온 분홍 여우를 만나 보세요!",
-    official: "Official Page",
+    official: "Check out the official page",
     previous: "이전 이야기",
     next: "다음 이야기",
     metaTitle: "핑크퐁: 스타리아에서 온 사막여우 | 팬 페이지",
@@ -109,7 +109,7 @@ window.PINKFONG_CONTENT = {
     eyebrow: "毎日に小さな魔法を",
     headline: '<span class="headline-line headline-lead">小さな世界。</span><br><span class="headline-line headline-emphasis"><em>大きな</em> <span class="headline-secondary">ときめき。</span></span>',
     intro: "好奇心のままに。<br>星の世界から来たピンクのキツネに会おう！",
-    official: "Official Page",
+    official: "Check out the official page",
     previous: "前のお話",
     next: "次のお話",
     metaTitle: "ピンキッツ：スターリアから来たフェネック | ファンページ",
@@ -144,7 +144,7 @@ window.PINKFONG_CONTENT = {
     eyebrow: "日常里的小小魔法",
     headline: '<span class="headline-line headline-lead">小小世界。</span><br><span class="headline-line headline-emphasis"><em>大大</em> <span class="headline-secondary">惊喜。</span></span>',
     intro: "跟着好奇心出发。<br>来认识这只来自星星世界的粉红小狐狸！",
-    official: "Official Page",
+    official: "Check out the official page",
     previous: "上一个故事",
     next: "下一个故事",
     metaTitle: "Pinkfong：来自 Staria 的耳廓狐 | 粉丝页",
@@ -176,8 +176,9 @@ window.PINKFONG_CONTENT = {
 
 };
 
+const __pinkfongRoot = new URL("../", document.currentScript.src);
 window.PINKFONG_POSES = [
-  "./assets/pinkfong-pose-01.png",
-  "./assets/pinkfong-pose-03-wonder.png",
-  "./assets/pinkfong-pose-02-staria.png"
+  new URL("assets/pinkfong-pose-01.webp", __pinkfongRoot).href,
+  new URL("assets/pinkfong-pose-03-wonder.webp", __pinkfongRoot).href,
+  new URL("assets/pinkfong-pose-02-staria.webp", __pinkfongRoot).href
 ];
