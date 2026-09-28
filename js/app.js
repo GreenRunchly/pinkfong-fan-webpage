@@ -21,8 +21,8 @@
 
   function languageUrl(code) {
     const root = window.PINKFONG_PAGE_ROOT || new URL("./", window.location.href);
-    const productionPath = code === "en" ? "" : `${code}/`;
-    const localPath = code === "en" ? "index.html" : `${code}/index.html`;
+    const productionPath = code === "id" ? "" : `${code}/`;
+    const localPath = code === "id" ? "index.html" : `${code}/index.html`;
     return new URL(window.location.protocol === "file:" ? localPath : productionPath, root).href;
   }
 
@@ -153,11 +153,7 @@
 
 
     if (lang === "ko") {
-      brandLink.textContent = "핑크퐁";
-      brandLink.setAttribute("aria-label", "핑크퐁 팬 페이지");
-    } else {
-      brandLink.innerHTML = 'pink<span>fong</span>';
-      brandLink.setAttribute("aria-label", "Pinkfong fan page");
+      brandLink.setAttribute("aria-label", lang === "ko" ? "핑크퐁 팬 페이지" : "Pinkfong fan page");
     }
 
     $("fox").setAttribute(
@@ -191,6 +187,13 @@
   $("language").addEventListener("change", (event) => {
     const nextLanguage = event.target.value;
     if (!texts[nextLanguage] || nextLanguage === lang) return;
+
+    try {
+      localStorage.setItem("pinkfong-language-choice", nextLanguage);
+    } catch {
+      // Navigation still works when storage is blocked.
+    }
+
     window.location.href = languageUrl(nextLanguage);
   });
 
