@@ -107,6 +107,17 @@
       @media (prefers-reduced-motion: reduce) {
         .site-loader-dots i { animation: none; }
       }
+
+      /* Bots, Lighthouse and PageSpeed should see the real page immediately. */
+      html.fast-loader-exit .world {
+        transition-duration: .1s !important;
+      }
+      html.fast-loader-exit #site-loader {
+        transition: opacity .1s ease, visibility .1s linear !important;
+      }
+      html.fast-loader-exit .site-loader-dots i {
+        animation-duration: .35s;
+      }
     </style>
 <script>
       (() => {
