@@ -1,0 +1,11 @@
+DirectoryIndex index.html
+
+<IfModule mod_mime.c>
+  AddType application/xml .xml
+  AddType text/plain .txt
+  AddType image/webp .webp
+</IfModule>
+
+<IfModule mod_alias.c>
+  Redirect 301 /id/ https://pinkfong.my.id/
+</IfModule>

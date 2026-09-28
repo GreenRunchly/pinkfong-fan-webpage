@@ -49,6 +49,39 @@
         text-shadow: 0 7px 24px rgba(78, 42, 121, .18);
       }
       .site-loader-brand span { color: #643d91; }
+
+      /* Reserve the exact loader wordmark size before external CSS loads. */
+      .site-loader-brand {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 34px;
+        line-height: 1;
+      }
+      .site-loader-brand .brand-picture-loader {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 34px;
+        line-height: 1;
+      }
+      .site-loader-brand .brand-image-loader {
+        display: block;
+        width: auto;
+        height: 34px;
+        max-width: none;
+        object-fit: contain;
+      }
+      @media (max-width: 1024px) {
+        .site-loader-brand,
+        .site-loader-brand .brand-picture-loader,
+        .site-loader-brand .brand-image-loader { height: 32px; }
+      }
+      @media (max-width: 640px) {
+        .site-loader-brand,
+        .site-loader-brand .brand-picture-loader,
+        .site-loader-brand .brand-image-loader { height: 28px; }
+      }
       .site-loader-dots {
         display: flex;
         align-items: center;
@@ -207,7 +240,7 @@
 <body class="app-loading">
 <div aria-label="Loading Pinkfong" id="site-loader" role="status">
 <div class="site-loader-inner">
-<div class="site-loader-brand"><img src="../assets/pinkfong-wordmark.webp" alt="Pinkfong" class="brand-image brand-image-loader" loading="eager" decoding="async"></div>
+<div class="site-loader-brand"><img src="../assets/pinkfong-wordmark.webp" data-dark-src="../assets/pinkfong-wordmark.webp" data-bright-src="../assets/pinkfong-wordmark-dark.webp" alt="Pinkfong" class="brand-image brand-image-loader brand-theme-sync" loading="eager" decoding="async" fetchpriority="high" width="320" height="96"></div>
 <div aria-hidden="true" class="site-loader-dots"><i></i><i></i><i></i></div>
 </div>
 </div>
@@ -217,7 +250,7 @@
 <div class="orbit two"></div>
 </div>
 <header>
-<a aria-label="Pinkfong fan page" class="brand no-underline text-inherit" href="#main-content"><img src="../assets/pinkfong-wordmark.webp" alt="Pinkfong" class="brand-image" loading="eager" decoding="async"></a>
+<a aria-label="Pinkfong fan page" class="brand no-underline text-inherit" href="#main-content"><img src="../assets/pinkfong-wordmark.webp" data-dark-src="../assets/pinkfong-wordmark.webp" data-bright-src="../assets/pinkfong-wordmark-dark.webp" alt="Pinkfong" class="brand-image brand-theme-sync" loading="eager" decoding="async" width="320" height="96"></a>
 <label class="sr-only" for="language">言語</label>
 <select aria-label="言語" class="language" id="language">
 <option value="id">Bahasa Indonesia</option>

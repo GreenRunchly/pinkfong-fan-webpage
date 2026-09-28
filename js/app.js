@@ -19,6 +19,37 @@
   const ogTitle = document.querySelector('meta[property="og:title"]');
   const ogDescription = document.querySelector('meta[property="og:description"]');
 
+
+  function parseRgb(color) {
+    const match = String(color).match(/rgba?\((\d+(?:\.\d+)?)[,\s]+(\d+(?:\.\d+)?)[,\s]+(\d+(?:\.\d+)?)/i);
+    return match ? match.slice(1, 4).map(Number) : null;
+  }
+
+  function relativeLuminance(rgb) {
+    if (!rgb) return 0;
+    const channel = (value) => {
+      const c = value / 255;
+      return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    };
+    return 0.2126 * channel(rgb[0]) + 0.7152 * channel(rgb[1]) + 0.0722 * channel(rgb[2]);
+  }
+
+  function syncBrandToRenderedTheme() {
+    const accent = document.querySelector("#headline .headline-emphasis em") || document.querySelector("#headline em");
+    if (!accent) return;
+
+    const color = getComputedStyle(accent).color;
+    const luminance = relativeLuminance(parseRgb(color));
+    const useBrightWordmark = luminance > 0.18;
+
+    document.querySelectorAll(".brand-theme-sync").forEach((image) => {
+      const nextSrc = useBrightWordmark ? image.dataset.brightSrc : image.dataset.darkSrc;
+      if (nextSrc && image.getAttribute("src") !== nextSrc) {
+        image.src = nextSrc;
+      }
+    });
+  }
+
   function languageUrl(code) {
     const root = window.PINKFONG_PAGE_ROOT || new URL("./", window.location.href);
     const productionPath = code === "id" ? "" : `${code}/`;
@@ -150,6 +181,8 @@
     $("eyebrow").textContent = content.eyebrow;
     $("headline").innerHTML = content.headline;
     $("intro-text").innerHTML = content.intro;
+
+    requestAnimationFrame(syncBrandToRenderedTheme);
 
 
     if (lang === "ko") {
