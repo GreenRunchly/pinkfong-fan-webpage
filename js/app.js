@@ -6,8 +6,7 @@
   const $ = (id) => document.getElementById(id);
 
   let current = 0;
-  let lang = "en";
-  let preference = "auto";
+  let lang = window.PINKFONG_PAGE_LANG || "en";
   let poseTimer;
   let popupTimer;
   let popupHideTimer;
@@ -20,32 +19,11 @@
   const ogTitle = document.querySelector('meta[property="og:title"]');
   const ogDescription = document.querySelector('meta[property="og:description"]');
 
-  function detectLanguage() {
-    const locales = navigator.languages?.length
-      ? navigator.languages
-      : [navigator.language || "en"];
-
-    for (const locale of locales) {
-      const base = locale.toLowerCase().split(/[-_]/)[0];
-
-      if (texts[base]) {
-        return base;
-      }
-    }
-
-    return "en";
-  }
-
-  function readPreference() {
-    try {
-      const saved = localStorage.getItem("pinkfong-language");
-
-      if (saved === "auto" || texts[saved]) {
-        preference = saved;
-      }
-    } catch {
-      // The page still works if localStorage is unavailable.
-    }
+  function languageUrl(code) {
+    const root = window.PINKFONG_PAGE_ROOT || new URL("./", window.location.href);
+    const productionPath = code === "en" ? "" : `${code}/`;
+    const localPath = code === "en" ? "index.html" : `${code}/index.html`;
+    return new URL(window.location.protocol === "file:" ? localPath : productionPath, root).href;
   }
 
   function preloadPoses() {
@@ -161,7 +139,7 @@
   }
 
   function translate() {
-    lang = preference === "auto" ? detectLanguage() : preference;
+    lang = window.PINKFONG_PAGE_LANG || lang || "en";
 
     const content = texts[lang];
 
@@ -211,21 +189,9 @@
   }
 
   $("language").addEventListener("change", (event) => {
-    preference = event.target.value;
-
-    try {
-      localStorage.setItem("pinkfong-language", preference);
-    } catch {
-      // Ignore storage errors.
-    }
-
-    translate();
-  });
-
-  window.addEventListener("languagechange", () => {
-    if (preference === "auto") {
-      translate();
-    }
+    const nextLanguage = event.target.value;
+    if (!texts[nextLanguage] || nextLanguage === lang) return;
+    window.location.href = languageUrl(nextLanguage);
   });
 
   // Pinkfong is intentionally the only story navigation control.
@@ -234,7 +200,6 @@
     showHelloPopup();
   });
 
-  readPreference();
   preloadPoses();
   createStars();
   translate();
