@@ -8,11 +8,35 @@
   let current = 0;
   let lang = window.PINKFONG_PAGE_LANG || "en";
   let poseTimer;
+  let poseEnterTimer;
+  let poseTransitioning = false;
   let popupTimer;
   let popupHideTimer;
+  let autoSwipeTimer;
+  const AUTO_SWIPE_DELAY = 5000;
 
+  const foxButton = $("fox");
   const characterImage = document.querySelector("#fox img");
+  const poseFrame = document.createElement("span");
+  poseFrame.className = "pose-frame";
+  characterImage.parentNode.insertBefore(poseFrame, characterImage);
+  poseFrame.appendChild(characterImage);
+
   const helloPopup = $("hello");
+  const storyPanel = $("story-panel");
+
+  // Hover-only card navigation. Swipe remains the primary touch interaction.
+  const storyArrows = document.createElement("div");
+  storyArrows.className = "story-arrows";
+  storyArrows.setAttribute("aria-label", "Story navigation");
+  storyArrows.innerHTML = `
+    <button class="story-arrow story-arrow-prev" type="button" aria-label="Previous story"><span class="story-chevron" aria-hidden="true"></span></button>
+    <button class="story-arrow story-arrow-next" type="button" aria-label="Next story"><span class="story-chevron" aria-hidden="true"></span></button>
+  `;
+  storyPanel.appendChild(storyArrows);
+  const previousStoryButton = storyArrows.querySelector(".story-arrow-prev");
+  const nextStoryButton = storyArrows.querySelector(".story-arrow-next");
+
   const sourceLink = document.querySelector(".source");
   const brandLink = document.querySelector(".brand");
   const metaDescription = document.querySelector('meta[name="description"]');
@@ -64,14 +88,33 @@
     });
   }
 
-  function updatePose() {
+  function clearPoseClasses() {
+    poseFrame.classList.remove(
+      "pose-no-transition",
+      "pose-exit-next",
+      "pose-exit-prev",
+      "pose-enter-next",
+      "pose-enter-prev"
+    );
+  }
+
+  function updatePose(direction = 1, onComplete) {
     const story = texts[lang].stories[current];
+    const nextSrc = poses[current];
+    const finishTransition = () => {
+      poseTransitioning = false;
+      clearPoseClasses();
+      if (typeof onComplete === "function") {
+        onComplete();
+      }
+    };
 
     characterImage.alt = story.alt;
     clearTimeout(poseTimer);
+    clearTimeout(poseEnterTimer);
 
-    if (characterImage.getAttribute("src") === poses[current]) {
-      characterImage.classList.remove("changing");
+    if (characterImage.src === nextSrc) {
+      finishTransition();
       return;
     }
 
@@ -80,17 +123,36 @@
     ).matches;
 
     if (reducedMotion) {
-      characterImage.src = poses[current];
-      characterImage.classList.remove("changing");
+      characterImage.src = nextSrc;
+      finishTransition();
       return;
     }
 
-    characterImage.classList.add("changing");
+    poseTransitioning = true;
+    clearPoseClasses();
+
+    const exitClass = direction < 0 ? "pose-exit-prev" : "pose-exit-next";
+    const enterClass = direction < 0 ? "pose-enter-prev" : "pose-enter-next";
+
+    // Old pose slides away while fading out.
+    void poseFrame.offsetWidth;
+    poseFrame.classList.add(exitClass);
 
     poseTimer = setTimeout(() => {
-      characterImage.src = poses[current];
-      characterImage.classList.remove("changing");
-    }, 150);
+      // Put the incoming pose on the opposite side without animating that jump.
+      characterImage.src = nextSrc;
+      poseFrame.classList.add("pose-no-transition");
+      poseFrame.classList.remove(exitClass);
+      poseFrame.classList.add(enterClass);
+      void poseFrame.offsetWidth;
+
+      // Then let it slide into place while fading in.
+      poseFrame.classList.remove("pose-no-transition");
+      requestAnimationFrame(() => {
+        poseFrame.classList.remove(enterClass);
+        poseEnterTimer = setTimeout(finishTransition, 300);
+      });
+    }, 220);
   }
 
   function hideHelloPopup(instant = false) {
@@ -132,12 +194,18 @@
 
     popupTimer = setTimeout(() => {
       hideHelloPopup(false);
-    }, 1500);
+    }, 3000);
   }
 
-  function page(index) {
-    current = (index + poses.length) % poses.length;
+  function page(index, direction = 1, options = {}) {
+    const next = (index + poses.length) % poses.length;
+    const { popupAfterTransition = false } = options;
 
+    if (poseTransitioning && next !== current) {
+      return false;
+    }
+
+    current = next;
     const story = texts[lang].stories[current];
 
     hideHelloPopup(true);
@@ -153,7 +221,27 @@
       dot.classList.toggle("active", index === current);
     });
 
-    updatePose();
+    updatePose(direction, () => {
+      if (popupAfterTransition) {
+        showHelloPopup();
+      }
+    });
+    return true;
+  }
+
+  function scheduleAutoSwipe() {
+    clearTimeout(autoSwipeTimer);
+    autoSwipeTimer = setTimeout(() => {
+      const changed = page(current + 1, 1, { popupAfterTransition: true });
+      // If a manual transition is still finishing, simply try again after the
+      // normal interval instead of stacking transitions.
+      scheduleAutoSwipe();
+      return changed;
+    }, AUTO_SWIPE_DELAY);
+  }
+
+  function resetAutoSwipe() {
+    scheduleAutoSwipe();
   }
 
   function updateSeo(content) {
@@ -177,6 +265,8 @@
     document.documentElement.lang = lang;
     $("language").value = lang;
     $("language").setAttribute("aria-label", content.language);
+    previousStoryButton.setAttribute("aria-label", content.previous);
+    nextStoryButton.setAttribute("aria-label", content.next);
 
     $("eyebrow").textContent = content.eyebrow;
     $("headline").innerHTML = content.headline;
@@ -230,14 +320,88 @@
     window.location.href = languageUrl(nextLanguage);
   });
 
-  // Pinkfong is intentionally the only story navigation control.
-  $("fox").addEventListener("click", () => {
-    page(current + 1);
-    showHelloPopup();
+  previousStoryButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (page(current - 1, -1, { popupAfterTransition: true })) {
+      resetAutoSwipe();
+    }
+  });
+
+  nextStoryButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (page(current + 1, 1, { popupAfterTransition: true })) {
+      resetAutoSwipe();
+    }
+  });
+
+  // Pinkfong remains clickable, and now also supports horizontal swipe/drag.
+  // Swipe left = next story, swipe right = previous story.
+  // A timestamp guard prevents the synthetic click generated after a swipe from
+  // reopening the speech popup.
+  let gestureStart = null;
+  let suppressClickUntil = 0;
+
+  foxButton.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+
+    gestureStart = {
+      id: event.pointerId,
+      x: event.clientX,
+      y: event.clientY,
+      time: performance.now()
+    };
+    try {
+      foxButton.setPointerCapture(event.pointerId);
+    } catch {
+      // Pointer capture is optional; swipe still works without it.
+    }
+  });
+
+  foxButton.addEventListener("pointerup", (event) => {
+    if (!gestureStart || gestureStart.id !== event.pointerId) return;
+
+    const dx = event.clientX - gestureStart.x;
+    const dy = event.clientY - gestureStart.y;
+    const elapsed = performance.now() - gestureStart.time;
+    const horizontalSwipe =
+      Math.abs(dx) >= 42 &&
+      Math.abs(dx) > Math.abs(dy) * 1.15 &&
+      elapsed <= 900;
+
+    if (horizontalSwipe) {
+      // Some touch browsers dispatch a delayed click after pointerup. Keep the
+      // guard alive long enough for that synthetic click to be ignored.
+      suppressClickUntil = performance.now() + 750;
+      event.preventDefault();
+      const direction = dx < 0 ? 1 : -1;
+      if (page(current + direction, direction, { popupAfterTransition: true })) {
+        resetAutoSwipe();
+      }
+    }
+
+    gestureStart = null;
+  });
+
+  foxButton.addEventListener("pointercancel", () => {
+    gestureStart = null;
+  });
+
+  foxButton.addEventListener("click", (event) => {
+    if (performance.now() < suppressClickUntil) {
+      event.preventDefault();
+      return;
+    }
+
+    if (page(current + 1, 1, { popupAfterTransition: true })) {
+      resetAutoSwipe();
+    }
   });
 
   preloadPoses();
   createStars();
   translate();
+  scheduleAutoSwipe();
   window.__pinkfongAssetReady?.("app");
 })();

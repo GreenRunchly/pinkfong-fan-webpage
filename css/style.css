@@ -1687,21 +1687,21 @@ h1{font-size:34px;line-height:1.08}
 /* Keep the speech bubble away from Pinkfong's head. */
 @media (orientation:landscape) and (min-width:901px){
   .hello{
-    right:-12%!important;
+    right:-8%!important;
     top:10%!important;
   }
 }
 
 @media (orientation:landscape) and (max-width:900px){
   .hello{
-    right:-7%!important;
+    right:-4%!important;
     top:8%!important;
   }
 }
 
 @media (orientation:portrait) and (max-width:900px){
   .hello{
-    right:-5%!important;
+    right:-2%!important;
     top:10%!important;
   }
 }
@@ -1752,7 +1752,7 @@ h1{font-size:34px;line-height:1.08}
 
 /* v27: story 2 speech bubble lives on Pinkfong's left side */
 .hello[data-story="2"]{
-  left:-10%!important;
+  left:-7%!important;
   right:auto!important;
   top:12%!important;
   transform-origin:88% 100%!important;
@@ -1874,3 +1874,1073 @@ h1{font-size:34px;line-height:1.08}
 
 /* v43: wordmark color follows the actually rendered headline accent via JS */
 .brand-theme-sync{transition:opacity .12s ease}
+
+/* v50: desktop editorial overlap — copy behind Pinkfong, story card lower-left */
+@media (orientation:landscape) and (min-width:1101px){
+  /* Move the hero copy toward Pinkfong and let the mascot overlap it. */
+  .intro{
+    left:16%!important;
+    top:44%!important;
+    z-index:2!important;
+  }
+
+  /* Keep Pinkfong above the copy. */
+  .character{
+    z-index:3!important;
+  }
+
+  /* Shift the story card closer to Pinkfong and noticeably lower. */
+  .fact{
+    right:8%!important;
+    top:70%!important;
+    z-index:5!important;
+  }
+}
+
+/* v51: fine-tune desktop overlap from annotated preview */
+@media (orientation:landscape) and (min-width:1101px){
+  /* Nudge the editorial copy a little farther left, while keeping it behind Pinkfong. */
+  .intro{
+    left:13.5%!important;
+    z-index:2!important;
+  }
+
+  /* Keep mascot above the copy. */
+  .character{
+    z-index:3!important;
+  }
+
+  /* Pull the story card slightly toward Pinkfong and place it in front of the mascot. */
+  .fact{
+    right:12.5%!important;
+    top:70%!important;
+    z-index:6!important;
+  }
+}
+
+
+/* v52: swipe navigation + directional slide/fade pose transition */
+.fox{
+  touch-action:pan-y;
+}
+
+.pose-frame{
+  --pose-slide-distance:clamp(48px,6vw,88px);
+  display:block;
+  width:100%;
+  height:100%;
+  opacity:1;
+  transform:translate3d(0,0,0) scale(1);
+  transition:
+    opacity .22s ease,
+    transform .28s cubic-bezier(.22,.72,.2,1);
+  will-change:opacity,transform;
+}
+
+.pose-frame.pose-no-transition{
+  transition:none!important;
+}
+
+/* Next: old pose exits left, incoming pose starts at the right. */
+.pose-frame.pose-exit-next{
+  opacity:0;
+  transform:translate3d(calc(var(--pose-slide-distance) * -1),0,0) scale(.985);
+}
+.pose-frame.pose-enter-next{
+  opacity:0;
+  transform:translate3d(var(--pose-slide-distance),0,0) scale(.985);
+}
+
+/* Previous: mirror the direction. */
+.pose-frame.pose-exit-prev{
+  opacity:0;
+  transform:translate3d(var(--pose-slide-distance),0,0) scale(.985);
+}
+.pose-frame.pose-enter-prev{
+  opacity:0;
+  transform:translate3d(calc(var(--pose-slide-distance) * -1),0,0) scale(.985);
+}
+
+@media(max-width:600px){
+  .pose-frame{--pose-slide-distance:clamp(34px,12vw,54px)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .pose-frame{transition:none!important}
+}
+
+
+/* v53: hover card arrows, robust swipe/click separation, tablet editorial layout */
+.fact{
+  overflow:visible!important;
+}
+
+.story-arrows{
+  position:absolute;
+  inset:0;
+  z-index:8;
+  pointer-events:none;
+}
+.story-arrow{
+  position:absolute;
+  top:50%;
+  display:grid;
+  place-items:center;
+  width:38px;
+  height:38px;
+  padding:0;
+  border:1px solid #ffffffb8;
+  border-radius:999px;
+  background:#fffdf0;
+  color:#603780;
+  box-shadow:0 10px 26px #663c9828;
+  backdrop-filter:blur(12px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .18s ease,transform .22s cubic-bezier(.2,.72,.2,1),background-color .18s ease;
+}
+.story-arrow span{
+  display:block;
+  font-size:20px;
+  line-height:1;
+  transform:translateY(-1px);
+}
+.story-arrow-prev{
+  left:-19px;
+  transform:translate(-7px,-50%) scale(.92);
+}
+.story-arrow-next{
+  right:-19px;
+  transform:translate(7px,-50%) scale(.92);
+}
+
+@media (hover:hover) and (pointer:fine){
+  .fact:hover .story-arrow,
+  .fact:focus-within .story-arrow{
+    opacity:1;
+    pointer-events:auto;
+  }
+  .fact:hover .story-arrow-prev,
+  .fact:focus-within .story-arrow-prev{
+    transform:translate(0,-50%) scale(1);
+  }
+  .fact:hover .story-arrow-next,
+  .fact:focus-within .story-arrow-next{
+    transform:translate(0,-50%) scale(1);
+  }
+  .story-arrow:hover{background:#fff}
+}
+.story-arrow:focus-visible{
+  opacity:1;
+  pointer-events:auto;
+}
+@media (hover:none){
+  .story-arrows{display:none}
+}
+
+/* Tablet landscape gets the same overlapping editorial treatment as desktop. */
+@media (orientation:landscape) and (min-width:701px) and (max-width:1100px){
+  .intro{
+    left:12%!important;
+    top:45%!important;
+    width:34%!important;
+    z-index:2!important;
+  }
+  .character{
+    z-index:3!important;
+  }
+  .fact{
+    right:7.5%!important;
+    top:69%!important;
+    z-index:6!important;
+  }
+}
+
+/* Tablet portrait keeps the vertical composition, but carries over the same
+   leftward copy/card tuning and foreground card hierarchy. */
+@media (orientation:portrait) and (min-width:601px) and (max-width:900px){
+  .intro{
+    position:relative!important;
+    left:-4%!important;
+    z-index:2!important;
+  }
+  .character{
+    z-index:3!important;
+  }
+  .fact{
+    position:relative!important;
+    left:-5%!important;
+    top:-2.5vh!important;
+    z-index:6!important;
+  }
+}
+
+/* Larger portrait tablets (e.g. 10–13 inch class) use a dedicated vertical
+   layout instead of falling back to the desktop three-column grid. */
+@media (orientation:portrait) and (min-width:901px) and (max-width:1100px){
+  .main{
+    position:absolute!important;
+    inset:90px 7% 88px!important;
+    display:block!important;
+  }
+  .intro{
+    position:absolute!important;
+    left:3%!important;
+    top:3%!important;
+    width:62%!important;
+    max-width:none!important;
+    padding:0!important;
+    text-align:left!important;
+    z-index:2!important;
+  }
+  .character{
+    position:absolute!important;
+    left:50%!important;
+    top:51%!important;
+    width:min(70vw,58vh)!important;
+    height:68%!important;
+    transform:translate(-50%,-50%)!important;
+    z-index:3!important;
+  }
+  .fact{
+    position:absolute!important;
+    left:42%!important;
+    right:auto!important;
+    bottom:0!important;
+    top:auto!important;
+    width:min(56%,360px)!important;
+    max-width:360px!important;
+    transform:translateX(-50%) rotate(1.8deg)!important;
+    z-index:6!important;
+  }
+}
+
+
+/* v54: stronger card/mascot overlap + chevron controls that are desktop/tablet only */
+.story-arrow .story-chevron{
+  display:block;
+  width:9px;
+  height:9px;
+  border-right:2px solid currentColor;
+  border-bottom:2px solid currentColor;
+  font-size:0;
+  line-height:0;
+}
+.story-arrow-prev .story-chevron{
+  transform:translateX(2px) rotate(135deg);
+}
+.story-arrow-next .story-chevron{
+  transform:translateX(-2px) rotate(-45deg);
+}
+
+/* Controls are intentionally unavailable on phone layouts. Tablets keep the
+   controls in the DOM so a mouse/trackpad can reveal them, while touch users
+   continue to navigate with swipe. */
+@media (max-width:600px){
+  .story-arrows{display:none!important}
+}
+@media (min-width:601px){
+  .story-arrows{display:block!important}
+}
+
+/* On desktop/tablet pointer devices, reveal controls only while the cursor is
+   actually over the card/control area. `any-*` also covers tablet trackpads. */
+@media (min-width:601px) and (any-hover:hover) and (any-pointer:fine){
+  .story-arrow{
+    opacity:0;
+    pointer-events:none;
+  }
+  .fact:hover .story-arrow{
+    opacity:1;
+    pointer-events:auto;
+  }
+  .fact:hover .story-arrow-prev{
+    transform:translate(0,-50%) scale(1);
+  }
+  .fact:hover .story-arrow-next{
+    transform:translate(0,-50%) scale(1);
+  }
+  .fact:not(:hover) .story-arrow:not(:focus-visible){
+    opacity:0!important;
+    pointer-events:none!important;
+  }
+}
+
+/* Desktop: move the story card a little farther toward the mascot so the
+   card visibly overlaps Pinkfong while remaining above the character layer. */
+@media (orientation:landscape) and (min-width:1101px){
+  .fact{
+    right:15.5%!important;
+    z-index:6!important;
+  }
+}
+
+/* Landscape tablets get the same stronger overlap. */
+@media (orientation:landscape) and (min-width:701px) and (max-width:1100px){
+  .fact{
+    right:11%!important;
+    z-index:6!important;
+  }
+}
+
+/* Portrait tablet: pull the card a little farther left toward Pinkfong. */
+@media (orientation:portrait) and (min-width:601px) and (max-width:900px){
+  .fact{
+    left:-8%!important;
+    z-index:6!important;
+  }
+}
+
+/* Larger portrait tablets: same overlap treatment in the dedicated layout. */
+@media (orientation:portrait) and (min-width:901px) and (max-width:1100px){
+  .fact{
+    left:38%!important;
+    z-index:6!important;
+  }
+}
+
+/* v64: portrait phones keep a centered desktop-like composition across
+   different device heights, while square-ish portrait devices use desktop
+   layout even when standing upright. */
+@media (orientation:portrait) and (max-width:600px){
+  /* Bigger gap below the navbar so the top content breathes more. */
+  .main{
+    inset:84px 12px 26px!important;
+    gap:0!important;
+    grid-template-rows:1fr 1.34fr auto!important;
+  }
+
+  /* Center the headline block and pull it closer to Pinkfong. */
+  .intro{
+    position:relative!important;
+    top:34px!important;
+    width:min(88%,340px)!important;
+    margin-inline:auto!important;
+    justify-self:center!important;
+    align-self:start!important;
+    text-align:center!important;
+    padding-bottom:0!important;
+    z-index:2!important;
+  }
+  .eyebrow{
+    justify-content:center!important;
+    margin-bottom:5px!important;
+  }
+  #headline,
+  :lang(id) #headline,
+  :lang(en) #headline,
+  :lang(ko) #headline,
+  :lang(ja) #headline,
+  :lang(zh) #headline{
+    margin-top:12px!important;
+    margin-bottom:8px!important;
+  }
+  .intro p{
+    max-width:240px!important;
+    margin:10px auto 0!important;
+  }
+
+  /* Slightly smaller Pinkfong so the text/card can overlap more cleanly. */
+  .character{
+    grid-column:1 / -1!important;
+    grid-row:2!important;
+    position:relative!important;
+    top:-66px!important;
+    z-index:3!important;
+    align-self:center!important;
+    justify-self:center!important;
+  }
+  .fox{
+    width:97%!important;
+    height:103%!important;
+  }
+
+  /* Keep the card centered and much closer to the mascot, overlap allowed. */
+  .fact{
+    position:relative!important;
+    grid-column:1 / -1!important;
+    grid-row:3!important;
+    top:-100px!important;
+    width:min(74%,290px)!important;
+    margin-inline:auto!important;
+    justify-self:center!important;
+    align-self:end!important;
+    z-index:6!important;
+    transform:rotate(1.3deg)!important;
+  }
+}
+
+/* Medium/taller phones need a touch more vertical pull for the card. */
+@media (orientation:portrait) and (max-width:600px) and (min-height:780px){
+  .main{inset:90px 12px 28px!important}
+  .intro{top:38px!important}
+  .character{top:-76px!important}
+  .fact{top:-112px!important}
+}
+
+/* Very tall phones can afford slightly more spacing at the top while keeping
+   the card tucked close to Pinkfong. */
+@media (orientation:portrait) and (max-width:600px) and (min-height:900px){
+  .main{inset:98px 12px 30px!important}
+  .intro{top:42px!important}
+  .character{top:-84px!important}
+  .fact{top:-122px!important}
+}
+
+/* Shorter phones ease the overlap slightly to avoid crowding. */
+@media (orientation:portrait) and (max-width:600px) and (max-height:699px){
+  .main{inset:74px 10px 22px!important}
+  .intro{top:22px!important}
+  .character{top:-44px!important}
+  .fox{
+    width:94%!important;
+    height:100%!important;
+  }
+  .fact{
+    top:-76px!important;
+    width:min(78%,290px)!important;
+  }
+}
+
+/* Extra-small phones keep the same composition, just slightly gentler. */
+@media (orientation:portrait) and (max-width:360px){
+  .main{inset:70px 9px 20px!important}
+  .intro{
+    top:18px!important;
+    width:min(90%,320px)!important;
+  }
+  .character{top:-38px!important}
+  .fox{
+    width:92%!important;
+    height:98%!important;
+  }
+  .fact{
+    top:-62px!important;
+    width:min(80%,280px)!important;
+  }
+}
+
+/* Square-ish portrait devices (including iPad mini portrait) should use a
+   desktop-like three-column layout instead of the stacked mobile layout. */
+@media (orientation:portrait) and (min-aspect-ratio:3/5) and (max-width:1100px){
+  header{
+    height:90px!important;
+    padding:24px 4.5%!important;
+  }
+  .main{
+    inset:100px 4.5% 88px!important;
+    display:grid!important;
+    grid-template-columns:1fr 1.18fr 1fr!important;
+    grid-template-rows:none!important;
+    align-items:center!important;
+    gap:10px!important;
+  }
+  .intro{
+    grid-column:1!important;
+    grid-row:auto!important;
+    position:relative!important;
+    top:0!important;
+    width:auto!important;
+    margin:0!important;
+    justify-self:start!important;
+    align-self:center!important;
+    text-align:left!important;
+    padding:0 0 18px!important;
+    z-index:2!important;
+  }
+  .eyebrow{
+    justify-content:flex-start!important;
+  }
+  .intro p{
+    max-width:250px!important;
+    margin:14px 0 0!important;
+  }
+  .character{
+    grid-column:2!important;
+    grid-row:auto!important;
+    align-self:center!important;
+    justify-self:center!important;
+    z-index:3!important;
+  }
+  .fox{
+    width:118%!important;
+    height:110%!important;
+  }
+  .fact{
+    grid-column:3!important;
+    grid-row:auto!important;
+    position:relative!important;
+    top:0!important;
+    left:auto!important;
+    right:auto!important;
+    width:min(100%,300px)!important;
+    margin:0!important;
+    justify-self:end!important;
+    align-self:center!important;
+    z-index:6!important;
+    transform:rotate(2deg)!important;
+  }
+}
+
+/* Wider square portrait tablets can use a little more room while keeping the
+   desktop composition. */
+@media (orientation:portrait) and (min-aspect-ratio:3/5) and (min-width:700px){
+  .main{
+    inset:104px 5.5% 92px!important;
+    grid-template-columns:1fr 1.22fr 1fr!important;
+  }
+  .fact{width:min(100%,320px)!important}
+}
+
+
+/* v68: phone composition anchored to Pinkfong instead of viewport height.
+   The headline and story card now keep a fixed visual relationship to the
+   mascot across short and tall portrait phones. */
+@media (orientation:portrait) and (max-width:600px) and (max-aspect-ratio:599/1000){
+  .main{
+    inset:0!important;
+    display:block!important;
+    --pf-anchor-y:clamp(345px,45dvh,390px);
+    --pf-copy-gap:clamp(250px,68vw,286px);
+    --pf-card-gap:clamp(124px,34vw,146px);
+  }
+
+  /* Copy is anchored above the mascot. */
+  .intro{
+    position:absolute!important;
+    left:50%!important;
+    top:calc(var(--pf-anchor-y) - var(--pf-copy-gap))!important;
+    width:min(88vw,340px)!important;
+    margin:0!important;
+    padding:0!important;
+    transform:translateX(-50%)!important;
+    text-align:center!important;
+    z-index:2!important;
+  }
+  .eyebrow{
+    justify-content:center!important;
+    margin-bottom:4px!important;
+  }
+  #headline,
+  :lang(id) #headline,
+  :lang(en) #headline,
+  :lang(ko) #headline,
+  :lang(ja) #headline,
+  :lang(zh) #headline{
+    margin-top:10px!important;
+    margin-bottom:6px!important;
+  }
+  .intro p{
+    max-width:245px!important;
+    margin:8px auto 0!important;
+  }
+
+  /* Pinkfong is the anchor of the whole phone composition. */
+  .character{
+    position:absolute!important;
+    left:50%!important;
+    top:var(--pf-anchor-y)!important;
+    width:100vw!important;
+    height:clamp(330px,102vw,400px)!important;
+    margin:0!important;
+    transform:translate(-50%,-50%)!important;
+    z-index:3!important;
+  }
+  .fox{
+    width:96%!important;
+    height:102%!important;
+  }
+
+  /* Card is anchored below Pinkfong and intentionally overlaps the lower body. */
+  .fact{
+    position:absolute!important;
+    left:50%!important;
+    top:calc(var(--pf-anchor-y) + var(--pf-card-gap))!important;
+    width:min(65vw,250px)!important;
+    margin:0!important;
+    padding:13px 15px!important;
+    transform:translateX(-50%) rotate(1.3deg)!important;
+    z-index:6!important;
+  }
+  .fact h2{
+    margin-top:7px!important;
+  }
+  .fact p{
+    min-height:0!important;
+    padding-right:0!important;
+  }
+}
+
+/* Slightly narrower phones keep the same anchor model with a compact card. */
+@media (orientation:portrait) and (max-width:360px) and (max-aspect-ratio:599/1000){
+  .main{
+    --pf-anchor-y:clamp(330px,45dvh,360px);
+    --pf-copy-gap:clamp(232px,70vw,256px);
+    --pf-card-gap:clamp(112px,36vw,128px);
+  }
+  .character{
+    height:clamp(310px,105vw,365px)!important;
+  }
+  .fox{
+    width:94%!important;
+    height:100%!important;
+  }
+  .fact{
+    width:min(67vw,225px)!important;
+    padding:12px 14px!important;
+  }
+}
+
+
+/* v71: center the whole phone composition vertically and keep all three
+   anchored elements on the same horizontal centerline. The headline remains
+   only lightly overlapped by the mascot. */
+
+/* v72: keep the three-part phone composition centered as one visual group.
+   Pinkfong stays on the canvas centerline; copy is pushed much farther above
+   the mascot while the card keeps its existing distance below. */
+@media (orientation:portrait) and (max-width:600px) and (max-aspect-ratio:599/1000){
+  .main{
+    /* Character is the group anchor. Using viewport-relative center keeps the
+       whole composition visually centered on short and tall phones alike. */
+    --pf-anchor-y:53dvh!important;
+    /* Large but responsive separation: enough for the headline to remain
+       readable with only a very small visual overlap at the ears. */
+    --pf-copy-gap:clamp(240px, min(80vw, 43dvh), 320px)!important;
+  }
+
+  .intro,
+  .character,
+  .fact{
+    left:50%!important;
+  }
+
+  .intro{
+    width:min(88vw,340px)!important;
+    text-align:center!important;
+  }
+
+  .character{
+    transform:translate(-50%,-50%)!important;
+  }
+
+  .fact{
+    transform:translateX(-50%) rotate(1.3deg)!important;
+  }
+}
+
+/* On very short phones, preserve clear navbar breathing room while keeping
+   the same centered relationship between character and card. */
+@media (orientation:portrait) and (max-width:600px) and (max-aspect-ratio:599/1000) and (max-height:650px){
+  .main{
+    --pf-anchor-y:55dvh!important;
+    --pf-copy-gap:clamp(238px,76vw,270px)!important;
+  }
+}
+
+
+/* v73: iPad mini / iPad Pro portrait should follow the desktop composition,
+   not the stacked/mobile editorial experiments. This strong override restores
+   the classic three-column desktop layout and clears any overlap offsets. */
+@media (orientation:portrait) and (min-width:700px) and (max-width:1100px) and (min-aspect-ratio:3/5){
+  header{
+    height:90px!important;
+    padding:24px 4.5%!important;
+  }
+  .main{
+    position:absolute!important;
+    inset:90px 4.5% 91px!important;
+    display:grid!important;
+    grid-template-columns:1fr 1.25fr 1fr!important;
+    grid-template-rows:none!important;
+    align-items:center!important;
+    gap:12px!important;
+    transform:none!important;
+  }
+  .intro{
+    grid-column:1!important;
+    grid-row:1!important;
+    position:relative!important;
+    top:0!important;
+    left:auto!important;
+    width:auto!important;
+    margin:0!important;
+    padding:0 0 40px!important;
+    transform:none!important;
+    justify-self:start!important;
+    align-self:center!important;
+    text-align:left!important;
+    z-index:2!important;
+  }
+  .eyebrow{
+    justify-content:flex-start!important;
+    margin-bottom:0!important;
+  }
+  .intro p{
+    max-width:270px!important;
+    margin:20px 0 26px!important;
+  }
+  .character{
+    grid-column:2!important;
+    grid-row:1!important;
+    position:relative!important;
+    top:0!important;
+    left:auto!important;
+    width:100%!important;
+    height:100%!important;
+    margin:0!important;
+    transform:none!important;
+    align-self:center!important;
+    justify-self:center!important;
+    z-index:2!important;
+  }
+  .fox{
+    width:125%!important;
+    height:115%!important;
+  }
+  .fact{
+    grid-column:3!important;
+    grid-row:1!important;
+    position:relative!important;
+    top:0!important;
+    left:auto!important;
+    right:auto!important;
+    width:100%!important;
+    max-width:315px!important;
+    margin:0!important;
+    padding:27px!important;
+    transform:rotate(2deg)!important;
+    justify-self:end!important;
+    align-self:center!important;
+    z-index:3!important;
+  }
+  .fact-top{font-size:12px!important;letter-spacing:1.8px!important}
+  .fact h2{font-size:26px!important;margin:0 0 12px!important}
+  .fact p{font-size:16px!important;line-height:1.65!important;min-height:105px!important;padding-right:0!important}
+  .paging{position:static!important;right:auto!important;bottom:auto!important;margin-top:22px!important;gap:0!important}
+  .paging button:first-child,.dots{display:flex!important}
+  .paging button{width:37px!important;height:37px!important}
+  .hello{
+    top:9%!important;
+    right:-2%!important;
+    max-width:180px!important;
+    text-align:center!important;
+  }
+  .hello[data-story="2"]{
+    left:-5%!important;
+    right:auto!important;
+    top:11%!important;
+  }
+}
+
+/* Larger iPad Pro portrait gets a bit more room while staying desktop-like. */
+@media (orientation:portrait) and (min-width:900px) and (max-width:1100px) and (min-aspect-ratio:3/5){
+  .main{
+    inset:94px 5% 96px!important;
+    grid-template-columns:1fr 1.28fr 1fr!important;
+  }
+  .fact{max-width:330px!important}
+}
+
+/* v74: TABLET ORIENTATION SPLIT
+   Portrait iPad/tablet = centered stacked/mobile composition.
+   Landscape is intentionally untouched, so it keeps the desktop layout. */
+@media (orientation:portrait) and (min-width:601px) and (max-width:1100px){
+  header{
+    height:88px!important;
+    padding:22px 5%!important;
+  }
+
+  .main{
+    position:absolute!important;
+    inset:0!important;
+    display:block!important;
+    transform:none!important;
+    --pf-tab-anchor-y:52dvh;
+    --pf-tab-copy-gap:clamp(270px,24dvh,340px);
+    --pf-tab-card-gap:clamp(160px,15dvh,205px);
+  }
+
+  /* Top copy: centered, mobile-like, with clear breathing room. */
+  .intro{
+    position:absolute!important;
+    left:50%!important;
+    top:calc(var(--pf-tab-anchor-y) - var(--pf-tab-copy-gap))!important;
+    width:min(72vw,520px)!important;
+    margin:0!important;
+    padding:0!important;
+    transform:translateX(-50%)!important;
+    text-align:center!important;
+    justify-self:auto!important;
+    align-self:auto!important;
+    z-index:2!important;
+  }
+  .eyebrow{
+    justify-content:center!important;
+    margin-bottom:5px!important;
+    font-size:10px!important;
+    letter-spacing:2px!important;
+  }
+  #headline,
+  :lang(id) #headline,
+  :lang(en) #headline,
+  :lang(ko) #headline,
+  :lang(ja) #headline,
+  :lang(zh) #headline{
+    font-size:clamp(40px,5.5vw,58px)!important;
+    line-height:1.02!important;
+    margin:10px 0 8px!important;
+    letter-spacing:-2px!important;
+  }
+  .intro p{
+    max-width:360px!important;
+    margin:9px auto 0!important;
+    font-size:clamp(13px,1.55vw,16px)!important;
+    line-height:1.5!important;
+  }
+
+  /* Pinkfong becomes the visual anchor in the center, like the phone layout. */
+  .character{
+    position:absolute!important;
+    left:50%!important;
+    top:var(--pf-tab-anchor-y)!important;
+    width:min(76vw,650px)!important;
+    height:clamp(420px,52dvh,620px)!important;
+    margin:0!important;
+    transform:translate(-50%,-50%)!important;
+    grid-column:auto!important;
+    grid-row:auto!important;
+    align-self:auto!important;
+    justify-self:auto!important;
+    z-index:3!important;
+  }
+  .fox{
+    width:100%!important;
+    height:100%!important;
+  }
+
+  /* Story card stays centered below Pinkfong instead of becoming a tall side card. */
+  .fact{
+    position:absolute!important;
+    left:50%!important;
+    top:calc(var(--pf-tab-anchor-y) + var(--pf-tab-card-gap))!important;
+    right:auto!important;
+    width:min(54vw,380px)!important;
+    max-width:380px!important;
+    margin:0!important;
+    padding:16px 19px!important;
+    transform:translateX(-50%) rotate(1.3deg)!important;
+    grid-column:auto!important;
+    grid-row:auto!important;
+    justify-self:auto!important;
+    align-self:auto!important;
+    border-radius:23px!important;
+    z-index:6!important;
+  }
+  .fact-top{
+    font-size:10px!important;
+    letter-spacing:1.4px!important;
+    margin-bottom:7px!important;
+  }
+  .fact h2{
+    font-size:clamp(20px,2.5vw,25px)!important;
+    margin:0 0 7px!important;
+  }
+  .fact p{
+    font-size:clamp(12px,1.55vw,15px)!important;
+    line-height:1.45!important;
+    min-height:0!important;
+    padding-right:0!important;
+  }
+  .paging{
+    position:static!important;
+    margin-top:10px!important;
+    justify-content:center!important;
+  }
+
+  /* Keep the speech bubble close to the mascot on portrait tablets. */
+  .hello{
+    top:10%!important;
+    right:2%!important;
+    left:auto!important;
+    max-width:180px!important;
+  }
+  .hello[data-story="2"]{
+    left:1%!important;
+    right:auto!important;
+    top:12%!important;
+  }
+}
+
+/* iPad mini portrait: slightly tighter scale. */
+@media (orientation:portrait) and (min-width:601px) and (max-width:850px){
+  .main{
+    --pf-tab-anchor-y:52dvh;
+    --pf-tab-copy-gap:clamp(250px,23dvh,290px);
+    --pf-tab-card-gap:clamp(145px,15dvh,170px);
+  }
+  .character{
+    width:min(80vw,580px)!important;
+    height:clamp(390px,50dvh,520px)!important;
+  }
+  .fact{
+    width:min(58vw,350px)!important;
+  }
+}
+
+/* iPad Pro portrait: allow a little more scale without changing composition. */
+@media (orientation:portrait) and (min-width:851px) and (max-width:1100px){
+  .main{
+    --pf-tab-anchor-y:51dvh;
+    --pf-tab-copy-gap:clamp(310px,24dvh,350px);
+    --pf-tab-card-gap:clamp(180px,15dvh,210px);
+  }
+  .character{
+    width:min(72vw,670px)!important;
+    height:clamp(500px,52dvh,660px)!important;
+  }
+}
+
+
+/* v75: portrait tablets (iPad mini / iPad Pro standing) should mimic the
+   polished mobile-stacked composition from the phone reference, not the
+   narrow desktop nor the stretched broken tablet stack. This block is kept
+   last so it cleanly overrides earlier portrait experiments. */
+@media (orientation:portrait) and (min-width:700px) and (max-width:1100px){
+  header{
+    height:88px!important;
+    padding:18px 22px!important;
+  }
+  .brand{font-size:24px!important}
+  .language{font-size:13px!important;padding:10px 12px!important}
+
+  .main{
+    position:absolute!important;
+    inset:0!important;
+    display:block!important;
+    transform:none!important;
+    --pf-tab-anchor-y:clamp(470px, 48dvh, 600px);
+    --pf-tab-copy-gap:clamp(290px, 30dvh, 350px);
+    --pf-tab-card-gap:clamp(155px, 16dvh, 195px);
+  }
+
+  .intro{
+    position:absolute!important;
+    left:50%!important;
+    top:calc(var(--pf-tab-anchor-y) - var(--pf-tab-copy-gap))!important;
+    width:min(72vw, 460px)!important;
+    margin:0!important;
+    padding:0!important;
+    transform:translateX(-50%)!important;
+    text-align:center!important;
+    justify-self:auto!important;
+    align-self:auto!important;
+    z-index:2!important;
+  }
+  .eyebrow{
+    justify-content:center!important;
+    margin-bottom:6px!important;
+    font-size:11px!important;
+    letter-spacing:2.2px!important;
+  }
+  .eyebrow:before{width:20px!important}
+  #headline,
+  :lang(id) #headline,
+  :lang(en) #headline,
+  :lang(ko) #headline,
+  :lang(ja) #headline,
+  :lang(zh) #headline{
+    font-size:clamp(34px, 5vw, 48px)!important;
+    line-height:1.03!important;
+    letter-spacing:-1.8px!important;
+    margin:12px 0 8px!important;
+  }
+  .intro p{
+    max-width:290px!important;
+    margin:10px auto 0!important;
+    font-size:13px!important;
+    line-height:1.45!important;
+  }
+
+  .character{
+    position:absolute!important;
+    left:50%!important;
+    top:var(--pf-tab-anchor-y)!important;
+    width:100%!important;
+    height:clamp(430px, 55vw, 560px)!important;
+    margin:0!important;
+    transform:translate(-50%, -50%)!important;
+    justify-content:center!important;
+    align-items:center!important;
+    z-index:3!important;
+  }
+  .fox{
+    width:88%!important;
+    height:106%!important;
+    max-width:none!important;
+  }
+
+  .fact{
+    position:absolute!important;
+    left:50%!important;
+    top:calc(var(--pf-tab-anchor-y) + var(--pf-tab-card-gap))!important;
+    width:min(50vw, 340px)!important;
+    max-width:340px!important;
+    margin:0!important;
+    padding:18px 20px!important;
+    transform:translateX(-50%) rotate(1.2deg)!important;
+    border-radius:24px!important;
+    justify-self:auto!important;
+    align-self:auto!important;
+    z-index:6!important;
+  }
+  .fact-top{font-size:10px!important;letter-spacing:1.4px!important;margin-bottom:8px!important}
+  .fact h2{font-size:22px!important;margin:0 0 8px!important;letter-spacing:-.6px!important}
+  .fact p{font-size:14px!important;line-height:1.5!important;min-height:0!important;padding-right:0!important}
+  .paging{
+    position:static!important;
+    margin-top:14px!important;
+    justify-content:center!important;
+  }
+  .paging button:first-child{display:none!important}
+  .paging button:last-child{display:none!important}
+  .dots{display:flex!important}
+
+  .hello{
+    right:4%!important;
+    top:14%!important;
+    left:auto!important;
+    max-width:170px!important;
+    font-size:12px!important;
+    padding:9px 12px!important;
+    white-space:normal!important;
+    text-align:center!important;
+    transform:rotate(6deg)!important;
+  }
+  .hello[data-story="2"]{
+    left:8%!important;
+    right:auto!important;
+    top:14%!important;
+    transform:rotate(-5deg)!important;
+  }
+
+  .bottom{
+    left:5%!important;
+    right:5%!important;
+    bottom:18px!important;
+    justify-content:center!important;
+  }
+  .source,.hint{font-size:10px!important}
+}
+
+/* 13-inch portrait iPad can breathe a little more while keeping the same look. */
+@media (orientation:portrait) and (min-width:900px) and (max-width:1100px){
+  .main{
+    --pf-tab-anchor-y:clamp(520px, 49dvh, 660px);
+    --pf-tab-copy-gap:clamp(320px, 31dvh, 390px);
+    --pf-tab-card-gap:clamp(168px, 16dvh, 210px);
+  }
+  .intro{width:min(66vw, 500px)!important}
+  .fact{width:min(42vw, 360px)!important;max-width:360px!important}
+  .fox{width:84%!important;height:104%!important}
+}
