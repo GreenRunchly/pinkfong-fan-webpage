@@ -43,59 +43,60 @@
         gap: 14px;
         transform: translateY(-1vh);
       }
-      .site-loader-brand {
-        color: #fff;
-        font-size: clamp(28px, 7vw, 52px);
-        font-weight: 900;
-        letter-spacing: -2.2px;
-        text-shadow: 0 7px 24px rgba(78, 42, 121, .18);
-      }
-      .site-loader-brand span { color: #643d91; }
-
-      /* Reserve the exact loader wordmark size before external CSS loads. */
-      .site-loader-brand {
+      .site-loader-inner {
         display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: center;
-        height: 34px;
-        line-height: 1;
+        gap: 12px;
+        transform: translateY(-1vh);
       }
-      .site-loader-brand .brand-picture-loader {
-        display: inline-flex;
+      .site-loader-peek-wrap {
+        width: clamp(210px, 27vw, 280px);
+        display: grid;
+        place-items: center;
+        overflow: visible;
+        filter: drop-shadow(0 18px 24px rgba(93, 49, 141, .18));
+      }
+      .site-loader-peek {
+        width: 100%;
+        display: flex;
+        justify-content: center;
         align-items: center;
-        justify-content: center;
-        height: 34px;
-        line-height: 1;
+        transform: none;
       }
-      .site-loader-brand .brand-image-loader {
+      .site-loader-peek img {
         display: block;
-        width: auto;
-        height: 34px;
+        width: 100%;
+        height: auto;
         max-width: none;
         object-fit: contain;
+        transform: none;
       }
       @media (max-width: 1024px) {
-        .site-loader-brand,
-        .site-loader-brand .brand-picture-loader,
-        .site-loader-brand .brand-image-loader { height: 32px; }
+        .site-loader-peek-wrap {
+          width: clamp(190px, 31vw, 245px);
+
+        }
       }
       @media (max-width: 640px) {
-        .site-loader-brand,
-        .site-loader-brand .brand-picture-loader,
-        .site-loader-brand .brand-image-loader { height: 28px; }
+        .site-loader-peek-wrap {
+          width: clamp(165px, 44vw, 215px);
+
+        }
       }
       .site-loader-dots {
         display: flex;
         align-items: center;
+        justify-content: center;
         gap: 7px;
         height: 12px;
       }
       .site-loader-dots i {
         display: block;
-        width: 8px;
-        height: 8px;
+        width: 6px;
+        height: 6px;
         border-radius: 999px;
-        background: rgba(255,255,255,.9);
+        background: #643d91;
         animation: pf-loader-bounce .85s ease-in-out infinite alternate;
       }
       .site-loader-dots i:nth-child(2) { animation-delay: .12s; }
@@ -108,16 +109,7 @@
         .site-loader-dots i { animation: none; }
       }
 
-      /* Bots, Lighthouse and PageSpeed should see the real page immediately. */
-      html.fast-loader-exit .world {
-        transition-duration: .1s !important;
-      }
-      html.fast-loader-exit #site-loader {
-        transition: opacity .1s ease, visibility .1s linear !important;
-      }
-      html.fast-loader-exit .site-loader-dots i {
-        animation-duration: .35s;
-      }
+
     </style>
 <script>
       (() => {
@@ -344,7 +336,7 @@
 <body class="app-loading">
 <div aria-label="Loading Pinkfong" id="site-loader" role="status">
 <div class="site-loader-inner">
-<div class="site-loader-brand"><img src="./assets/pinkfong-wordmark.webp" data-dark-src="./assets/pinkfong-wordmark.webp" data-bright-src="./assets/pinkfong-wordmark-dark.webp" alt="Pinkfong" class="brand-image brand-image-loader brand-theme-sync" loading="eager" decoding="async" fetchpriority="high" width="320" height="96"></div>
+<div class="site-loader-peek-wrap" aria-hidden="true"><div class="site-loader-peek"><img src="./assets/pinkfong-loader-peek.webp" alt="" loading="eager" decoding="async" fetchpriority="high" width="320" height="256"></div></div>
 <div aria-hidden="true" class="site-loader-dots"><i></i><i></i><i></i></div>
 </div>
 </div>
