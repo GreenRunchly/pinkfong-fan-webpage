@@ -2944,3 +2944,203 @@ h1{font-size:34px;line-height:1.08}
   .fact{width:min(42vw, 360px)!important;max-width:360px!important}
   .fox{width:84%!important;height:104%!important}
 }
+
+/* v76 responsive QA pass --------------------------------------------------
+   Final breakpoint contract:
+   - portrait phones: mobile/stacked composition
+   - portrait tablets/iPads: scaled mobile/stacked composition
+   - landscape tablets + desktop: existing desktop composition
+   This block intentionally comes last to neutralize older experimental rules. */
+
+/* Never let an inherited `bottom` stretch an absolutely-positioned story card. */
+@media (orientation:portrait) and (max-width:1100px){
+  .fact{
+    bottom:auto!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+  }
+}
+
+/* Portrait tablets: one clean stacked layout for iPad mini through iPad Pro. */
+@media (orientation:portrait) and (min-width:700px) and (max-width:1100px){
+  header{
+    height:88px!important;
+    padding:18px 24px!important;
+  }
+
+  .main{
+    position:absolute!important;
+    inset:0!important;
+    display:block!important;
+    transform:none!important;
+    --pf-tab-anchor-y:50dvh;
+    --pf-tab-copy-gap:clamp(285px,29dvh,365px);
+    --pf-tab-card-gap:clamp(160px,15.5dvh,210px);
+  }
+
+  .intro{
+    position:absolute!important;
+    left:50%!important;
+    top:calc(var(--pf-tab-anchor-y) - var(--pf-tab-copy-gap))!important;
+    width:min(72vw,480px)!important;
+    margin:0!important;
+    padding:0!important;
+    transform:translateX(-50%)!important;
+    text-align:center!important;
+    justify-self:auto!important;
+    align-self:auto!important;
+    z-index:2!important;
+  }
+  .eyebrow{
+    justify-content:center!important;
+    margin-bottom:6px!important;
+    font-size:11px!important;
+    letter-spacing:2.2px!important;
+  }
+  .eyebrow:before{width:20px!important}
+  #headline,
+  :lang(id) #headline,
+  :lang(en) #headline,
+  :lang(ko) #headline,
+  :lang(ja) #headline,
+  :lang(zh) #headline{
+    font-size:clamp(35px,5vw,50px)!important;
+    line-height:1.03!important;
+    letter-spacing:-1.8px!important;
+    margin:12px 0 8px!important;
+  }
+  .intro p{
+    max-width:310px!important;
+    margin:10px auto 0!important;
+    font-size:13px!important;
+    line-height:1.45!important;
+  }
+
+  .character{
+    position:absolute!important;
+    left:50%!important;
+    top:var(--pf-tab-anchor-y)!important;
+    width:min(82vw,760px)!important;
+    height:clamp(470px,58vw,620px)!important;
+    margin:0!important;
+    transform:translate(-50%,-50%)!important;
+    grid-column:auto!important;
+    grid-row:auto!important;
+    align-self:auto!important;
+    justify-self:auto!important;
+    z-index:3!important;
+  }
+  .fox{
+    width:92%!important;
+    height:104%!important;
+    max-width:none!important;
+  }
+
+  .fact{
+    position:absolute!important;
+    left:50%!important;
+    right:auto!important;
+    top:calc(var(--pf-tab-anchor-y) + var(--pf-tab-card-gap))!important;
+    bottom:auto!important;
+    width:min(50vw,360px)!important;
+    max-width:360px!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    margin:0!important;
+    padding:17px 19px!important;
+    transform:translateX(-50%) rotate(1.2deg)!important;
+    border-radius:24px!important;
+    grid-column:auto!important;
+    grid-row:auto!important;
+    justify-self:auto!important;
+    align-self:auto!important;
+    z-index:6!important;
+  }
+  .fact-top{font-size:10px!important;letter-spacing:1.4px!important;margin-bottom:7px!important}
+  .fact h2{font-size:22px!important;margin:0 0 7px!important;letter-spacing:-.6px!important}
+  .fact p{font-size:14px!important;line-height:1.45!important;min-height:0!important;padding-right:0!important}
+  .paging{
+    position:static!important;
+    right:auto!important;
+    bottom:auto!important;
+    margin-top:12px!important;
+    justify-content:center!important;
+  }
+  .paging button:first-child,.paging button:last-child{display:none!important}
+  .dots{display:flex!important}
+
+  .hello{
+    left:auto!important;
+    right:7%!important;
+    top:13%!important;
+    max-width:170px!important;
+    font-size:12px!important;
+    padding:9px 12px!important;
+    white-space:normal!important;
+    text-align:center!important;
+  }
+  .hello[data-story="2"]{
+    left:7%!important;
+    right:auto!important;
+    top:13%!important;
+  }
+}
+
+/* Larger portrait iPads scale up, but keep exactly the same stacked geometry. */
+@media (orientation:portrait) and (min-width:900px) and (max-width:1100px){
+  .main{
+    --pf-tab-anchor-y:50dvh;
+    --pf-tab-copy-gap:clamp(340px,28dvh,390px);
+    --pf-tab-card-gap:clamp(190px,15dvh,220px);
+  }
+  .intro{width:min(64vw,520px)!important}
+  .character{
+    width:min(76vw,780px)!important;
+    height:clamp(560px,58vw,680px)!important;
+  }
+  .fox{width:90%!important;height:103%!important}
+  .fact{width:min(40vw,380px)!important;max-width:380px!important}
+}
+
+/* v76.1 tablet copy clearance: keep the headline visibly separated from
+   Pinkfong while preserving the stacked portrait composition. */
+@media (orientation:portrait) and (min-width:700px) and (max-width:1100px){
+  .main{--pf-tab-copy-gap:clamp(380px,36.5dvh,505px)!important}
+}
+@media (orientation:portrait) and (min-width:900px) and (max-width:1100px){
+  .main{--pf-tab-copy-gap:clamp(430px,36.5dvh,520px)!important}
+}
+
+/* v76.2 tiny-phone clearance: avoid covering the intro on very short screens. */
+@media (orientation:portrait) and (max-width:340px) and (max-height:650px){
+  .main{
+    --pf-anchor-y:56dvh!important;
+    --pf-copy-gap:clamp(255px,82vw,270px)!important;
+  }
+  .character{
+    height:clamp(280px,90vw,310px)!important;
+  }
+  .fox{
+    width:92%!important;
+    height:98%!important;
+  }
+}
+
+/* v76.3 compact landscape: keep the desktop composition but reduce mascot
+   overlap on short landscape phones/small tablets. */
+@media (orientation:landscape) and (min-width:700px) and (max-width:1000px) and (max-height:520px){
+  .fox{
+    width:84%!important;
+    height:96%!important;
+  }
+}
+
+/* v76.4 final vertical centering for portrait tablets. */
+@media (orientation:portrait) and (min-width:700px) and (max-width:899px){
+  .main{--pf-tab-anchor-y:52dvh!important}
+}
+@media (orientation:portrait) and (min-width:900px) and (max-width:1100px){
+  .main{--pf-tab-anchor-y:55dvh!important}
+}
