@@ -1,407 +1,594 @@
 (() => {
-  "use strict";
+    "use strict";
 
-  const texts = window.PINKFONG_CONTENT;
-  const poses = window.PINKFONG_POSES;
-  const $ = (id) => document.getElementById(id);
+    /* ------------------------------------------------------------------------ */
+    /* Configuration                                                            */
+    /* ------------------------------------------------------------------------ */
 
-  let current = 0;
-  let lang = window.PINKFONG_PAGE_LANG || "en";
-  let poseTimer;
-  let poseEnterTimer;
-  let poseTransitioning = false;
-  let popupTimer;
-  let popupHideTimer;
-  let autoSwipeTimer;
-  const AUTO_SWIPE_DELAY = 5000;
-
-  const foxButton = $("fox");
-  const characterImage = document.querySelector("#fox img");
-  const poseFrame = document.createElement("span");
-  poseFrame.className = "pose-frame";
-  characterImage.parentNode.insertBefore(poseFrame, characterImage);
-  poseFrame.appendChild(characterImage);
-
-  const helloPopup = $("hello");
-  const storyPanel = $("story-panel");
-
-  // Hover-only card navigation. Swipe remains the primary touch interaction.
-  const storyArrows = document.createElement("div");
-  storyArrows.className = "story-arrows";
-  storyArrows.setAttribute("aria-label", "Story navigation");
-  storyArrows.innerHTML = `
-    <button class="story-arrow story-arrow-prev" type="button" aria-label="Previous story"><span class="story-chevron" aria-hidden="true"></span></button>
-    <button class="story-arrow story-arrow-next" type="button" aria-label="Next story"><span class="story-chevron" aria-hidden="true"></span></button>
-  `;
-  storyPanel.appendChild(storyArrows);
-  const previousStoryButton = storyArrows.querySelector(".story-arrow-prev");
-  const nextStoryButton = storyArrows.querySelector(".story-arrow-next");
-
-  const sourceLink = document.querySelector(".source");
-  const brandLink = document.querySelector(".brand");
-  const metaDescription = document.querySelector('meta[name="description"]');
-  const ogTitle = document.querySelector('meta[property="og:title"]');
-  const ogDescription = document.querySelector('meta[property="og:description"]');
-
-
-  function parseRgb(color) {
-    const match = String(color).match(/rgba?\((\d+(?:\.\d+)?)[,\s]+(\d+(?:\.\d+)?)[,\s]+(\d+(?:\.\d+)?)/i);
-    return match ? match.slice(1, 4).map(Number) : null;
-  }
-
-  function relativeLuminance(rgb) {
-    if (!rgb) return 0;
-    const channel = (value) => {
-      const c = value / 255;
-      return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-    };
-    return 0.2126 * channel(rgb[0]) + 0.7152 * channel(rgb[1]) + 0.0722 * channel(rgb[2]);
-  }
-
-  function syncBrandToRenderedTheme() {
-    const accent = document.querySelector("#headline .headline-emphasis em") || document.querySelector("#headline em");
-    if (!accent) return;
-
-    const color = getComputedStyle(accent).color;
-    const luminance = relativeLuminance(parseRgb(color));
-    const useBrightWordmark = luminance > 0.18;
-
-    document.querySelectorAll(".brand-theme-sync").forEach((image) => {
-      const nextSrc = useBrightWordmark ? image.dataset.brightSrc : image.dataset.darkSrc;
-      if (nextSrc && image.getAttribute("src") !== nextSrc) {
-        image.src = nextSrc;
-      }
-    });
-  }
-
-  function languageUrl(code) {
-    const root = window.PINKFONG_PAGE_ROOT || new URL("./", window.location.href);
-    const productionPath = code === "id" ? "" : `${code}/`;
-    const localPath = code === "id" ? "index.html" : `${code}/index.html`;
-    return new URL(window.location.protocol === "file:" ? localPath : productionPath, root).href;
-  }
-
-  function preloadPoses() {
-    poses.forEach((src) => {
-      const image = new Image();
-      image.src = src;
-    });
-  }
-
-  function clearPoseClasses() {
-    poseFrame.classList.remove(
-      "pose-no-transition",
-      "pose-exit-next",
-      "pose-exit-prev",
-      "pose-enter-next",
-      "pose-enter-prev"
-    );
-  }
-
-  function updatePose(direction = 1, onComplete) {
-    const story = texts[lang].stories[current];
-    const nextSrc = poses[current];
-    const finishTransition = () => {
-      poseTransitioning = false;
-      clearPoseClasses();
-      if (typeof onComplete === "function") {
-        onComplete();
-      }
+    const CONFIG = {
+        autoSwitchMs: 5000,
+        popupVisibleMs: 3000,
+        popupExitMs: 230,
+        poseExitMs: 220,
+        poseEnterMs: 300,
+        swipeDistancePx: 42,
+        swipeDirectionRatio: 1.15,
+        swipeMaxMs: 900,
+        syntheticClickGuardMs: 750,
+        starCount: 34
     };
 
-    characterImage.alt = story.alt;
-    clearTimeout(poseTimer);
-    clearTimeout(poseEnterTimer);
-
-    if (characterImage.src === nextSrc) {
-      finishTransition();
-      return;
-    }
-
-    const reducedMotion = matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    if (reducedMotion) {
-      characterImage.src = nextSrc;
-      finishTransition();
-      return;
-    }
-
-    poseTransitioning = true;
-    clearPoseClasses();
-
-    const exitClass = direction < 0 ? "pose-exit-prev" : "pose-exit-next";
-    const enterClass = direction < 0 ? "pose-enter-prev" : "pose-enter-next";
-
-    // Old pose slides away while fading out.
-    void poseFrame.offsetWidth;
-    poseFrame.classList.add(exitClass);
-
-    poseTimer = setTimeout(() => {
-      // Put the incoming pose on the opposite side without animating that jump.
-      characterImage.src = nextSrc;
-      poseFrame.classList.add("pose-no-transition");
-      poseFrame.classList.remove(exitClass);
-      poseFrame.classList.add(enterClass);
-      void poseFrame.offsetWidth;
-
-      // Then let it slide into place while fading in.
-      poseFrame.classList.remove("pose-no-transition");
-      requestAnimationFrame(() => {
-        poseFrame.classList.remove(enterClass);
-        poseEnterTimer = setTimeout(finishTransition, 300);
-      });
-    }, 220);
-  }
-
-  function hideHelloPopup(instant = false) {
-    clearTimeout(popupTimer);
-    clearTimeout(popupHideTimer);
-
-    if (instant) {
-      helloPopup.classList.remove("is-visible", "is-hiding");
-      helloPopup.setAttribute("aria-hidden", "true");
-      return;
-    }
-
-    if (!helloPopup.classList.contains("is-visible")) {
-      helloPopup.classList.remove("is-hiding");
-      helloPopup.setAttribute("aria-hidden", "true");
-      return;
-    }
-
-    helloPopup.classList.remove("is-visible");
-    helloPopup.classList.add("is-hiding");
-    helloPopup.setAttribute("aria-hidden", "true");
-
-    popupHideTimer = setTimeout(() => {
-      helloPopup.classList.remove("is-hiding");
-    }, 230);
-  }
-
-  function showHelloPopup() {
-    clearTimeout(popupTimer);
-    clearTimeout(popupHideTimer);
-
-    helloPopup.classList.remove("is-visible", "is-hiding");
-
-    // Force a style flush so repeated clicks always replay the pop animation.
-    void helloPopup.offsetWidth;
-
-    helloPopup.classList.add("is-visible");
-    helloPopup.setAttribute("aria-hidden", "false");
-
-    popupTimer = setTimeout(() => {
-      hideHelloPopup(false);
-    }, 3000);
-  }
-
-  function page(index, direction = 1, options = {}) {
-    const next = (index + poses.length) % poses.length;
-    const { popupAfterTransition = false } = options;
-
-    if (poseTransitioning && next !== current) {
-      return false;
-    }
-
-    current = next;
-    const story = texts[lang].stories[current];
-
-    hideHelloPopup(true);
-
-    $("category").textContent = story.category;
-    $("title").textContent = story.title;
-    $("description").textContent = story.description;
-    $("hello").textContent = story.hello;
-    helloPopup.dataset.story = String(current + 1);
-    $("number").textContent = `0${current + 1} / 03`;
-
-    document.querySelectorAll(".dots i").forEach((dot, index) => {
-      dot.classList.toggle("active", index === current);
-    });
-
-    updatePose(direction, () => {
-      if (popupAfterTransition) {
-        showHelloPopup();
-      }
-    });
-    return true;
-  }
-
-  function scheduleAutoSwipe() {
-    clearTimeout(autoSwipeTimer);
-    autoSwipeTimer = setTimeout(() => {
-      const changed = page(current + 1, 1, { popupAfterTransition: true });
-      // If a manual transition is still finishing, simply try again after the
-      // normal interval instead of stacking transitions.
-      scheduleAutoSwipe();
-      return changed;
-    }, AUTO_SWIPE_DELAY);
-  }
-
-  function resetAutoSwipe() {
-    scheduleAutoSwipe();
-  }
-
-  function updateSeo(content) {
-    document.title = content.metaTitle;
-    metaDescription.content = content.metaDescription;
-
-    if (ogTitle) {
-      ogTitle.content = content.metaTitle;
-    }
-
-    if (ogDescription) {
-      ogDescription.content = content.metaDescription;
-    }
-  }
-
-  function translate() {
-    lang = window.PINKFONG_PAGE_LANG || lang || "en";
-
-    const content = texts[lang];
-
-    document.documentElement.lang = lang;
-    $("language").value = lang;
-    $("language").setAttribute("aria-label", content.language);
-    previousStoryButton.setAttribute("aria-label", content.previous);
-    nextStoryButton.setAttribute("aria-label", content.next);
-
-    $("eyebrow").textContent = content.eyebrow;
-    $("headline").innerHTML = content.headline;
-    $("intro-text").innerHTML = content.intro;
-
-    requestAnimationFrame(syncBrandToRenderedTheme);
-
-
-    if (lang === "ko") {
-      brandLink.setAttribute("aria-label", lang === "ko" ? "핑크퐁 팬 페이지" : "Pinkfong fan page");
-    }
-
-    $("fox").setAttribute(
-      "aria-label",
-      `${content.next} — Pinkfong`
-    );
-
-    sourceLink.textContent = content.official;
-
-    updateSeo(content);
-    page(current);
-  }
-
-  function createStars() {
-    for (let i = 0; i < 27; i += 1) {
-      const star = document.createElement("span");
-
-      star.className = "twinkle";
-      star.textContent = i % 3 ? "✧" : "·";
-      star.style.cssText = [
-        `left:${(i * 37.71) % 100}%`,
-        `top:${(i * 19.13) % 100}%`,
-        `animation-delay:${i * 0.17}s`,
-        `font-size:${12 + (i % 4) * 7}px`
-      ].join(";");
-
-      $("sky").append(star);
-    }
-  }
-
-  $("language").addEventListener("change", (event) => {
-    const nextLanguage = event.target.value;
-    if (!texts[nextLanguage] || nextLanguage === lang) return;
-
-    try {
-      localStorage.setItem("pinkfong-language-choice", nextLanguage);
-    } catch {
-      // Navigation still works when storage is blocked.
-    }
-
-    window.location.href = languageUrl(nextLanguage);
-  });
-
-  previousStoryButton.addEventListener("click", (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    if (page(current - 1, -1, { popupAfterTransition: true })) {
-      resetAutoSwipe();
-    }
-  });
-
-  nextStoryButton.addEventListener("click", (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    if (page(current + 1, 1, { popupAfterTransition: true })) {
-      resetAutoSwipe();
-    }
-  });
-
-  // Pinkfong remains clickable, and now also supports horizontal swipe/drag.
-  // Swipe left = next story, swipe right = previous story.
-  // A timestamp guard prevents the synthetic click generated after a swipe from
-  // reopening the speech popup.
-  let gestureStart = null;
-  let suppressClickUntil = 0;
-
-  foxButton.addEventListener("pointerdown", (event) => {
-    if (event.pointerType === "mouse" && event.button !== 0) return;
-
-    gestureStart = {
-      id: event.pointerId,
-      x: event.clientX,
-      y: event.clientY,
-      time: performance.now()
+    const CHARACTERS = {
+        pinkfong: {
+            name: "Pinkfong",
+            content: window.PINKFONG_CONTENT,
+            poses: window.PINKFONG_CHARACTER_POSES.pinkfong
+        },
+        hogi: {
+            name: "Hogi",
+            content: window.HOGI_CONTENT,
+            poses: window.PINKFONG_CHARACTER_POSES.hogi
+        },
+        jeni: {
+            name: "Jeni",
+            content: window.JENI_CONTENT,
+            poses: window.PINKFONG_CHARACTER_POSES.jeni
+        }
     };
-    try {
-      foxButton.setPointerCapture(event.pointerId);
-    } catch {
-      // Pointer capture is optional; swipe still works without it.
+
+    const byId = (id) => document.getElementById(id);
+
+    /* ------------------------------------------------------------------------ */
+    /* DOM references                                                           */
+    /* ------------------------------------------------------------------------ */
+
+    const dom = {
+        fox: byId("fox"),
+        foxImage: document.querySelector("#fox img"),
+        popup: byId("hello"),
+        panel: byId("story-panel"),
+        category: byId("category"),
+        title: byId("title"),
+        description: byId("description"),
+        number: byId("number"),
+        language: byId("language"),
+        eyebrow: byId("eyebrow"),
+        headline: byId("headline"),
+        intro: byId("intro-text"),
+        sky: byId("sky"),
+        source: document.querySelector(".source"),
+        brand: document.querySelector(".brand"),
+        metaDescription: document.querySelector('meta[name="description"]'),
+        ogTitle: document.querySelector('meta[property="og:title"]'),
+        ogDescription: document.querySelector('meta[property="og:description"]'),
+        characterSwitcherLabel: byId("character-switcher-label"),
+    };
+
+    /* ------------------------------------------------------------------------ */
+    /* State                                                                    */
+    /* ------------------------------------------------------------------------ */
+
+    const state = {
+        index: 0,
+        character: "pinkfong",
+        language: window.PINKFONG_PAGE_LANG || "en",
+        poseTransitioning: false,
+        gesture: null,
+        suppressClickUntil: 0,
+        timers: {
+            poseExit: null,
+            poseEnter: null,
+            popup: null,
+            popupExit: null,
+            autoSwitch: null
+        }
+    };
+
+    /* ------------------------------------------------------------------------ */
+    /* Dynamic UI setup                                                         */
+    /* ------------------------------------------------------------------------ */
+
+    const poseFrame = document.createElement("span");
+    poseFrame.className = "pose-frame";
+    dom.foxImage.parentNode.insertBefore(poseFrame, dom.foxImage);
+    poseFrame.appendChild(dom.foxImage);
+
+    const storyNavigation = document.createElement("div");
+    storyNavigation.className = "story-arrows";
+    storyNavigation.setAttribute("aria-label", "Story navigation");
+    storyNavigation.innerHTML = `
+        <button class="story-arrow story-arrow-prev" type="button" aria-label="Previous story">
+            <span class="story-chevron" aria-hidden="true"></span>
+        </button>
+        <button class="story-arrow story-arrow-next" type="button" aria-label="Next story">
+            <span class="story-chevron" aria-hidden="true"></span>
+        </button>
+    `;
+    dom.panel.appendChild(storyNavigation);
+
+    const previousButton = storyNavigation.querySelector(".story-arrow-prev");
+    const nextButton = storyNavigation.querySelector(".story-arrow-next");
+
+    /* ------------------------------------------------------------------------ */
+    /* Small helpers                                                            */
+    /* ------------------------------------------------------------------------ */
+
+    function clearTimer(name) {
+        window.clearTimeout(state.timers[name]);
+        state.timers[name] = null;
     }
-  });
 
-  foxButton.addEventListener("pointerup", (event) => {
-    if (!gestureStart || gestureStart.id !== event.pointerId) return;
-
-    const dx = event.clientX - gestureStart.x;
-    const dy = event.clientY - gestureStart.y;
-    const elapsed = performance.now() - gestureStart.time;
-    const horizontalSwipe =
-      Math.abs(dx) >= 42 &&
-      Math.abs(dx) > Math.abs(dy) * 1.15 &&
-      elapsed <= 900;
-
-    if (horizontalSwipe) {
-      // Some touch browsers dispatch a delayed click after pointerup. Keep the
-      // guard alive long enough for that synthetic click to be ignored.
-      suppressClickUntil = performance.now() + 750;
-      event.preventDefault();
-      const direction = dx < 0 ? 1 : -1;
-      if (page(current + direction, direction, { popupAfterTransition: true })) {
-        resetAutoSwipe();
-      }
+    function getCharacter() {
+        return CHARACTERS[state.character] || CHARACTERS.pinkfong;
     }
 
-    gestureStart = null;
-  });
-
-  foxButton.addEventListener("pointercancel", () => {
-    gestureStart = null;
-  });
-
-  foxButton.addEventListener("click", (event) => {
-    if (performance.now() < suppressClickUntil) {
-      event.preventDefault();
-      return;
+    function getContent() {
+        const character = getCharacter();
+        return character.content[state.language] || character.content.id || character.content.en;
     }
 
-    if (page(current + 1, 1, { popupAfterTransition: true })) {
-      resetAutoSwipe();
+    function getPoses() {
+        return getCharacter().poses;
     }
-  });
 
-  preloadPoses();
-  createStars();
-  translate();
-  scheduleAutoSwipe();
-  window.__pinkfongAssetReady?.("app");
+    function wrapIndex(index) {
+        const poses = getPoses();
+        return (index + poses.length) % poses.length;
+    }
+
+    function formatStoryNumber(index) {
+        const current = String(index + 1).padStart(2, "0");
+        const total = String(getPoses().length).padStart(2, "0");
+        return `${current} / ${total}`;
+    }
+
+    function syncCharacterSwitcher() {
+        document.querySelectorAll(".character-option").forEach((button) => {
+            const isActive = button.dataset.character === state.character;
+            button.classList.toggle("is-active", isActive);
+
+            if (isActive) {
+                button.setAttribute("aria-current", "true");
+            } else {
+                button.removeAttribute("aria-current");
+            }
+        });
+
+        document.body.dataset.character = state.character;
+    }
+
+    function parseRgb(color) {
+        const match = String(color).match(
+            /rgba?\((\d+(?:\.\d+)?)[,\s]+(\d+(?:\.\d+)?)[,\s]+(\d+(?:\.\d+)?)/i
+        );
+        return match ? match.slice(1, 4).map(Number) : null;
+    }
+
+    function relativeLuminance(rgb) {
+        if (!rgb) return 0;
+
+        const channel = (value) => {
+            const normalized = value / 255;
+            return normalized <= 0.04045
+                ? normalized / 12.92
+                : Math.pow((normalized + 0.055) / 1.055, 2.4);
+        };
+
+        return (
+            0.2126 * channel(rgb[0]) +
+            0.7152 * channel(rgb[1]) +
+            0.0722 * channel(rgb[2])
+        );
+    }
+
+    /* ------------------------------------------------------------------------ */
+    /* Branding / locale                                                        */
+    /* ------------------------------------------------------------------------ */
+
+    function syncWordmarkToHeadline() {
+        const accent = document.querySelector("#headline .headline-emphasis em");
+        if (!accent) return;
+
+        const luminance = relativeLuminance(parseRgb(getComputedStyle(accent).color));
+        const useBrightWordmark = luminance > 0.18;
+
+        document.querySelectorAll(".brand-theme-sync").forEach((image) => {
+            const nextSrc = useBrightWordmark
+                ? image.dataset.brightSrc
+                : image.dataset.darkSrc;
+
+            if (nextSrc && image.getAttribute("src") !== nextSrc) {
+                image.src = nextSrc;
+            }
+        });
+    }
+
+    function updateSeo(content) {
+        document.title = content.metaTitle;
+        dom.metaDescription.content = content.metaDescription;
+        if (dom.ogTitle) dom.ogTitle.content = content.metaTitle;
+        if (dom.ogDescription) dom.ogDescription.content = content.metaDescription;
+    }
+
+    function applyLanguage(options = {}) {
+        const {
+            animatePose = false,
+            popupAfterTransition = false
+        } = options;
+        state.language = window.PINKFONG_PAGE_LANG || state.language || "en";
+        const content = getContent();
+
+        document.documentElement.lang = state.language;
+        dom.language.value = state.language;
+        dom.language.setAttribute("aria-label", content.language);
+        previousButton.setAttribute("aria-label", content.previous);
+        nextButton.setAttribute("aria-label", content.next);
+
+        dom.eyebrow.textContent = content.eyebrow;
+        dom.headline.innerHTML = content.headline;
+        dom.intro.innerHTML = content.intro;
+        dom.source.textContent = content.official;
+        dom.fox.setAttribute("aria-label", `${content.next} — ${getCharacter().name}`);
+
+        if (dom.characterSwitcherLabel) {
+            dom.characterSwitcherLabel.textContent = content.characterLabel || "Characters";
+        }
+
+        document.querySelectorAll(".character-option.is-upcoming").forEach((button) => {
+            const name = button.querySelector(".character-name")?.textContent?.trim() || "Character";
+            const label = `${name} — ${content.comingSoon || "Coming soon"}`;
+            button.setAttribute("aria-label", label);
+            button.title = label;
+        });
+
+        dom.brand.setAttribute(
+            "aria-label",
+            state.language === "ko" ? "핑크퐁 팬 페이지" : "Pinkfong fan page"
+        );
+
+        updateSeo(content);
+        syncCharacterSwitcher();
+        renderStory(state.index, 1, {
+            animatePose,
+            popupAfterTransition
+        });
+        requestAnimationFrame(syncWordmarkToHeadline);
+    }
+
+    /* ------------------------------------------------------------------------ */
+    /* Pose transition                                                          */
+    /* ------------------------------------------------------------------------ */
+
+    function clearPoseClasses() {
+        poseFrame.classList.remove(
+            "pose-no-transition",
+            "pose-exit-next",
+            "pose-exit-prev",
+            "pose-enter-next",
+            "pose-enter-prev"
+        );
+    }
+
+    function finishPoseTransition(onComplete) {
+        state.poseTransitioning = false;
+        clearPoseClasses();
+        if (typeof onComplete === "function") onComplete();
+    }
+
+    function transitionPose(direction, onComplete) {
+        const content = getContent();
+        const story = content.stories[state.index];
+        const nextSrc = getPoses()[state.index];
+
+        dom.foxImage.alt = story.alt;
+        clearTimer("poseExit");
+        clearTimer("poseEnter");
+
+        if (dom.foxImage.src === nextSrc) {
+            finishPoseTransition(onComplete);
+            return;
+        }
+
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            dom.foxImage.src = nextSrc;
+            finishPoseTransition(onComplete);
+            return;
+        }
+
+        state.poseTransitioning = true;
+        clearPoseClasses();
+
+        const exitClass = direction < 0 ? "pose-exit-prev" : "pose-exit-next";
+        const enterClass = direction < 0 ? "pose-enter-prev" : "pose-enter-next";
+
+        // Animate the current pose out.
+        void poseFrame.offsetWidth;
+        poseFrame.classList.add(exitClass);
+
+        state.timers.poseExit = window.setTimeout(() => {
+            // Swap the asset offscreen, then animate it back in from the other side.
+            dom.foxImage.src = nextSrc;
+            poseFrame.classList.add("pose-no-transition");
+            poseFrame.classList.remove(exitClass);
+            poseFrame.classList.add(enterClass);
+            void poseFrame.offsetWidth;
+
+            poseFrame.classList.remove("pose-no-transition");
+            requestAnimationFrame(() => {
+                poseFrame.classList.remove(enterClass);
+                state.timers.poseEnter = window.setTimeout(
+                    () => finishPoseTransition(onComplete),
+                    CONFIG.poseEnterMs
+                );
+            });
+        }, CONFIG.poseExitMs);
+    }
+
+    /* ------------------------------------------------------------------------ */
+    /* Speech popup                                                             */
+    /* ------------------------------------------------------------------------ */
+
+    function hidePopup(instant = false) {
+        clearTimer("popup");
+        clearTimer("popupExit");
+
+        if (instant) {
+            dom.popup.classList.remove("is-visible", "is-hiding");
+            dom.popup.setAttribute("aria-hidden", "true");
+            return;
+        }
+
+        if (!dom.popup.classList.contains("is-visible")) {
+            dom.popup.classList.remove("is-hiding");
+            dom.popup.setAttribute("aria-hidden", "true");
+            return;
+        }
+
+        dom.popup.classList.remove("is-visible");
+        dom.popup.classList.add("is-hiding");
+        dom.popup.setAttribute("aria-hidden", "true");
+
+        state.timers.popupExit = window.setTimeout(() => {
+            dom.popup.classList.remove("is-hiding");
+        }, CONFIG.popupExitMs);
+    }
+
+    function showPopup() {
+        clearTimer("popup");
+        clearTimer("popupExit");
+
+        dom.popup.classList.remove("is-visible", "is-hiding");
+        void dom.popup.offsetWidth; // Replay the animation on repeated interactions.
+        dom.popup.classList.add("is-visible");
+        dom.popup.setAttribute("aria-hidden", "false");
+
+        state.timers.popup = window.setTimeout(
+            () => hidePopup(false),
+            CONFIG.popupVisibleMs
+        );
+    }
+
+    /* ------------------------------------------------------------------------ */
+    /* Story rendering / navigation                                             */
+    /* ------------------------------------------------------------------------ */
+
+    function updateStoryCopy() {
+        const story = getContent().stories[state.index];
+
+        dom.category.textContent = story.category;
+        dom.title.textContent = story.title;
+        dom.description.textContent = story.description;
+        dom.popup.textContent = story.hello;
+        dom.popup.dataset.story = String(state.index + 1);
+        document.body.dataset.story = String(state.index + 1);
+        dom.number.textContent = formatStoryNumber(state.index);
+
+        document.querySelectorAll(".dots i").forEach((dot, index) => {
+            dot.classList.toggle("active", index === state.index);
+        });
+    }
+
+    function renderStory(index, direction = 1, options = {}) {
+        const {
+            popupAfterTransition = false,
+            animatePose = true
+        } = options;
+
+        const nextIndex = wrapIndex(index);
+        if (state.poseTransitioning && nextIndex !== state.index) return false;
+
+        state.index = nextIndex;
+        hidePopup(true);
+        updateStoryCopy();
+
+        const afterPose = () => {
+            if (popupAfterTransition) showPopup();
+        };
+
+        if (animatePose) {
+            transitionPose(direction, afterPose);
+        } else {
+            dom.foxImage.src = getPoses()[state.index];
+            dom.foxImage.alt = getContent().stories[state.index].alt;
+            afterPose();
+        }
+
+        return true;
+    }
+
+    function goToStory(index, direction) {
+        const changed = renderStory(index, direction, { popupAfterTransition: true });
+        if (changed) restartAutoSwitch();
+        return changed;
+    }
+
+    function scheduleAutoSwitch() {
+        clearTimer("autoSwitch");
+        state.timers.autoSwitch = window.setTimeout(() => {
+            renderStory(state.index + 1, 1, { popupAfterTransition: true });
+            scheduleAutoSwitch();
+        }, CONFIG.autoSwitchMs);
+    }
+
+    function restartAutoSwitch() {
+        scheduleAutoSwitch();
+    }
+
+    /* ------------------------------------------------------------------------ */
+    /* Decorative stars                                                         */
+    /* ------------------------------------------------------------------------ */
+
+    function createStars() {
+        for (let index = 0; index < CONFIG.starCount; index += 1) {
+            const star = document.createElement("span");
+            const isAccent = index % 9 === 0;
+
+            star.className = `twinkle${isAccent ? " is-accent" : ""}`;
+            star.textContent = isAccent ? "✦" : (index % 3 ? "✧" : "·");
+            star.style.cssText = [
+                `left:${(index * 37.71) % 100}%`,
+                `top:${(index * 19.13) % 100}%`,
+                `animation-delay:${index * 0.17}s`,
+                `font-size:${12 + (index % 4) * 7}px`
+            ].join(";");
+            dom.sky.append(star);
+        }
+    }
+
+    function preloadPoses() {
+        Object.values(CHARACTERS).forEach((character) => {
+            character.poses.forEach((src) => {
+                const image = new Image();
+                image.src = src;
+            });
+        });
+    }
+
+    /* ------------------------------------------------------------------------ */
+    /* Events                                                                   */
+    /* ------------------------------------------------------------------------ */
+
+    dom.language.addEventListener("change", (event) => {
+        const nextLanguage = event.target.value;
+        if (!getCharacter().content[nextLanguage] || nextLanguage === state.language) return;
+
+        try {
+            localStorage.setItem("pinkfong-language-choice", nextLanguage);
+        } catch {
+            // The language still changes when storage is blocked.
+        }
+
+        window.PINKFONG_PAGE_LANG = nextLanguage;
+        state.language = nextLanguage;
+        applyLanguage();
+        restartAutoSwitch();
+    });
+
+    previousButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        goToStory(state.index - 1, -1);
+    });
+
+    nextButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        goToStory(state.index + 1, 1);
+    });
+
+    dom.fox.addEventListener("pointerdown", (event) => {
+        if (event.pointerType === "mouse" && event.button !== 0) return;
+
+        state.gesture = {
+            pointerId: event.pointerId,
+            x: event.clientX,
+            y: event.clientY,
+            startedAt: performance.now()
+        };
+
+        try {
+            dom.fox.setPointerCapture(event.pointerId);
+        } catch {
+            // Pointer capture is optional.
+        }
+    });
+
+    dom.fox.addEventListener("pointerup", (event) => {
+        const gesture = state.gesture;
+        if (!gesture || gesture.pointerId !== event.pointerId) return;
+
+        const dx = event.clientX - gesture.x;
+        const dy = event.clientY - gesture.y;
+        const elapsed = performance.now() - gesture.startedAt;
+        const isHorizontalSwipe =
+            Math.abs(dx) >= CONFIG.swipeDistancePx &&
+            Math.abs(dx) > Math.abs(dy) * CONFIG.swipeDirectionRatio &&
+            elapsed <= CONFIG.swipeMaxMs;
+
+        if (isHorizontalSwipe) {
+            state.suppressClickUntil = performance.now() + CONFIG.syntheticClickGuardMs;
+            event.preventDefault();
+            const direction = dx < 0 ? 1 : -1;
+            goToStory(state.index + direction, direction);
+        }
+
+        state.gesture = null;
+    });
+
+    dom.fox.addEventListener("pointercancel", () => {
+        state.gesture = null;
+    });
+
+    dom.fox.addEventListener("click", (event) => {
+        if (performance.now() < state.suppressClickUntil) {
+            event.preventDefault();
+            return;
+        }
+
+        goToStory(state.index + 1, 1);
+    });
+
+    if (dom.brand) {
+        dom.brand.addEventListener("click", (event) => {
+            event.preventDefault();
+            window.location.reload();
+        });
+    }
+
+    document.querySelectorAll(".character-option:not(:disabled)").forEach((button) => {
+        button.addEventListener("click", () => {
+            const nextCharacter = button.dataset.character;
+            if (!CHARACTERS[nextCharacter] || nextCharacter === state.character) return;
+            if (state.poseTransitioning) return;
+
+            hidePopup(true);
+            clearTimer("autoSwitch");
+            state.character = nextCharacter;
+            state.index = 0;
+            syncCharacterSwitcher();
+            applyLanguage({
+                animatePose: true,
+                popupAfterTransition: true
+            });
+            restartAutoSwitch();
+        });
+    });
+
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            clearTimer("autoSwitch");
+        } else {
+            restartAutoSwitch();
+        }
+    });
+
+    /* ------------------------------------------------------------------------ */
+    /* Start                                                                    */
+    /* ------------------------------------------------------------------------ */
+
+    preloadPoses();
+    createStars();
+    applyLanguage();
+    scheduleAutoSwitch();
+    window.__pinkfongAssetReady?.("app");
 })();

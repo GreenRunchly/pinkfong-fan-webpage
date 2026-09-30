@@ -1,395 +1,496 @@
 <!DOCTYPE html>
-
+<!-- Static version: open/deploy this index.html directly. No PHP or build step required. -->
 <html lang="id">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
-<title>Pinkfong: Rubah Fennec dari Staria | Fan Page</title>
-<meta content="Kenalan dengan Pinkfong, rubah fennec dari Staria yang selalu penasaran, punya kekuatan sihir, dan suka membantu teman-temannya di Wonderville." name="description"/>
-<meta content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" name="robots"/>
-<meta content="#9d72ec" name="theme-color"/>
-<!-- Critical loader styles are inline so the loading screen can paint immediately. -->
-<style id="critical-loader-style">
-      html, body { margin: 0; min-height: 100%; }
-      body.app-loading { overflow: hidden; }
-      body.app-loading .world { opacity: 0; visibility: hidden; }
-      body.app-ready .world { opacity: 1; visibility: visible; }
-      .world { transition: opacity .62s cubic-bezier(.22,.61,.36,1); }
+    <head>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+        <meta content="light" name="color-scheme">
+        <title>Pinkfong: Rubah Fennec dari Staria | Fan Page</title>
+        <meta
+            content="Kenalan dengan Pinkfong, rubah fennec dari Staria yang selalu penasaran, punya kekuatan sihir, dan suka membantu teman-temannya di Wonderville."
+            name="description">
+        <meta
+            content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+            name="robots">
+        <meta content="#9d72ec" name="theme-color">
+        <link
+            rel="preload"
+            as="image"
+            href="assets/pinkfong-loader-peek.webp"
+            type="image/webp"
+            fetchpriority="high">
+        <!-- Critical loader styles are inline so the loading screen can paint immediately. -->
+        <!-- ====================================================================== -->
+        <!-- Critical first paint: keep inline to prevent refresh white flash -->
+        <!-- ====================================================================== -->
+        <style id="critical-loader-style">
+            /* Inline on purpose: prevents a white flash before the main CSS arrives. */
+            html {
+                min-height: 100%;
+                margin: 0;
+                background:
+                    radial-gradient(ellipse at 76% 17%, #ffc6ec 0, transparent 51%),
+                    radial-gradient(ellipse at 15% 93%, #958bff 0, transparent 60%),
+                    linear-gradient(120deg, #b38af3, #e5a8e8);
+                color-scheme: light;
+            }
 
-      #site-loader {
-        position: fixed;
-        inset: 0;
-        z-index: 2147483647;
-        display: grid;
-        place-items: center;
-        background:
-          radial-gradient(ellipse at 76% 17%, #ffc6ec 0, transparent 51%),
-          radial-gradient(ellipse at 15% 93%, #958bff 0, transparent 60%),
-          linear-gradient(120deg, #b38af3, #e5a8e8);
-        font-family: ui-rounded, "Arial Rounded MT Bold", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        opacity: 1;
-        visibility: visible;
-        transition: opacity .62s cubic-bezier(.22,.61,.36,1), visibility .62s linear;
-      }
-      #site-loader.is-leaving {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-      }
-      .site-loader-inner {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 14px;
-        transform: translateY(-1vh);
-      }
-      .site-loader-inner {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 12px;
-        transform: translateY(-1vh);
-      }
-      .site-loader-peek-wrap {
-        width: clamp(210px, 27vw, 280px);
-        display: grid;
-        place-items: center;
-        overflow: visible;
-        filter: drop-shadow(0 18px 24px rgba(93, 49, 141, .18));
-      }
-      .site-loader-peek {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        transform: none;
-      }
-      .site-loader-peek img {
-        display: block;
-        width: 100%;
-        height: auto;
-        max-width: none;
-        object-fit: contain;
-        transform: none;
-      }
-      @media (max-width: 1024px) {
-        .site-loader-peek-wrap {
-          width: clamp(190px, 31vw, 245px);
+            body {
+                min-height: 100%;
+                margin: 0;
+                background: transparent;
+            }
 
+            body.app-loading {
+                overflow: hidden;
+            }
+            body.app-loading .world {
+                opacity: 0;
+                visibility: hidden;
+            }
+            body.app-ready .world {
+                opacity: 1;
+                visibility: visible;
+            }
+            .world {
+                transition: opacity .62s cubic-bezier(.22,.61,.36,1);
+            }
+
+            #site-loader {
+                position: fixed;
+                inset: 0;
+                z-index: 2147483647;
+                display: grid;
+                place-items: center;
+                background:
+                    radial-gradient(ellipse at 76% 17%, #ffc6ec 0, transparent 51%),
+                    radial-gradient(ellipse at 15% 93%, #958bff 0, transparent 60%),
+                    linear-gradient(120deg, #b38af3, #e5a8e8);
+                opacity: 1;
+                visibility: visible;
+                transition: opacity .62s cubic-bezier(.22,.61,.36,1), visibility .62s linear;
+            }
+
+            #site-loader.is-leaving {
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+            }
+
+            .site-loader-inner {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+                transform: translateY(-1vh);
+            }
+
+            .site-loader-peek-wrap {
+                width: clamp(210px, 27vw, 280px);
+                filter: drop-shadow(0 18px 24px rgba(93,42,121,.18));
+            }
+
+            .site-loader-peek,
+            .site-loader-peek img {
+                display: block;
+                width: 100%;
+            }
+
+            .site-loader-peek img {
+                height: auto;
+            }
+
+            .site-loader-dots {
+                display: flex;
+                gap: 7px;
+                align-items: center;
+                justify-content: center;
+                height: 12px;
+            }
+
+            .site-loader-dots i {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: #643d91;
+                animation: pf-loader-bounce .85s ease-in-out infinite alternate;
+            }
+
+            .site-loader-dots i:nth-child(2) {
+                animation-delay: .12s;
+            }
+            .site-loader-dots i:nth-child(3) {
+                animation-delay: .24s;
+            }
+
+            @keyframes pf-loader-bounce {
+                from {
+                    transform: translateY(2px) scale(.78);
+                    opacity: .55;
+                }
+                to {
+                    transform: translateY(-4px) scale(1);
+                    opacity: 1;
+                }
+            }
+
+            @media (max-width: 1024px) {
+                .site-loader-peek-wrap {
+                    width: clamp(190px, 31vw, 245px);
+                }
+            }
+
+            @media (max-width: 640px) {
+                .site-loader-peek-wrap {
+                    width: clamp(165px, 44vw, 215px);
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .site-loader-dots i {
+                    animation: none;
+                }
+            }
+        </style>
+        <script>
+            (() => {
+                // Use the same loader timing for every visitor.
+                // Once critical resources are ready, keep the loader for 1 second,
+                // then fade it out smoothly.
+                const EXIT_HOLD_MS = 1000;
+                const EXIT_TRANSITION_MS = 620;
+                const FAILSAFE_MS = 7000;
+
+                const ready = { css: false, hero: false, app: false, locale: false };
+                let finished = false;
+                let exitScheduled = false;
+
+                function finishLoader() {
+                    if (finished) return;
+                    if (!document.body) {
+                        document.addEventListener("DOMContentLoaded", finishLoader, { once: true });
+                        return;
+                    }
+
+                    finished = true;
+                    const loader = document.getElementById("site-loader");
+                    document.body.classList.remove("app-loading");
+                    document.body.classList.add("app-ready");
+
+                    if (loader) {
+                        loader.classList.add("is-leaving");
+                        window.setTimeout(() => loader.remove(), EXIT_TRANSITION_MS + 40);
+                    }
+                }
+
+                function scheduleExit() {
+                    if (exitScheduled || finished) return;
+                    exitScheduled = true;
+                    window.setTimeout(finishLoader, EXIT_HOLD_MS);
+                }
+
+                window.__pinkfongAssetReady = (key) => {
+                    if (key in ready) ready[key] = true;
+                    if (ready.css && ready.hero && ready.app && ready.locale) {
+                        scheduleExit();
+                    }
+                };
+
+                // Never leave the page trapped behind the loader.
+                window.setTimeout(finishLoader, FAILSAFE_MS);
+            })();
+        </script>
+        <!-- ====================================================================== -->
+        <!-- SEO / social metadata -->
+        <!-- ====================================================================== -->
+        <!-- Search + social metadata -->
+        <link href="https://pinkfong.my.id/" rel="canonical">
+        <link href="https://pinkfong.my.id/en/" hreflang="x-default" rel="alternate">
+        <link href="https://pinkfong.my.id/sitemap.xml" rel="sitemap" type="application/xml">
+        <meta content="website" property="og:type">
+        <meta content="Pinkfong Fan Page" property="og:site_name">
+        <meta content="Pinkfong: Rubah Fennec dari Staria | Fan Page" property="og:title">
+        <meta
+            content="Kenalan dengan Pinkfong, rubah fennec dari Staria yang selalu penasaran, punya kekuatan sihir, dan suka membantu teman-temannya di Wonderville."
+            property="og:description">
+        <meta content="https://pinkfong.my.id/" property="og:url">
+        <meta content="id_ID" property="og:locale">
+        <meta content="en_US" property="og:locale:alternate">
+        <meta content="ko_KR" property="og:locale:alternate">
+        <meta content="ja_JP" property="og:locale:alternate">
+        <meta content="zh_CN" property="og:locale:alternate">
+        <meta content="https://pinkfong.my.id/assets/pinkfong-share.webp" property="og:image">
+        <link href="https://pinkfong.my.id/assets/pinkfong-share.webp" rel="image_src">
+        <meta content="https://pinkfong.my.id/assets/pinkfong-share.webp" property="og:image:secure_url">
+        <meta content="https://pinkfong.my.id/assets/pinkfong-share.webp" property="og:image:url">
+        <meta content="image/webp" property="og:image:type">
+        <meta content="1200" property="og:image:width">
+        <meta content="630" property="og:image:height">
+        <meta
+            content="Pinkfong mengintip sambil tersenyum pada latar ungu dan merah muda dengan orbit tipis dan bintang lembut."
+            property="og:image:alt">
+        <meta content="summary_large_image" name="twitter:card">
+        <meta content="Pinkfong: Rubah Fennec dari Staria | Fan Page" name="twitter:title">
+        <meta
+            content="Kenalan dengan Pinkfong, rubah fennec dari Staria yang selalu penasaran, punya kekuatan sihir, dan suka membantu teman-temannya di Wonderville."
+            name="twitter:description">
+        <meta content="https://pinkfong.my.id/assets/pinkfong-share.webp" name="twitter:image">
+        <meta
+            content="Pinkfong mengintip sambil tersenyum pada latar ungu dan merah muda dengan orbit tipis dan bintang lembut."
+            name="twitter:image:alt">
+        <link
+            href="favicon.png"
+            rel="icon"
+            sizes="192x192"
+            type="image/png">
+        <link href="favicon.ico" rel="shortcut icon" type="image/x-icon">
+        <link href="assets/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180">
+        <link href="site.webmanifest" rel="manifest">
+        <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "WebSite",
+            "@id": "https://pinkfong.my.id/#website",
+            "url": "https://pinkfong.my.id/",
+            "name": "Pinkfong Fan Page",
+            "alternateName": "Pinkfong — Dunia Kecil, Keajaiban Besar",
+            "inLanguage": [
+                "id-ID",
+                "en",
+                "ko",
+                "ja",
+                "zh-CN"
+            ]
+        },
+        {
+            "@type": "WebPage",
+            "@id": "https://pinkfong.my.id/#webpage",
+            "url": "https://pinkfong.my.id/",
+            "name": "Pinkfong: Rubah Fennec dari Staria | Fan Page",
+            "description": "Kenalan dengan Pinkfong, rubah fennec dari Staria yang selalu penasaran, punya kekuatan sihir, dan suka membantu teman-temannya di Wonderville.",
+            "isPartOf": {
+                "@id": "https://pinkfong.my.id/#website"
+            },
+            "image": {
+                "@id": "https://pinkfong.my.id/#primaryimage"
+            },
+            "about": {
+                "@id": "https://pinkfong.my.id/#pinkfong"
+            },
+            "isBasedOn": "https://www.pinkfong.com/en/characters",
+            "inLanguage": "id",
+            "isFamilyFriendly": true
+        },
+        {
+            "@type": "ImageObject",
+            "@id": "https://pinkfong.my.id/#primaryimage",
+            "url": "https://pinkfong.my.id/assets/pinkfong-share.webp",
+            "contentUrl": "https://pinkfong.my.id/assets/pinkfong-share.webp",
+            "width": 1200,
+            "height": 630
+        },
+        {
+            "@type": "Thing",
+            "@id": "https://pinkfong.my.id/#pinkfong",
+            "name": "Pinkfong",
+            "sameAs": "https://www.pinkfong.com/en/characters"
         }
-      }
-      @media (max-width: 640px) {
-        .site-loader-peek-wrap {
-          width: clamp(165px, 44vw, 215px);
+    ]
+}        </script>
+        <!-- ====================================================================== -->
+        <!-- Application stylesheet -->
+        <!-- ====================================================================== -->
+        <!-- Main stylesheet. Loader stays visible until this file is ready. -->
+        <link
+            id="main-stylesheet"
+            rel="stylesheet"
+            href="css/style.css"
+            onload="window.__pinkfongAssetReady?.('css')"
+            onerror="window.__pinkfongAssetReady?.('css')">
+    </head>
+    <body class="app-loading">
+        <!-- ====================================================================== -->
+        <!-- Loading screen -->
+        <!-- ====================================================================== -->
+        <div aria-label="Loading Pinkfong" id="site-loader" role="status">
+            <div class="site-loader-inner">
+                <div class="site-loader-peek-wrap" aria-hidden="true">
+                    <div class="site-loader-peek">
+                        <img
+                            src="assets/pinkfong-loader-peek.webp"
+                            alt=""
+                            loading="eager"
+                            decoding="async"
+                            fetchpriority="high"
+                            width="320"
+                            height="256">
+                    </div>
+                </div>
+                <div aria-hidden="true" class="site-loader-dots">
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                </div>
+            </div>
+        </div>
+        <!-- ====================================================================== -->
+        <!-- Page -->
+        <!-- ====================================================================== -->
+        <div class="world">
+            <div aria-hidden="true" class="sky" id="sky">
+                <div class="orbit"></div>
+                <div class="orbit two"></div>
+            </div>
+            <!-- Header -->
+            <header>
+                <a aria-label="Pinkfong fan page" class="brand" href="./index.html">
+                    <img
+                        src="assets/pinkfong-wordmark-white.webp"
+                        data-dark-src="assets/pinkfong-wordmark-white.webp"
+                        data-bright-src="assets/pinkfong-wordmark-white.webp"
+                        alt="Pinkfong"
+                        class="brand-image brand-theme-sync"
+                        loading="eager"
+                        decoding="async"
+                        width="320"
+                        height="96">
+                </a>
+                <label class="sr-only" for="language">Bahasa</label>
+                <select aria-label="Bahasa" class="language" id="language">
+                    <option
+                        value="id"
+                        selected>Bahasa Indonesia</option>
+                    <option
+                        value="en"
+                        >English</option>
+                    <option
+                        value="ko"
+                        >한국어</option>
+                    <option
+                        value="ja"
+                        >日本語</option>
+                    <option
+                        value="zh"
+                        >简体中文</option>
+                </select>
+            </header>
+            <!-- Main composition -->
+            <main class="main" id="main-content">
+                <!-- Intro / headline -->
+                <section aria-labelledby="headline" class="intro">
+                    <div class="eyebrow" id="eyebrow">Sepotong keajaiban</div>
+                    <h1 id="headline"><span class="headline-line headline-lead">Dunia kecil.</span><br><span class="headline-line headline-emphasis"><em>Keajaiban</em> <span class="headline-secondary">besar.</span></span></h1>
+                    <p id="intro-text">Ikuti rasa ingin tahumu.<br>Yuk, kenalan dengan si rubah pink dari negeri bintang!</p>
+                </section>
+                <!-- Character -->
+                <figure class="character">
+                    <div aria-hidden="true" class="halo"></div>
+                    <button
+                        aria-label="Cerita berikutnya — Pinkfong"
+                        class="fox"
+                        id="fox"
+                        type="button">
+                        <img
+                            alt="Pinkfong melambaikan tangan untuk menyapa."
+                            decoding="async"
+                            draggable="false"
+                            fetchpriority="high"
+                            height="724"
+                            onerror="window.__pinkfongAssetReady?.('hero')"
+                            onload="window.__pinkfongAssetReady?.('hero')"
+                            src="assets/pinkfong-pose-01.webp"
+                            width="724">
+                    </button>
+                    <figcaption aria-hidden="true" class="hello" id="hello">Hai, apa kabar!</figcaption>
+                </figure>
+                <!-- Character switcher -->
+                <nav aria-label="Karakter" class="character-switcher">
+                    <span class="character-switcher-label" id="character-switcher-label">Karakter</span>
+                    <div class="character-options">
+                        <button aria-current="true" aria-label="Pinkfong" class="character-option is-active" data-character="pinkfong" type="button">
+                            <span class="character-avatar" aria-hidden="true">
+                                <img alt="" decoding="async" loading="lazy" src="assets/character-pinkfong.webp">
+                            </span>
+                            <span class="character-name">Pinkfong</span>
+                        </button>
+                        <button aria-label="Hogi" class="character-option" data-character="hogi" type="button">
+                            <span class="character-avatar" aria-hidden="true">
+                                <img alt="" decoding="async" loading="lazy" src="assets/character-hogi.webp">
+                            </span>
+                            <span class="character-name">Hogi</span>
+                        </button>
+                        <button aria-label="Jeni" class="character-option" data-character="jeni" type="button">
+                            <span class="character-avatar" aria-hidden="true">
+                                <img alt="" decoding="async" loading="lazy" src="assets/character-jeni.webp">
+                            </span>
+                            <span class="character-name">Jeni</span>
+                        </button>
+                    </div>
+                </nav>
+                <!-- Story card -->
+                <section
+                    aria-atomic="true"
+                    aria-labelledby="title"
+                    aria-live="polite"
+                    class="fact"
+                    id="story-panel"
+                    role="region">
+                    <div class="fact-top">
+                        <span id="category">Aku Pinkfong</span>
+                        <span id="number">01 / 03</span>
+                    </div>
+                    <h2 id="title">Halo, aku Pinkfong!</h2>
+                    <p id="description">Aku rubah fennec dari Staria. Aku selalu penasaran!</p>
+                    <div aria-label="Posisi cerita" class="paging">
+                        <div aria-hidden="true" class="dots">
+                            <i class="active"></i>
+                            <i></i>
+                            <i></i>
+                        </div>
+                    </div>
+                </section>
+            </main>
+            <!-- Footer -->
+            <footer class="bottom">
+                <a
+                    class="source"
+                    href="https://www.pinkfong.com/"
+                    rel="noopener noreferrer external"
+                    target="_blank">Check out the official page</a>
+            </footer>
+        </div>
+        <!-- ====================================================================== -->
+        <!-- Static runtime data -->
+        <!-- ====================================================================== -->
+        <script src="js/content.js"></script>
+        <script>
+            (() => {
+                const supported = new Set(["id", "en", "ko", "ja", "zh"]);
+                let language = "id";
 
-        }
-      }
-      .site-loader-dots {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 7px;
-        height: 12px;
-      }
-      .site-loader-dots i {
-        display: block;
-        width: 6px;
-        height: 6px;
-        border-radius: 999px;
-        background: #643d91;
-        animation: pf-loader-bounce .85s ease-in-out infinite alternate;
-      }
-      .site-loader-dots i:nth-child(2) { animation-delay: .12s; }
-      .site-loader-dots i:nth-child(3) { animation-delay: .24s; }
-      @keyframes pf-loader-bounce {
-        from { transform: translateY(2px) scale(.78); opacity: .55; }
-        to { transform: translateY(-4px) scale(1); opacity: 1; }
-      }
-      @media (prefers-reduced-motion: reduce) {
-        .site-loader-dots i { animation: none; }
-      }
+                try {
+                    const saved = localStorage.getItem("pinkfong-language-choice");
+                    if (supported.has(saved)) {
+                        language = saved;
+                    } else {
+                        const browserLanguage = String(navigator.language || "id")
+                            .toLowerCase()
+                            .split(/[-_]/)[0];
 
+                        if (supported.has(browserLanguage)) {
+                            language = browserLanguage;
+                        }
+                    }
+                } catch (_) {
+                    // Local storage can be unavailable in strict/private browsing.
+                }
 
-    </style>
-<script>
-      (() => {
-        // Use the same loader timing for every visitor.
-        // Once critical resources are ready, keep the loader for 1 second,
-        // then fade it out smoothly.
-        const EXIT_HOLD_MS = 1000;
-        const EXIT_TRANSITION_MS = 620;
-        const FAILSAFE_MS = 7000;
-
-        const ready = { css: false, hero: false, app: false, locale: false };
-        let finished = false;
-        let exitScheduled = false;
-
-        function finishLoader() {
-          if (finished) return;
-          if (!document.body) {
-            document.addEventListener("DOMContentLoaded", finishLoader, { once: true });
-            return;
-          }
-
-          finished = true;
-          const loader = document.getElementById("site-loader");
-          document.body.classList.remove("app-loading");
-          document.body.classList.add("app-ready");
-
-          if (loader) {
-            loader.classList.add("is-leaving");
-            window.setTimeout(() => loader.remove(), EXIT_TRANSITION_MS + 40);
-          }
-        }
-
-        function scheduleExit() {
-          if (exitScheduled || finished) return;
-          exitScheduled = true;
-          window.setTimeout(finishLoader, EXIT_HOLD_MS);
-        }
-
-        window.__pinkfongAssetReady = (key) => {
-          if (key in ready) ready[key] = true;
-          if (ready.css && ready.hero && ready.app && ready.locale) {
-            scheduleExit();
-          }
-        };
-
-        // Never leave the page trapped behind the loader.
-        window.setTimeout(finishLoader, FAILSAFE_MS);
-      })();
-    </script>
-<!-- First-visit locale routing. Manual language choice always wins. -->
-<script>
-  (() => {
-    const STORAGE_KEY = "pinkfong-language-choice";
-    const supported = new Set(["id", "en", "ko", "ja", "zh"]);
-    const routes = { id: "/", en: "/en/", ko: "/ko/", ja: "/ja/", zh: "/zh/" };
-    const countryLanguage = { ID: "id", KR: "ko", JP: "ja", CN: "zh" };
-    const crawlerPattern = /bot|crawler|spider|slurp|google|bing|yandex|baidu|duckduck|facebookexternalhit|twitterbot|linkedinbot/i;
-
-    function releaseLocale() {
-      window.__pinkfongAssetReady?.("locale");
-    }
-
-    function redirectTo(code) {
-      if (!supported.has(code) || code === "id") {
-        releaseLocale();
-        return;
-      }
-
-      const target = routes[code];
-      if (window.location.pathname !== target) {
-        window.location.replace(target + window.location.search + window.location.hash);
-      } else {
-        releaseLocale();
-      }
-    }
-
-    function browserFallback() {
-      const locales = navigator.languages?.length ? navigator.languages : [navigator.language || "en"];
-      for (const locale of locales) {
-        const base = String(locale).toLowerCase().split(/[-_]/)[0];
-        if (supported.has(base)) return base;
-      }
-      return "en";
-    }
-
-    // Keep local/file preview stable and do not geo-route known crawlers.
-    if (window.location.protocol === "file:" || crawlerPattern.test(navigator.userAgent || "")) {
-      releaseLocale();
-      return;
-    }
-
-    try {
-      const manual = localStorage.getItem(STORAGE_KEY);
-      if (supported.has(manual)) {
-        redirectTo(manual);
-        return;
-      }
-    } catch (_) {}
-
-    const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 900);
-
-    fetch("/cdn-cgi/trace", {
-      cache: "no-store",
-      credentials: "same-origin",
-      signal: controller.signal
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error("geo unavailable");
-        return response.text();
-      })
-      .then((trace) => {
-        const match = trace.match(/^loc=([A-Z]{2})$/m);
-        const country = match?.[1];
-        redirectTo(countryLanguage[country] || "en");
-      })
-      .catch(() => redirectTo(browserFallback()))
-      .finally(() => window.clearTimeout(timeout));
-  })();
-</script>
-<!-- Search + social metadata -->
-<link href="https://pinkfong.my.id/" rel="canonical"/><link href="https://pinkfong.my.id/" hreflang="id" rel="alternate"/><link href="https://pinkfong.my.id/en/" hreflang="en" rel="alternate"/><link href="https://pinkfong.my.id/ko/" hreflang="ko" rel="alternate"/><link href="https://pinkfong.my.id/ja/" hreflang="ja" rel="alternate"/><link href="https://pinkfong.my.id/zh/" hreflang="zh-CN" rel="alternate"/><link href="https://pinkfong.my.id/en/" hreflang="x-default" rel="alternate"/>
-<link href="https://pinkfong.my.id/sitemap.xml" rel="sitemap" type="application/xml"/>
-<meta content="website" property="og:type"/>
-<meta content="Pinkfong Fan Page" property="og:site_name"/>
-<meta content="Pinkfong: Rubah Fennec dari Staria | Fan Page" property="og:title"/>
-<meta content="Kenalan dengan Pinkfong, rubah fennec dari Staria yang selalu penasaran, punya kekuatan sihir, dan suka membantu teman-temannya di Wonderville." property="og:description"/>
-<meta content="https://pinkfong.my.id/" property="og:url"/>
-<meta content="id_ID" property="og:locale"/><meta content="en_US" property="og:locale:alternate"/><meta content="ko_KR" property="og:locale:alternate"/><meta content="ja_JP" property="og:locale:alternate"/><meta content="zh_CN" property="og:locale:alternate"/>
-
-
-
-
-<meta content="https://pinkfong.my.id/assets/pinkfong-share.webp" property="og:image"/>
-<link href="https://pinkfong.my.id/assets/pinkfong-share.webp" rel="image_src"/>
-<meta content="https://pinkfong.my.id/assets/pinkfong-share.webp" property="og:image:secure_url"/>
-<meta content="https://pinkfong.my.id/assets/pinkfong-share.webp" property="og:image:url"/>
-<meta content="image/webp" property="og:image:type"/>
-<meta content="1200" property="og:image:width"/>
-<meta content="630" property="og:image:height"/>
-<meta content="Pinkfong mengintip sambil tersenyum pada latar ungu dan merah muda dengan orbit tipis dan bintang lembut." property="og:image:alt"/>
-<meta content="summary_large_image" name="twitter:card"/>
-<meta content="Pinkfong: Rubah Fennec dari Staria | Fan Page" name="twitter:title"/>
-<meta content="Kenalan dengan Pinkfong, rubah fennec dari Staria yang selalu penasaran, punya kekuatan sihir, dan suka membantu teman-temannya di Wonderville." name="twitter:description"/>
-<meta content="https://pinkfong.my.id/assets/pinkfong-share.webp" name="twitter:image"/>
-<meta content="Pinkfong mengintip sambil tersenyum pada latar ungu dan merah muda dengan orbit tipis dan bintang lembut." name="twitter:image:alt"/>
-<link href="https://pinkfong.my.id/favicon.png" rel="icon" sizes="192x192" type="image/png"/>
-<link href="https://pinkfong.my.id/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
-<link href="https://pinkfong.my.id/assets/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
-<link href="./site.webmanifest" rel="manifest"/>
-<script type="application/ld+json">{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebSite",
-      "@id": "https://pinkfong.my.id/#website",
-      "url": "https://pinkfong.my.id/",
-      "name": "Pinkfong Fan Page",
-      "alternateName": "Pinkfong — Dunia Kecil, Keajaiban Besar",
-      "inLanguage": [
-        "id-ID",
-        "en",
-        "ko",
-        "ja",
-        "zh-CN"
-      ]
-    },
-    {
-      "@type": "WebPage",
-      "@id": "https://pinkfong.my.id/#webpage",
-      "url": "https://pinkfong.my.id/",
-      "name": "Pinkfong: Rubah Fennec dari Staria | Fan Page",
-      "description": "Kenalan dengan Pinkfong, rubah fennec dari Staria yang selalu penasaran, punya kekuatan sihir, dan suka membantu teman-temannya di Wonderville.",
-      "isPartOf": {
-        "@id": "https://pinkfong.my.id/#website"
-      },
-      "primaryImageOfPage": {
-        "@id": "https://pinkfong.my.id/#primaryimage"
-      },
-      "image": {
-        "@id": "https://pinkfong.my.id/#primaryimage"
-      },
-      "thumbnailUrl": "https://pinkfong.my.id/assets/pinkfong-share.webp",
-      "about": {
-        "@id": "https://pinkfong.my.id/#pinkfong"
-      },
-      "isBasedOn": "https://www.pinkfong.com/en/characters",
-      "inLanguage": "id",
-      "isFamilyFriendly": true
-    },
-    {
-      "@type": "ImageObject",
-      "@id": "https://pinkfong.my.id/#primaryimage",
-      "representativeOfPage": true,
-      "encodingFormat": "image/webp",
-      "url": "https://pinkfong.my.id/assets/pinkfong-share.webp",
-      "contentUrl": "https://pinkfong.my.id/assets/pinkfong-share.webp",
-      "width": 1200,
-      "height": 630,
-      "caption": "Pinkfong mengintip sambil tersenyum pada latar ungu dan merah muda dengan orbit tipis dan bintang lembut."
-    },
-    {
-      "@type": "Thing",
-      "@id": "https://pinkfong.my.id/#pinkfong",
-      "name": "Pinkfong",
-      "description": "Rubah fennec dari Staria yang selalu penasaran, memiliki kekuatan sihir, dan suka membantu teman-temannya di Wonderville.",
-      "sameAs": "https://www.pinkfong.com/en/characters"
-    }
-  ]
-}</script>
-<!-- Main visual CSS loads non-blocking; the inline loader above paints first. -->
-<link as="style" href="./css/style.css" id="main-stylesheet" onerror="window.__pinkfongAssetReady?.('css')" onload="this.onload=null;this.rel='stylesheet';window.__pinkfongAssetReady?.('css')" rel="preload"/>
-<noscript><link href="./css/style.css" rel="stylesheet"/></noscript>
-<!-- Tailwind for on-the-fly developer editing. Preflight is disabled. -->
-<script>
-      window.tailwind = window.tailwind || {};
-      window.tailwind.config = {
-        corePlugins: { preflight: false }
-      };
-    </script>
-<script defer="" src="https://cdn.tailwindcss.com"></script>
-<script defer="" src="./js/tailwind.config.js"></script>
-</head>
-<body class="app-loading">
-<div aria-label="Loading Pinkfong" id="site-loader" role="status">
-<div class="site-loader-inner">
-<div class="site-loader-peek-wrap" aria-hidden="true"><div class="site-loader-peek"><img src="./assets/pinkfong-loader-peek.webp" alt="" loading="eager" decoding="async" fetchpriority="high" width="320" height="256"></div></div>
-<div aria-hidden="true" class="site-loader-dots"><i></i><i></i><i></i></div>
-</div>
-</div>
-<div class="world">
-<div aria-hidden="true" class="sky" id="sky">
-<div class="orbit"></div>
-<div class="orbit two"></div>
-</div>
-<header>
-<a aria-label="Pinkfong fan page" class="brand no-underline text-inherit" href="#main-content"><img src="./assets/pinkfong-wordmark.webp" data-dark-src="./assets/pinkfong-wordmark.webp" data-bright-src="./assets/pinkfong-wordmark-dark.webp" alt="Pinkfong" class="brand-image brand-theme-sync" loading="eager" decoding="async" width="320" height="96"></a>
-<label class="sr-only" for="language">Bahasa</label>
-<select aria-label="Bahasa" class="language" id="language">
-<option selected="selected" value="id">Bahasa Indonesia</option>
-<option value="en">English</option>
-<option value="ko">한국어</option>
-<option value="ja">日本語</option>
-<option value="zh">简体中文</option>
-</select>
-</header>
-<main class="main" id="main-content">
-<section aria-labelledby="headline" class="intro">
-<div class="eyebrow" id="eyebrow">Sepotong keajaiban</div>
-<h1 id="headline"><span class="headline-line headline-lead">Dunia kecil.</span><br/><span class="headline-line headline-emphasis"><em>Keajaiban</em> <span class="headline-secondary">besar.</span></span></h1>
-<p id="intro-text">Ikuti rasa ingin tahumu.<br/>Yuk, kenalan dengan si rubah pink dari negeri bintang!</p>
-</section>
-<figure class="character">
-<div aria-hidden="true" class="halo"></div>
-<button aria-label="Cerita berikutnya — klik Pinkfong" class="fox" id="fox" type="button">
-<img alt="Pinkfong melambaikan tangan untuk menyapa." decoding="async" draggable="false" fetchpriority="high" height="1049" onerror="window.__pinkfongAssetReady?.('hero')" onload="window.__pinkfongAssetReady?.('hero')" src="./assets/pinkfong-pose-01.webp" width="909"/>
-</button>
-<figcaption aria-hidden="true" class="hello" id="hello">Hai, apa kabar!</figcaption>
-</figure>
-<section aria-atomic="true" aria-labelledby="title" aria-live="polite" class="fact" id="story-panel" role="region">
-<div class="fact-top">
-<span id="category">Aku Pinkfong</span>
-<span id="number">01 / 03</span>
-</div>
-<h2 id="title">Halo, aku Pinkfong!</h2>
-<p id="description">Aku rubah fennec dari Staria. Aku selalu penasaran!</p>
-<div aria-label="Posisi cerita" class="paging">
-<div aria-hidden="true" class="dots">
-<i class="active"></i>
-<i></i>
-<i></i>
-</div>
-</div>
-</section>
-</main>
-<footer class="bottom">
-<a class="source" href="https://www.pinkfong.com/" rel="noopener noreferrer external" target="_blank">Check out the official page</a>
-</footer>
-</div>
-<script>window.PINKFONG_PAGE_LANG = "id"; window.PINKFONG_PAGE_ROOT = new URL("./", window.location.href);</script><script src="./js/content.js"></script>
-<script src="./js/app.js"></script>
-</body>
+                window.PINKFONG_PAGE_LANG = language;
+                window.__pinkfongAssetReady?.("locale");
+            })();
+        </script>
+        <script src="js/app.js"></script>
+    </body>
 </html>

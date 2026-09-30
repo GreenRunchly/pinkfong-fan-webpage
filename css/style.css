@@ -1,3146 +1,2734 @@
 /*
-  Pinkfong visual baseline
-  ------------------------
-  This stylesheet preserves the original page appearance.
+ * Pinkfong Fan Page — production stylesheet
+ * -----------------------------------------
+ * Layout contract:
+ *   1. Landscape            = desktop-style horizontal composition.
+ *   2. Portrait < 700px     = phone stacked composition.
+ *   3. Portrait 700–1100px  = tablet/iPad stacked composition.
+ *   4. Portrait > 1100px    = wide desktop-style composition.
+ *
+ * Keep new responsive changes inside the matching section below. Avoid adding
+ * one-off device/model breakpoints unless there is a reproducible layout issue.
+ */
 
-  Tailwind is loaded separately with preflight disabled, so developers can add
-  utility classes directly in index.html without Tailwind resetting this design.
-
-  Migrate individual rules to Tailwind gradually if desired; keeping this file
-  as the visual baseline prevents accidental layout regressions.
-*/
-
-*{box-sizing:border-box}
-
-html,body{margin:0;width:100%;height:100%;overflow:hidden}
-
-body{font-family:ui-rounded,"Arial Rounded MT Bold",Trebuchet MS,sans-serif;color:#49266c;background:#ae86ef}
-
-button,a{-webkit-tap-highlight-color:transparent}
-
-button{font:inherit;cursor:pointer}
-
-button:focus-visible,a:focus-visible{outline:3px solid #663792;outline-offset:5px}
-
-.world{height:100svh;height:100dvh;position:relative;isolation:isolate;overflow:hidden;background:radial-gradient(ellipse at 76% 17%,#ffc6ec 0,transparent 51%),radial-gradient(ellipse at 15% 93%,#958bff 0,transparent 60%),linear-gradient(120deg,#b38af3,#e5a8e8)}
-
-.world:before{content:"";position:absolute;inset:12px;border:1px solid #ffffff60;border-radius:28px;pointer-events:none;z-index:5}
-
-header{height:90px;padding:24px 4.5%;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:6}
-
-.brand{font-size:25px;font-weight:900;letter-spacing:-1.2px}
-
-.brand span{color:#fff}
-
-.brand small{display:block;font-size:11px;letter-spacing:2.3px;text-transform:uppercase;margin-top:3px}
-
-.sky{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-
-.twinkle{position:absolute;color:#fff9;font-size:21px;animation:twinkle 4s ease-in-out infinite}
-
-.orbit{position:absolute;left:50%;top:50%;width:min(66vw,870px);height:58%;border:1px solid #ffffff44;border-radius:50%;transform:translate(-50%,-50%) rotate(-17deg)}
-
-.orbit.two{width:min(55vw,690px);height:75%;transform:translate(-50%,-50%) rotate(28deg);border-style:dashed;opacity:.6}
-
-.main{position:absolute;inset:90px 4.5% 91px;display:grid;grid-template-columns:1fr 1.25fr 1fr;align-items:center;gap:12px}
-
-.intro{z-index:2;align-self:center;padding-bottom:40px}
-
-.eyebrow{font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:bold;display:flex;align-items:center;gap:10px}
-
-.eyebrow:before{content:"";width:24px;height:1px;background:currentColor}
-
-h1{font-size:clamp(40px,5.2vw,78px);line-height:1.04;letter-spacing:-3px;margin:18px 0;color:#fff;text-shadow:0 4px 0 #8c5ac41c}
-
-h1 em{font-style:normal;color:#562b7a}
-
- .intro p{font-size:16px;line-height:1.65;max-width:270px;margin:20px 0 26px}
-
-.character{width:100%;height:100%;min-height:0;position:relative;display:flex;align-items:center;justify-content:center;z-index:2}
-
-.halo{position:absolute;width:95%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#ffedff8c,transparent 68%);filter:blur(5px)}
-
-.fox{display:block;width:125%;max-width:none;height:115%;object-fit:contain;position:relative;border:0;background:none;padding:0;animation:float 5s ease-in-out infinite;cursor:pointer;filter:drop-shadow(0 25px 17px #763e9a25)}
-
-.fox img{width:100%;height:100%;object-fit:contain;pointer-events:none}
-
-.hello{position:absolute;top:6%;right:0;background:#fff9;backdrop-filter:blur(10px);padding:12px 19px;border-radius:20px 20px 20px 4px;font-size:14px;font-weight:bold;transform:rotate(7deg);white-space:nowrap}
-
-.fact{position:relative;z-index:3;max-width:315px;justify-self:end;background:#fff9;border:1px solid #ffffffb3;border-radius:28px;padding:27px;box-shadow:0 18px 45px #663c9810;backdrop-filter:blur(16px);transform:rotate(2deg)}
-
-.fact-top{display:flex;justify-content:space-between;align-items:center;font-size:12px;letter-spacing:1.8px;font-weight:bold;text-transform:uppercase}
-
-.fact h2{font-size:26px;letter-spacing:-.8px;margin:0 0 12px}
-
-.fact p{font-size:16px;line-height:1.65;margin:0;min-height:105px}
-
-.paging{display:flex;align-items:center;justify-content:space-between;margin-top:22px}
-
-.paging button{background:#fff8;border:1px solid #a873c32e;border-radius:50%;width:37px;height:37px;color:#603780;font-size:20px}
-
-.dots{display:flex;gap:7px}
-
-.dots i{width:6px;height:6px;border-radius:50%;background:#8a61a947}
-
-.dots i.active{background:#70408c;width:19px;border-radius:10px}
-
-.bottom{position:absolute;bottom:22px;left:4.5%;right:4.5%;z-index:6;display:flex;align-items:center;justify-content:space-between;gap:16px}
-
-.hint{font-size:12px;color:#553473}
-
-.source{font-size:12px;color:#593a74;text-decoration:none;line-height:1.6;text-align:right}
-
-.source:hover{text-decoration:underline}
-
-
-@keyframes float{50%{transform:translateY(-16px) rotate(-2deg)}
-
+:root {
+    --ink: #49266c;
+    --ink-strong: #562b7a;
+    --card: rgba(255, 255, 255, 0.62);
+    --card-border: rgba(255, 255, 255, 0.7);
+    --page-left: #b38af3;
+    --page-mid: #e5a8e8;
+    --page-blue: #958bff;
+    --page-pink: #ffc6ec;
+    --ease-out: cubic-bezier(.22, .72, .2, 1);
 }
 
+/* -------------------------------------------------------------------------- */
+/* Base                                                                       */
+/* -------------------------------------------------------------------------- */
 
-@keyframes twinkle{50%{opacity:.25;transform:scale(.7)}
-
+* {
+    box-sizing: border-box;
 }
 
-
-
-@media(min-width:1500px){.main{max-width:1400px;left:50%;right:auto;width:91%;transform:translateX(-50%)}
-
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
 }
 
-
-@media(max-width:850px) and (min-height:560px){header{height:74px;padding:19px 7%}
-
-.brand{font-size:22px}
-
-.brand small{font-size:10px}
-
-.main{inset:76px 7% 108px;grid-template-columns:1fr 1fr;grid-template-rows:1fr auto;gap:10px}
-
-.intro{grid-column:1;grid-row:1;align-self:center;padding:0}
-
-.eyebrow{font-size:10px;letter-spacing:1.5px}
-
-.eyebrow:before{width:15px}
-
-h1{font-size:clamp(33px,7vw,60px);letter-spacing:-1.8px;margin:12px 0}
-
-.intro p{font-size:14px;line-height:1.5;margin:14px 0;max-width:220px}
-
-.character{grid-row:1;grid-column:2}
-
-.fox{width:150%;height:120%}
-
-.hello{top:8%;right:0;font-size:11px;padding:8px 10px}
-
-.fact{grid-column:1 / -1;grid-row:2;max-width:none;width:100%;padding:17px 21px;transform:none;border-radius:23px}
-
-.fact-top{font-size:10px;margin-bottom:8px}
-
-.fact h2{font-size:21px;margin-bottom:7px}
-
-.fact p{font-size:14px;line-height:1.5;min-height:42px;padding-right:54px}
-
-.paging{position:absolute;right:17px;bottom:18px;margin:0;gap:5px}
-
-.paging button{width:29px;height:29px}
-
-.paging button:first-child,.dots{display:none}
-
-.bottom{bottom:22px;left:7%;right:7%;flex-wrap:wrap;gap:8px;justify-content:center}
-
-.hint{order:1;font-size:10px}
-
-.source{order:2;font-size:10px}
-
-.orbit{width:95%;height:46%}
-
-.orbit.two{width:78%;height:65%}
-
+body {
+    color: var(--ink);
+    background: transparent;
+    font-family: ui-rounded, "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;
 }
 
-
-
-@media(max-width:450px) and (min-height:700px){.main{grid-template-rows:1fr 1.6fr auto}
-
-.intro{grid-column:1 / -1;text-align:center;align-self:start}
-
-.eyebrow{justify-content:center}
-
-h1{font-size:39px;line-height:1.05;margin:9px 0}
-
-h1 br{display:none}
-
-.intro p{max-width:280px;margin:9px auto;font-size:13px}
-
-.character{grid-column:1 / -1;grid-row:2}
-
-.fox{width:105%;height:123%}
-
-.hello{right:10%;top:5%}
-
-.fact{grid-row:3}
-
-.fact p{font-size:13px}
-
-.fact h2{font-size:20px}
-
-.fact{padding:15px 18px}
-
+button,
+a,
+select {
+    -webkit-tap-highlight-color: transparent;
 }
 
-
-
-@media(max-height:559px){header{height:60px;padding:14px 4.5%}
-
-.brand{font-size:20px}
-
-.brand small{display:none}
-
-.main{inset:62px 4.5% 66px;grid-template-columns:1fr 1fr 1fr;gap:10px}
-
-.intro{padding:0}
-
-.eyebrow{font-size:9px;letter-spacing:1px}
-
-h1{font-size:clamp(24px,4.6vw,43px);letter-spacing:-1.5px;margin:10px 0}
-
-.intro p{font-size:12px;line-height:1.4;margin:9px 0}
-
-.hello{font-size:10px;padding:7px;top:0}
-
-.fact{padding:15px;border-radius:20px}
-
-.fact-top{font-size:9px}
-
-.fact h2{font-size:19px;margin:10px 0 6px}
-
-.fact p{font-size:12px;line-height:1.4;min-height:0}
-
-.paging{margin-top:8px}
-
-.paging button{width:26px;height:26px;font-size:16px}
-
-.bottom{bottom:17px}
-
-.hint,.source{font-size:10px}
-
+button,
+select {
+    font: inherit;
 }
 
-
-
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}
-
+button {
+    cursor: pointer;
 }
 
-
-
-.language{font:inherit;font-size:14px;color:#49266c;background:#ffffff70;border:1px solid #ffffffa0;border-radius:25px;padding:11px 14px;max-width:180px;cursor:pointer}
-
-.language:focus-visible{outline:3px solid #663792;outline-offset:4px}
-
-.language option{background:#fff;color:#49266c}
-
-.fox{cursor:default}
-
-.hello{white-space:normal;max-width:190px}
-
-.intro{padding-bottom:10px}
-
-:lang(ko) h1,:lang(ja) h1{letter-spacing:-1px;font-size:clamp(35px,4.6vw,68px)}
-
-
-
-@media(max-width:850px) and (min-height:560px){.language{font-size:12px;padding:9px 11px;max-width:165px}
-
-.source{flex-basis:100%;text-align:center}
-
-.source br{display:block}
-
-:lang(ko) h1,:lang(ja) h1{font-size:clamp(29px,6vw,46px)}
-
+a {
+    color: inherit;
 }
 
-
-
-@media(max-width:450px) and (min-height:700px){h1 br{display:block}
-
-h1{font-size:34px;line-height:1.08}
-
-:lang(ko) h1,:lang(ja) h1{font-size:32px}
-
-.main{grid-template-rows:auto minmax(0,1fr) auto}
-
-.intro p{margin-bottom:4px}
-
-.fact p{min-height:58px}
-
+button:focus-visible,
+a:focus-visible,
+select:focus-visible {
+    outline: 3px solid #663792;
+    outline-offset: 4px;
 }
 
-
-
-@media(max-height:559px){.language{font-size:12px;padding:7px 10px}
-
-.bottom{justify-content:center}
-
-.source{max-width:190px}
-
-:lang(ko) h1,:lang(ja) h1{font-size:clamp(24px,3.8vw,39px)}
-
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
+/* -------------------------------------------------------------------------- */
+/* Canvas / background                                                        */
+/* -------------------------------------------------------------------------- */
 
-
-.fact h2{margin-top:23px}
-
-.bottom{justify-content:center}
-
-.source{font-size:12px;text-align:center;max-width:none;flex-basis:auto}
-
-
-
-@media(max-width:850px) and (min-height:560px){.main{bottom:86px}
-
-.fact h2{margin-top:12px}
-
-.bottom{bottom:24px}
-
-.source{font-size:11px}
-
-.paging button:first-child{display:block}
-
-.paging{position:static;margin-top:12px;justify-content:space-between}
-
-.fact p{padding-right:0}
-
-.dots{display:flex}
-
+.world {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    height: 100svh;
+    height: 100dvh;
+    overflow: hidden;
+    background:
+        radial-gradient(ellipse at 76% 17%, var(--page-pink) 0, transparent 51%),
+        radial-gradient(ellipse at 15% 93%, var(--page-blue) 0, transparent 60%),
+        linear-gradient(120deg, var(--page-left), var(--page-mid));
 }
 
-
-
-@media(max-height:559px){.fact h2{margin-top:12px}
-
-.source{font-size:11px}
-
-.bottom{bottom:16px}
-
+.sky {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
 }
 
-
-
-.language{font-size:12px;padding:8px 10px;max-width:156px;border-radius:22px}
-
-.fact{max-width:285px;padding:22px;border-radius:24px}
-
-.fact-top{font-size:11px;letter-spacing:1.4px}
-
-.fact h2{font-size:23px;margin-top:17px;margin-bottom:10px}
-
-.fact p{font-size:15px;line-height:1.55;min-height:94px}
-
-.paging{margin-top:17px}
-
-.paging button{width:33px;height:33px}
-
-.fox img{transition:opacity .16s ease;user-select:none}
-
-.fox img.changing{opacity:0}
-
-
-
-@media(max-width:850px) and (min-height:560px){.language{font-size:12px;padding:7px 9px;max-width:152px}
-
-.fact{max-width:520px;padding:15px 18px;justify-self:center}
-
-.fact-top{font-size:10px}
-
-.fact h2{font-size:20px;margin-top:10px;margin-bottom:7px}
-
-.fact p{font-size:14px;min-height:0;line-height:1.5}
-
-.paging{margin-top:10px}
-
-.paging button{width:29px;height:29px}
-
+.sky::before,
+.sky::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(32px);
+    opacity: .34;
+    mix-blend-mode: soft-light;
+    animation: aurora-drift 14s ease-in-out infinite alternate;
 }
 
-
-
-@media(max-height:559px){.language{padding:6px 9px}
-
-.fact{padding:13px;max-width:270px}
-
-.fact h2{font-size:18px;margin:10px 0 6px}
-
-.fact-top{font-size:9px}
-
-.fact p{font-size:12px;min-height:0;line-height:1.4}
-
-.paging{margin-top:8px}
-
-.paging button{width:26px;height:26px}
-
+.sky::before {
+    left: 31%;
+    top: 12%;
+    width: min(34vw, 520px);
+    aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(255, 255, 255, .58), rgba(255, 160, 222, .18) 46%, transparent 72%);
 }
 
-/*
-  Character-first responsive refinement
-  -------------------------------------
-  The original visual style remains intact. These overrides only rebalance
-  hierarchy so Pinkfong is the focal point on every screen size.
-*/
-
-@media(min-width:601px){
-  .main{grid-template-columns:.9fr 1.42fr .88fr;gap:10px}
-  .intro p{max-width:245px}
-  .character{z-index:3}
-  .fox{width:142%;height:126%}
-  .fact{max-width:285px;padding:21px 22px}
-  .fact h2{font-size:22px}
-  .fact p{font-size:14px;min-height:86px}
-  .hello{right:4%;top:10%;font-size:12px;padding:9px 12px}
+.sky::after {
+    right: 5%;
+    bottom: 5%;
+    width: min(30vw, 460px);
+    aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(212, 198, 255, .55), rgba(158, 124, 255, .14) 48%, transparent 72%);
+    animation-delay: -7s;
 }
 
-/* Narrow phones: one clean vertical composition, no breakpoint collision. */
-@media(max-width:600px){
-  html,body{width:100%;height:100%;overflow:hidden}
-  .world{height:100svh;height:100dvh;min-height:0;overflow:hidden}
-  .world:before{inset:6px;border-radius:20px}
-
-  header{
-    height:46px;
-    padding:11px 11px 4px;
-    align-items:center;
-  }
-  .brand{font-size:16px;letter-spacing:-.8px}
-  .language{
-    font-size:9px;
-    max-width:106px;
-    padding:6px 9px;
-    border-radius:16px;
-  }
-
-  .main{
-    position:absolute;
-    inset:46px 10px 34px;
-    display:grid;
-    grid-template-columns:1fr;
-    grid-template-rows:auto minmax(0,1fr) auto;
-    gap:1px;
-    align-items:stretch;
-  }
-
-  .intro{
-    grid-column:1;
-    grid-row:1;
-    align-self:start;
-    padding:0;
-    margin:0;
-    text-align:center;
-    z-index:4;
-  }
-  .eyebrow{
-    justify-content:center;
-    gap:6px;
-    font-size:7px;
-    line-height:1;
-    letter-spacing:1.7px;
-  }
-  .eyebrow:before{width:12px}
-  h1,
-  :lang(ko) h1,
-  :lang(ja) h1{
-    margin:6px 0 5px;
-    font-size:clamp(29px,11.8vw,38px);
-    line-height:.93;
-    letter-spacing:-1.45px;
-  }
-  h1 br{display:block}
-  .intro p{
-    max-width:205px;
-    margin:0 auto;
-    font-size:9px;
-    line-height:1.32;
-  }
-
-  .character{
-    grid-column:1;
-    grid-row:2;
-    width:100%;
-    height:100%;
-    min-height:0;
-    margin:0;
-    align-self:stretch;
-    overflow:visible;
-    z-index:3;
-  }
-  .halo{
-    width:82%;
-    opacity:.9;
-  }
-  .fox{
-    width:119%;
-    height:126%;
-    max-width:none;
-    filter:drop-shadow(0 18px 13px #763e9a2b);
-  }
-  .fox img{
-    object-position:center center;
-  }
-  .hello{
-    top:12%;
-    right:1%;
-    max-width:95px;
-    padding:6px 8px;
-    border-radius:14px 14px 14px 4px;
-    font-size:8px;
-    line-height:1.15;
-    z-index:5;
-  }
-
-  .fact{
-    grid-column:1;
-    grid-row:3;
-    align-self:end;
-    justify-self:center;
-    width:92%;
-    max-width:none;
-    padding:10px 12px 9px;
-    border-radius:17px;
-    transform:none;
-    z-index:5;
-  }
-  .fact-top{
-    margin:0 0 4px;
-    font-size:7px;
-    line-height:1;
-    letter-spacing:.9px;
-  }
-  .fact h2{
-    margin:0 0 5px;
-    font-size:15px;
-    line-height:1.08;
-    letter-spacing:-.3px;
-  }
-  .fact p{
-    min-height:0;
-    margin:0;
-    padding:0;
-    font-size:9px;
-    line-height:1.33;
-  }
-  .paging{
-    position:static;
-    margin-top:7px;
-    gap:7px;
-  }
-  .paging button{
-    display:grid;
-    place-items:center;
-    width:23px;
-    height:23px;
-    padding:0;
-    font-size:13px;
-  }
-  .paging button:first-child{display:grid}
-  .dots{display:flex;gap:5px}
-  .dots i{width:4px;height:4px}
-  .dots i.active{width:14px}
-
-  .bottom{
-    left:10px;
-    right:10px;
-    bottom:7px;
-    justify-content:center;
-    gap:0;
-  }
-  .source{
-    max-width:none;
-    flex-basis:auto;
-    font-size:7.5px;
-    line-height:1.25;
-    text-align:center;
-  }
-  .source br{display:block}
-
-  .orbit{width:118%;height:45%;top:50%}
-  .orbit.two{width:102%;height:64%;top:51%}
+@keyframes aurora-drift {
+    from {
+        transform: translate3d(-1.5%, 1%, 0) scale(.96);
+    }
+    to {
+        transform: translate3d(2%, -1.5%, 0) scale(1.05);
+    }
 }
 
-/* Very narrow devices get a touch more breathing room. */
-@media(max-width:320px){
-  .main{inset:46px 8px 32px}
-  h1,
-  :lang(ko) h1,
-  :lang(ja) h1{font-size:clamp(27px,11.5vw,34px)}
-  .intro p{max-width:188px;font-size:8.5px}
-  .fox{width:116%;height:123%}
-  .hello{right:0;max-width:88px;font-size:7.5px}
-  .fact{width:94%;padding:9px 10px 8px}
-  .fact h2{font-size:14px}
-  .fact p{font-size:8.5px}
-  .paging{margin-top:6px}
-  .paging button{width:22px;height:22px}
+.orbit {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(66vw, 870px);
+    height: 58%;
+    border: 1px solid rgba(255, 255, 255, .27);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) rotate(-17deg);
+    animation: orbit-drift-one 34s ease-in-out infinite alternate;
 }
 
-/* Baseline fallbacks so the page stays polished even before Tailwind loads. */
-.sr-only{
-  position:absolute!important;
-  width:1px!important;
-  height:1px!important;
-  padding:0!important;
-  margin:-1px!important;
-  overflow:hidden!important;
-  clip:rect(0,0,0,0)!important;
-  white-space:nowrap!important;
-  border:0!important;
-}
-.brand{text-decoration:none;color:inherit}
-
-/* Tablet portrait: same character-first hierarchy as mobile, with more breathing room. */
-@media(min-width:601px) and (max-width:850px) and (min-height:650px){
-  header{height:68px;padding:18px 6% 8px}
-  .brand{font-size:22px}
-  .language{font-size:11px;padding:8px 11px;max-width:150px}
-
-  .main{
-    position:absolute;
-    inset:70px 6% 48px;
-    display:grid;
-    grid-template-columns:1fr;
-    grid-template-rows:auto minmax(0,1fr) auto;
-    gap:3px;
-    align-items:stretch;
-  }
-
-  .intro{
-    grid-column:1;
-    grid-row:1;
-    align-self:start;
-    padding:0;
-    text-align:center;
-  }
-  .eyebrow{justify-content:center;font-size:9px;letter-spacing:2px}
-  .eyebrow:before{width:18px}
-  h1,
-  :lang(ko) h1,
-  :lang(ja) h1{
-    margin:8px 0 8px;
-    font-size:clamp(39px,6.4vw,52px);
-    line-height:.98;
-    letter-spacing:-1.8px;
-  }
-  h1 br{display:block}
-  .intro p{
-    max-width:320px;
-    margin:0 auto;
-    font-size:12px;
-    line-height:1.4;
-  }
-
-  .character{
-    grid-column:1;
-    grid-row:2;
-    width:100%;
-    height:100%;
-    min-height:0;
-    margin:0;
-    overflow:visible;
-    z-index:3;
-  }
-  .halo{width:76%}
-  .fox{
-    width:108%;
-    height:116%;
-    filter:drop-shadow(0 25px 18px #763e9a2b);
-  }
-  .hello{
-    top:9%;
-    right:12%;
-    max-width:145px;
-    padding:8px 11px;
-    font-size:10px;
-  }
-
-  .fact{
-    grid-column:1;
-    grid-row:3;
-    align-self:end;
-    justify-self:center;
-    width:min(390px,72%);
-    max-width:390px;
-    padding:14px 17px 13px;
-    border-radius:21px;
-    transform:none;
-  }
-  .fact-top{margin-bottom:5px;font-size:9px;letter-spacing:1.1px}
-  .fact h2{margin:0 0 6px;font-size:20px;line-height:1.1}
-  .fact p{min-height:0;padding:0;font-size:12px;line-height:1.42}
-  .paging{position:static;margin-top:10px;gap:8px}
-  .paging button{display:grid;place-items:center;width:29px;height:29px;padding:0;font-size:16px}
-  .paging button:first-child{display:grid}
-  .dots{display:flex}
-
-  .bottom{left:6%;right:6%;bottom:10px;justify-content:center}
-  .source{font-size:9px;line-height:1.3;text-align:center}
+.orbit.two {
+    width: min(55vw, 690px);
+    height: 75%;
+    border-style: dashed;
+    opacity: .6;
+    transform: translate(-50%, -50%) rotate(28deg);
+    animation: orbit-drift-two 42s ease-in-out infinite alternate;
 }
 
-
-/* v4 interaction and composition refinements */
-
-/* Remove the decorative border around the entire HTML canvas. */
-.world:before{display:none}
-
-/* Pinkfong is the single carousel control. */
-.fox{
-  left:-2.5%;
-  cursor:pointer;
-}
-.fox:focus-visible{
-  outline:3px solid #663792;
-  outline-offset:6px;
-  border-radius:46%;
+@keyframes orbit-drift-one {
+    from {
+        transform: translate(-50%, -50%) rotate(-17deg) scale(1);
+    }
+    to {
+        transform: translate(-50%, -50%) rotate(-12deg) scale(1.025);
+    }
 }
 
-/* With arrows removed, dots become a quiet position indicator. */
-.paging{
-  justify-content:center;
+@keyframes orbit-drift-two {
+    from {
+        transform: translate(-50%, -50%) rotate(28deg) scale(1);
+    }
+    to {
+        transform: translate(-50%, -50%) rotate(22deg) scale(.98);
+    }
 }
 
-/* English headline helpers. Desktop remains close to the current composition. */
-.headline-small,
-.headline-secondary{font-size:1em}
-.big-wonders{white-space:nowrap}
-
-@media(max-width:600px){
-  /* A tiny left correction makes the visual mass of the pose look centered. */
-  .fox{left:-4%}
-
-  /* No carousel arrows on mobile: only the indicator dots remain. */
-  .paging{
-    justify-content:center;
-    margin-top:6px;
-  }
-  .dots{display:flex}
-
-  /* Keep “Big wonders.” together; let “Big” remain the visual accent. */
-  :lang(en) #headline .headline-small{
-    font-size:.82em;
-  }
-  :lang(en) #headline .big-wonders{
-    display:inline-block;
-    white-space:nowrap;
-  }
-  :lang(en) #headline .headline-secondary{
-    display:inline-block;
-    font-size:.76em;
-    vertical-align:.08em;
-  }
+.twinkle {
+    position: absolute;
+    color: rgba(255, 255, 255, .6);
+    animation: twinkle 4s ease-in-out infinite;
 }
 
-@media(min-width:601px) and (max-width:850px){
-  .fox{left:-3%}
+.twinkle.is-accent {
+    color: rgba(255, 247, 184, .92);
+    text-shadow:
+        0 0 8px rgba(255, 239, 151, .75),
+        0 0 18px rgba(255, 221, 93, .42);
+    animation-duration: 3.2s;
 }
 
-
-
-/* v5 polish: minimal language selector, quieter footer, smaller cards, true visual centering */
-
-/* Language selector: text-only, visually aligned with the wordmark. */
-.language{
-  -webkit-appearance:none;
-  appearance:none;
-  background:transparent;
-  background-image:none;
-  border:0;
-  border-radius:0;
-  box-shadow:none;
-  padding:0;
-  margin:0;
-  max-width:none;
-  width:auto;
-  color:#49266c;
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:-.15px;
-  line-height:1.2;
-  text-align:right;
-  text-align-last:right;
-  cursor:pointer;
-}
-.language::-ms-expand{display:none}
-.language:focus-visible{
-  outline:2px solid #663792;
-  outline-offset:4px;
-  border-radius:4px;
+@keyframes twinkle {
+    50% {
+        opacity: .25;
+        transform: scale(.7);
+    }
 }
 
-/* Move the artwork itself, not the clickable container, for better visual centering. */
-.fox{left:0}
-.fox img{transform:translateX(-5.5%)}
+/* -------------------------------------------------------------------------- */
+/* Header                                                                     */
+/* -------------------------------------------------------------------------- */
 
-/* Make the legal/source footer deliberately quiet but still present. */
-.source{
-  opacity:.62;
-  font-size:9px;
-  letter-spacing:.05px;
-}
-.source:hover{opacity:.9}
-
-@media(max-width:600px){
-  .language{
-    font-size:10px;
-    font-weight:800;
-  }
-
-  /* Pinkfong's visual mass sits to the right, so shift only the artwork left. */
-  .fox{left:0}
-  .fox img{transform:translateX(-8%)}
-
-  /* Compact supporting card: character remains the dominant object. */
-  .fact{
-    width:75%;
-    max-width:300px;
-    justify-self:center;
-    padding:9px 11px 8px;
-  }
-  .fact-top{font-size:6.7px}
-  .fact h2{font-size:14px;margin-bottom:4px}
-  .fact p{font-size:8.5px;line-height:1.32}
-  .paging{margin-top:6px}
-
-  .source{
-    font-size:6.8px;
-    line-height:1.15;
-    opacity:.55;
-  }
+header {
+    position: absolute;
+    z-index: 20;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 90px;
+    padding: 24px 4.5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    pointer-events: none;
 }
 
-@media(max-width:320px){
-  .fact{width:75%;padding:8px 9px 7px}
-  .fact h2{font-size:13px}
-  .fact p{font-size:8px}
+header > * {
+    pointer-events: auto;
 }
 
-@media(min-width:601px) and (max-width:850px) and (min-height:650px){
-  .language{font-size:11px;padding:0;max-width:none}
-
-  .fox{left:0}
-  .fox img{transform:translateX(-6.5%)}
-
-  /* Slightly smaller tablet card. */
-  .fact{
-    width:min(340px,60%);
-    max-width:340px;
-    padding:12px 15px 11px;
-  }
-  .fact-top{font-size:8px}
-  .fact h2{font-size:18px;margin-bottom:5px}
-  .fact p{font-size:11px;line-height:1.38}
-  .paging{margin-top:8px}
-
-  .source{font-size:8px;opacity:.58}
+.brand {
+    display: inline-flex;
+    align-items: center;
+    color: inherit;
+    text-decoration: none;
+    line-height: 1;
 }
 
-
-/* v6: click-only speech popup + Simplified Chinese typography */
-.hello{
-  opacity:0;
-  visibility:hidden;
-  pointer-events:none;
-  transform:translateY(6px) rotate(7deg) scale(.96);
-  transition:opacity .18s ease, transform .18s ease, visibility 0s linear .18s;
-}
-.hello.is-visible{
-  opacity:1;
-  visibility:visible;
-  transform:translateY(0) rotate(7deg) scale(1);
-  transition:opacity .18s ease, transform .18s ease, visibility 0s;
+.brand-image {
+    display: block;
+    width: auto;
+    height: 28px;
+    max-width: none;
+    object-fit: contain;
 }
 
-:lang(zh) h1{
-  letter-spacing:-1px;
-  font-size:clamp(35px,4.6vw,68px);
+.brand-theme-sync {
+    transition: opacity .12s ease;
 }
 
-@media(max-width:850px) and (min-height:560px){
-  :lang(zh) h1{font-size:clamp(29px,6vw,46px)}
+.language {
+    max-width: 180px;
+    padding: 6px 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    appearance: none;
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 700;
+    text-align: right;
+    cursor: pointer;
 }
 
-@media(max-width:600px){
-  :lang(zh) h1{
-    font-size:clamp(31px,10.8vw,46px);
-    line-height:1.02;
-  }
+/* -------------------------------------------------------------------------- */
+/* Shared content                                                             */
+/* -------------------------------------------------------------------------- */
+
+.main {
+    position: absolute;
+    inset: 90px 4.5% 72px;
 }
 
-@media(max-height:559px) and (min-width:601px){
-  :lang(zh) h1{font-size:clamp(24px,3.8vw,39px)}
+.intro {
+    z-index: 2;
 }
 
-/* v7: hard-centered character, speech-bubble motion, consistent tablet card */
-
-/*
-  From tablet upward the mascot is taken out of the grid completely.
-  Its center is always exactly 50% of the main canvas, so copy/card width
-  can never push it to the right or left.
-*/
-@media(min-width:601px){
-  .character{
-    position:absolute;
-    left:50%;
-    top:50%;
-    width:min(46vw,700px);
-    height:100%;
-    transform:translate(-50%,-50%);
-    grid-column:auto;
-    grid-row:auto;
-    margin:0;
-    z-index:3;
-  }
-  .fox{
-    left:0;
-    width:120%;
-    height:120%;
-  }
-  .fox img{
-    transform:none!important;
-    object-position:50% 50%;
-  }
+.eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
 }
 
-/* On phones keep the vertical flow, but center the actual artwork mathematically. */
-@media(max-width:600px){
-  .fox{left:0}
-  .fox img{
-    transform:none!important;
-    object-position:50% 50%;
-  }
+.eyebrow::before {
+    content: "";
+    width: 24px;
+    height: 1px;
+    flex: none;
+    background: currentColor;
 }
 
-/*
-  Speech bubble motion follows its pointed lower-left corner:
-  it grows outward from Pinkfong, overshoots slightly, then settles.
-*/
-.hello{
-  transform-origin:12% 100%;
-  opacity:0;
-  visibility:hidden;
-  pointer-events:none;
-  will-change:transform,opacity;
-  transition:none;
-  transform:translate(-11px,9px) rotate(1deg) scale(.72);
-}
-.hello::after{
-  content:"";
-  position:absolute;
-  left:12px;
-  bottom:-6px;
-  width:0;
-  height:0;
-  border-left:7px solid transparent;
-  border-right:2px solid transparent;
-  border-top:8px solid rgba(255,255,255,.60);
-  transform:rotate(10deg);
-  transform-origin:top left;
-}
-.hello.is-visible{
-  visibility:visible;
-  animation:speech-pop-in .36s cubic-bezier(.2,1.35,.45,1) both;
-}
-.hello.is-hiding{
-  visibility:visible;
-  animation:speech-pop-out .22s cubic-bezier(.55,.05,.7,.35) both;
-}
-@keyframes speech-pop-in{
-  0%{
-    opacity:0;
-    transform:translate(-16px,13px) rotate(-2deg) scale(.58);
-  }
-  62%{
-    opacity:1;
-    transform:translate(2px,-2px) rotate(8deg) scale(1.06);
-  }
-  100%{
-    opacity:1;
-    transform:translate(0,0) rotate(7deg) scale(1);
-  }
-}
-@keyframes speech-pop-out{
-  0%{
-    opacity:1;
-    transform:translate(0,0) rotate(7deg) scale(1);
-  }
-  100%{
-    opacity:0;
-    transform:translate(-11px,9px) rotate(1deg) scale(.72);
-  }
+#headline {
+    margin: 16px 0 14px;
+    color: #fff;
+    font-size: clamp(38px, 5vw, 72px);
+    font-weight: 900;
+    line-height: .98;
+    letter-spacing: -2.6px;
+    text-shadow: 0 4px 0 rgba(140, 90, 196, .11);
 }
 
-/* Landscape tablets: card keeps a desktop-like proportion instead of being squeezed by the grid track. */
-@media(min-width:601px) and (max-width:950px) and (max-height:649px){
-  .character{
-    width:46vw;
-    height:104%;
-  }
-  .fox{
-    width:118%;
-    height:116%;
-  }
-
-  .fact{
-    position:absolute;
-    right:0;
-    top:50%;
-    width:250px;
-    max-width:250px;
-    min-height:190px;
-    padding:16px 17px 14px;
-    border-radius:22px;
-    transform:translateY(-50%);
-    justify-self:auto;
-    z-index:4;
-  }
-  .fact-top{
-    margin-bottom:8px;
-    font-size:9px;
-    line-height:1.15;
-    letter-spacing:1.15px;
-  }
-  .fact h2{
-    margin:0 0 8px;
-    font-size:19px;
-    line-height:1.08;
-  }
-  .fact p{
-    min-height:76px;
-    padding:0;
-    font-size:12px;
-    line-height:1.42;
-  }
-  .paging{margin-top:10px}
-
-  .hello{
-    top:10%;
-    right:4%;
-    max-width:130px;
-  }
+#headline .headline-line {
+    display: inline-flex;
+    align-items: baseline;
+    white-space: nowrap;
 }
 
-/* Portrait tablets: keep the compact card, but preserve a stable width/height ratio. */
-@media(min-width:601px) and (max-width:850px) and (min-height:650px){
-  .character{
-    position:absolute;
-    left:50%;
-    top:47%;
-    width:58vw;
-    height:58%;
-    transform:translate(-50%,-50%);
-  }
-  .fox{
-    width:116%;
-    height:118%;
-  }
-  .fact{
-    width:min(330px,48vw);
-    max-width:330px;
-    min-height:150px;
-    padding:13px 16px 12px;
-  }
-  .fact-top{font-size:8px}
-  .fact h2{font-size:18px}
-  .fact p{font-size:11px;line-height:1.38}
+#headline .headline-lead {
+    font-size: .92em;
+    color: #fff;
 }
 
-@media(prefers-reduced-motion:reduce){
-  .hello.is-visible,
-  .hello.is-hiding{
-    animation:none!important;
-  }
-  .hello.is-visible{opacity:1;visibility:visible;transform:rotate(7deg)}
-  .hello.is-hiding{opacity:0;visibility:hidden}
+#headline .headline-emphasis {
+    gap: .16em;
 }
 
-/* v8: protect the mascot center — cards get a dedicated right-side safe zone */
-
-/* Desktop: card is no longer part of the grid. It stays pinned to the right edge. */
-@media(min-width:1101px){
-  .character{
-    left:50%;
-    width:min(42vw,620px);
-    height:100%;
-  }
-  .fox{
-    width:115%;
-    height:116%;
-  }
-
-  .fact{
-    position:absolute;
-    right:0;
-    top:50%;
-    width:285px;
-    max-width:285px;
-    min-height:205px;
-    padding:20px 22px 18px;
-    transform:translateY(-50%) rotate(1.5deg);
-    justify-self:auto;
-    z-index:4;
-  }
-  .fact-top{
-    margin-bottom:10px;
-    font-size:10px;
-    line-height:1.15;
-    letter-spacing:1.35px;
-  }
-  .fact h2{
-    margin:0 0 10px;
-    font-size:21px;
-    line-height:1.08;
-  }
-  .fact p{
-    min-height:88px;
-    padding:0;
-    font-size:13px;
-    line-height:1.45;
-  }
-  .paging{margin-top:12px}
+#headline .headline-emphasis em {
+    color: var(--ink-strong);
+    font-style: normal;
 }
 
-/* Narrow desktop: reduce mascot/card together before they are allowed to collide. */
-@media(min-width:951px) and (max-width:1100px){
-  .character{
-    left:50%;
-    width:39vw;
-    height:100%;
-  }
-  .fox{
-    width:115%;
-    height:114%;
-  }
-
-  .fact{
-    position:absolute;
-    right:-.5vw;
-    top:50%;
-    width:230px;
-    max-width:230px;
-    min-height:180px;
-    padding:16px 17px 15px;
-    transform:translateY(-50%) rotate(1deg);
-    justify-self:auto;
-    z-index:4;
-  }
-  .fact-top{margin-bottom:8px;font-size:8.5px;letter-spacing:1.05px}
-  .fact h2{margin:0 0 7px;font-size:18px;line-height:1.08}
-  .fact p{min-height:72px;padding:0;font-size:11px;line-height:1.4}
-  .paging{margin-top:9px}
+#headline .headline-secondary {
+    color: #fff;
+    font-size: .72em;
+    font-weight: 900;
+    letter-spacing: -.035em;
 }
 
-/* Landscape tablets: keep the same card proportions while preserving Pinkfong's center. */
-@media(min-width:601px) and (max-width:950px) and (max-height:649px){
-  .character{
-    left:50%;
-    width:39vw;
-    height:102%;
-  }
-  .fox{
-    width:112%;
-    height:112%;
-  }
-
-  .fact{
-    right:-1.5vw;
-    width:210px;
-    max-width:210px;
-    min-height:168px;
-    padding:14px 15px 13px;
-    border-radius:21px;
-  }
-  .fact-top{margin-bottom:7px;font-size:8px;letter-spacing:.95px}
-  .fact h2{margin:0 0 7px;font-size:17px;line-height:1.08}
-  .fact p{min-height:66px;font-size:10.5px;line-height:1.38}
-  .paging{margin-top:8px}
-}
-
-
-/* v9: breakpoint stabilization, Indonesian headline normalization, mobile tilt */
-
-/*
-  Indonesian has longer words than English. Keep the same two-line visual rhythm
-  instead of letting it become a 3–4 line block at intermediate widths.
-*/
-:lang(id) #headline{
-  font-size:clamp(40px,4.55vw,66px);
-  line-height:.98;
-}
-:lang(id) #headline .headline-small{
-  display:inline-block;
-  font-size:.94em;
-  white-space:nowrap;
-}
-:lang(id) #headline .id-wonder-line{
-  display:inline-block;
-  white-space:nowrap;
-  font-size:.88em;
-}
-:lang(id) #headline .headline-secondary{
-  display:inline-block;
-  font-size:.74em;
-  vertical-align:.05em;
-}
-
-/* Mobile card keeps the same playful tilt as desktop. */
-@media(max-width:600px) and (orientation:portrait){
-  .fact{
-    transform:rotate(1.5deg);
-    transform-origin:center center;
-  }
-
-  :lang(id) #headline{
-    font-size:clamp(27px,10.2vw,37px);
-    line-height:.96;
-  }
-  :lang(id) #headline .headline-small{font-size:.88em}
-  :lang(id) #headline .id-wonder-line{font-size:.82em}
-  :lang(id) #headline .headline-secondary{font-size:.72em}
-}
-
-/*
-  Compact landscape layout.
-  This catches short/zoomed windows that visually look horizontal but otherwise
-  fall into the <=600px mobile rules. It prevents the story card from dropping
-  below the mascot unexpectedly.
-*/
-@media(max-width:700px) and (orientation:landscape),
-       (max-width:700px) and (max-height:480px) and (min-aspect-ratio:6/5){
-  html,body{overflow:hidden}
-  .world{height:100dvh;min-height:0;overflow:hidden}
-
-  header{
-    height:42px;
-    padding:10px 4% 4px;
-  }
-  .brand{font-size:16px}
-  .language{font-size:9px}
-
-  .main{
-    position:absolute;
-    inset:44px 4% 28px;
-    display:block;
-  }
-
-  .intro{
-    position:absolute;
-    left:0;
-    top:50%;
-    width:30%;
-    margin:0;
-    padding:0;
-    transform:translateY(-50%);
-    text-align:left;
-    z-index:4;
-  }
-  .eyebrow{
-    justify-content:flex-start;
-    font-size:6px;
-    letter-spacing:1.4px;
-  }
-  .eyebrow:before{width:11px}
-  #headline,
-  :lang(ko) #headline,
-  :lang(ja) #headline,
-  :lang(zh) #headline{
-    margin:5px 0 7px;
-    font-size:clamp(23px,5.4vw,36px);
-    line-height:.96;
-    letter-spacing:-1.2px;
-  }
-  .intro p{
-    max-width:150px;
-    margin:0;
-    font-size:7.5px;
-    line-height:1.32;
-  }
-
-  :lang(id) #headline{
-    font-size:clamp(22px,5vw,34px);
-  }
-  :lang(id) #headline .headline-small{font-size:.9em}
-  :lang(id) #headline .id-wonder-line{font-size:.82em}
-  :lang(id) #headline .headline-secondary{font-size:.68em}
-
-  .character{
-    position:absolute;
-    left:50%;
-    top:50%;
-    width:39%;
-    height:108%;
-    min-height:0;
-    margin:0;
-    transform:translate(-50%,-50%);
-    z-index:3;
-  }
-  .halo{width:92%}
-  .fox{
-    width:112%;
-    height:112%;
-    left:0;
-  }
-  .fox img{
-    transform:none!important;
-    object-position:50% 50%;
-  }
-
-  .fact{
-    position:absolute;
-    right:0;
-    top:50%;
-    width:27%;
-    min-width:112px;
-    max-width:175px;
-    min-height:0;
-    padding:9px 10px 8px;
-    border-radius:16px;
-    transform:translateY(-50%) rotate(1.5deg);
-    transform-origin:center center;
-    justify-self:auto;
-    z-index:4;
-  }
-  .fact-top{
-    margin-bottom:5px;
-    font-size:5.8px;
-    line-height:1.05;
-    letter-spacing:.75px;
-  }
-  .fact h2{
-    margin:0 0 5px;
-    font-size:11.5px;
-    line-height:1.08;
-  }
-  .fact p{
-    min-height:0;
-    margin:0;
-    padding:0;
-    font-size:7.2px;
-    line-height:1.32;
-  }
-  .paging{margin-top:6px}
-  .dots{gap:4px}
-  .dots i{width:3px;height:3px}
-  .dots i.active{width:10px}
-
-  .hello{
-    top:8%;
-    right:4%;
-    max-width:88px;
-    padding:5px 7px;
-    font-size:7px;
-  }
-
-  .bottom{
-    left:4%;
-    right:4%;
-    bottom:5px;
-  }
-  .source{font-size:5.8px;line-height:1.1}
-}
-
-/* Intermediate desktop/tablet widths: keep Indonesian copy visually comparable. */
-@media(min-width:701px) and (max-width:1100px){
-  :lang(id) #headline{
-    font-size:clamp(34px,4.9vw,54px);
-  }
-  :lang(id) #headline .headline-small{font-size:.9em}
-  :lang(id) #headline .id-wonder-line{font-size:.82em}
-  :lang(id) #headline .headline-secondary{font-size:.7em}
-}
-
-
-/* v10: deterministic orientation layout + unified multilingual headline system */
-
-/*
-  Every language uses the same two-line headline structure.
-  The first line is the setup, while the darker word on line two carries the
-  semantic emphasis; the trailing word is intentionally smaller/lighter.
-*/
-#headline{
-  font-size:clamp(38px,5vw,72px);
-  line-height:.98;
-  letter-spacing:-2.6px;
-}
-#headline .headline-line{
-  display:inline-flex;
-  align-items:baseline;
-  white-space:nowrap;
-}
-#headline .headline-lead{
-  font-size:.92em;
-  color:#fff;
-}
-#headline .headline-emphasis{
-  gap:.16em;
-}
-#headline .headline-emphasis em{
-  font-size:1em;
-  color:#562b7a;
-  font-style:normal;
-}
-#headline .headline-secondary{
-  font-size:.72em;
-  color:#fff;
-  font-weight:900;
-  letter-spacing:-.035em;
-}
-
-/* CJK glyphs are optically denser; keep the same box height with a tiny reduction. */
 :lang(ko) #headline,
 :lang(ja) #headline,
-:lang(zh) #headline{
-  font-size:clamp(36px,4.65vw,67px);
-  letter-spacing:-1.5px;
+:lang(zh) #headline {
+    font-size: clamp(36px, 4.65vw, 67px);
+    letter-spacing: -1.5px;
 }
 
-/* Reset old language-specific headline sizing so all languages share one rhythm. */
-:lang(id) #headline,
-:lang(en) #headline{
-  font-size:clamp(38px,5vw,72px);
-  line-height:.98;
+.intro p {
+    max-width: 270px;
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.65;
 }
-:lang(id) #headline .headline-lead,
-:lang(en) #headline .headline-lead,
-:lang(id) #headline .headline-emphasis,
-:lang(en) #headline .headline-emphasis,
-:lang(id) #headline .headline-secondary,
-:lang(en) #headline .headline-secondary{
-  white-space:nowrap;
+
+/* -------------------------------------------------------------------------- */
+/* Character                                                                  */
+/* -------------------------------------------------------------------------- */
+
+.character {
+    position: absolute;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+.halo {
+    position: absolute;
+    width: 94%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 237, 255, .55), transparent 68%);
+    filter: blur(5px);
+    pointer-events: none;
+}
+
+.fox {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    filter: drop-shadow(0 25px 17px rgba(118, 62, 154, .15));
+    animation: float 5s ease-in-out infinite;
+    touch-action: pan-y;
+}
+
+@keyframes float {
+    50% {
+        transform: translateY(-16px) rotate(-2deg);
+    }
+}
+
+.pose-frame {
+    --pose-slide-distance: clamp(48px, 6vw, 88px);
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    transition: opacity .22s ease, transform .28s var(--ease-out);
+    will-change: opacity, transform;
+}
+
+.pose-frame img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: 50% 50%;
+    pointer-events: none;
+    user-select: none;
+}
+
+.pose-frame.pose-no-transition {
+    transition: none;
+}
+.pose-frame.pose-exit-next {
+    opacity: 0;
+    transform: translate3d(calc(var(--pose-slide-distance) * -1), 0, 0) scale(.985);
+}
+.pose-frame.pose-enter-next {
+    opacity: 0;
+    transform: translate3d(var(--pose-slide-distance), 0, 0) scale(.985);
+}
+.pose-frame.pose-exit-prev {
+    opacity: 0;
+    transform: translate3d(var(--pose-slide-distance), 0, 0) scale(.985);
+}
+.pose-frame.pose-enter-prev {
+    opacity: 0;
+    transform: translate3d(calc(var(--pose-slide-distance) * -1), 0, 0) scale(.985);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Speech popup                                                               */
+/* -------------------------------------------------------------------------- */
+
+.hello {
+    position: absolute;
+    z-index: 8;
+    top: 10%;
+    right: -2%;
+    max-width: 180px;
+    padding: 10px 14px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, .62);
+    backdrop-filter: blur(10px);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.25;
+    white-space: normal;
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform-origin: 12% 100%;
+    will-change: transform, opacity;
+}
+
+.hello::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    bottom: -6px;
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 2px solid transparent;
+    border-top: 8px solid rgba(255, 255, 255, .6);
+    transform: rotate(10deg);
+    transform-origin: top left;
+}
+
+.hello.is-visible {
+    visibility: visible;
+    animation: speech-pop-in .36s cubic-bezier(.2, 1.35, .45, 1) both;
+}
+
+.hello.is-hiding {
+    visibility: visible;
+    animation: speech-pop-out .22s cubic-bezier(.55, .05, .7, .35) both;
+}
+
+.hello[data-story="1"],
+.hello[data-story="2"] {
+    left: -5%;
+    right: auto;
+    transform-origin: 88% 100%;
+}
+
+.hello[data-story="1"] {
+    top: 9%;
+}
+.hello[data-story="2"] {
+    top: 12%;
+}
+
+.hello[data-story="1"]::after,
+.hello[data-story="2"]::after {
+    left: auto;
+    right: 12px;
+    border-left: 2px solid transparent;
+    border-right: 7px solid transparent;
+    transform: rotate(-10deg);
+    transform-origin: top right;
+}
+
+.hello[data-story="1"].is-visible,
+.hello[data-story="2"].is-visible {
+    animation-name: speech-pop-in-left;
+}
+
+.hello[data-story="1"].is-hiding,
+.hello[data-story="2"].is-hiding {
+    animation-name: speech-pop-out-left;
+}
+
+@keyframes speech-pop-in {
+    0% {
+        opacity: 0;
+        transform: translate(-16px, 13px) rotate(-2deg) scale(.58);
+    }
+    62% {
+        opacity: 1;
+        transform: translate(2px, -2px) rotate(8deg) scale(1.06);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(0, 0) rotate(7deg) scale(1);
+    }
+}
+
+@keyframes speech-pop-out {
+    from {
+        opacity: 1;
+        transform: translate(0, 0) rotate(7deg) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translate(-11px, 9px) rotate(1deg) scale(.72);
+    }
+}
+
+@keyframes speech-pop-in-left {
+    0% {
+        opacity: 0;
+        transform: translate(16px, 13px) rotate(2deg) scale(.58);
+    }
+    62% {
+        opacity: 1;
+        transform: translate(-2px, -2px) rotate(-7deg) scale(1.06);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(0, 0) rotate(-6deg) scale(1);
+    }
+}
+
+@keyframes speech-pop-out-left {
+    from {
+        opacity: 1;
+        transform: translate(0, 0) rotate(-6deg) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translate(11px, 9px) rotate(-1deg) scale(.72);
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Story card                                                                 */
+/* -------------------------------------------------------------------------- */
+
+.fact {
+    position: absolute;
+    z-index: 6;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding: 18px 20px;
+    border: 1px solid var(--card-border);
+    border-radius: 26px;
+    background: var(--card);
+    box-shadow: 0 18px 45px rgba(102, 60, 152, .06);
+    backdrop-filter: blur(16px);
+    transform-origin: center;
+}
+
+.fact-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+}
+
+.fact h2 {
+    margin: 0 0 8px;
+    font-size: 22px;
+    line-height: 1.08;
+    letter-spacing: -.6px;
+}
+
+.fact p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.paging {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+.dots {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.dots i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(138, 97, 169, .28);
+}
+
+.dots i.active {
+    width: 19px;
+    border-radius: 10px;
+    background: #70408c;
+}
+
+/* Card navigation is created by JS. */
+.story-arrows {
+    position: absolute;
+    z-index: 8;
+    inset: 0;
+    pointer-events: none;
+}
+
+.story-arrow {
+    position: absolute;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, .72);
+    border-radius: 50%;
+    background: #fffdf0;
+    color: #603780;
+    box-shadow: 0 10px 26px rgba(102, 60, 152, .16);
+    backdrop-filter: blur(12px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .18s ease, transform .22s var(--ease-out), background-color .18s ease;
+}
+
+.story-arrow-prev {
+    left: -19px;
+    transform: translate(-7px, -50%) scale(.92);
+}
+.story-arrow-next {
+    right: -19px;
+    transform: translate(7px, -50%) scale(.92);
+}
+
+.story-chevron {
+    display: block;
+    width: 9px;
+    height: 9px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+}
+
+.story-arrow-prev .story-chevron {
+    transform: translateX(2px) rotate(135deg);
+}
+.story-arrow-next .story-chevron {
+    transform: translateX(-2px) rotate(-45deg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .fact:hover .story-arrow,
+    .fact:focus-within .story-arrow {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .fact:hover .story-arrow-prev,
+    .fact:focus-within .story-arrow-prev,
+    .fact:hover .story-arrow-next,
+    .fact:focus-within .story-arrow-next {
+        transform: translate(0, -50%) scale(1);
+    }
+
+    .story-arrow:hover {
+        background: #fff;
+    }
+}
+
+.story-arrow:focus-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Character switcher                                                         */
+/* -------------------------------------------------------------------------- */
+
+.character-switcher {
+    position: absolute;
+    z-index: 7;
+    left: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    transform: translateX(-50%);
+}
+
+.character-switcher-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(73, 38, 108, .68);
+    font-size: 8px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+}
+
+.character-switcher-label::before,
+.character-switcher-label::after {
+    content: "";
+    width: 20px;
+    height: 1px;
+    background: rgba(255, 255, 255, .6);
+}
+
+.character-options {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 8px;
+}
+
+.character-option {
+    position: relative;
+    width: 54px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    cursor: pointer;
+}
+
+.character-avatar {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    margin: 0 auto;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, .54);
+    border-radius: 15px;
+    background: rgba(255, 255, 255, .28);
+    box-shadow: 0 8px 20px rgba(91, 54, 137, .08);
+    backdrop-filter: blur(10px);
+    transition:
+        transform .22s var(--ease-out),
+        box-shadow .22s ease,
+        border-color .22s ease,
+        opacity .22s ease;
+}
+
+.character-avatar img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+    transform: scale(1.04);
+}
+
+.character-avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background:
+        radial-gradient(circle at 35% 28%, rgba(255, 255, 255, .72), transparent 30%),
+        linear-gradient(145deg, rgba(255, 203, 233, .7), rgba(193, 182, 255, .62));
+    color: rgba(73, 38, 108, .62);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: -.3px;
+}
+
+.character-name {
+    display: block;
+    margin-top: 4px;
+    overflow: hidden;
+    font-size: 7.5px;
+    font-weight: 700;
+    line-height: 1.1;
+    white-space: nowrap;
+    text-align: center;
+    text-overflow: ellipsis;
+}
+
+.character-option.is-active .character-avatar {
+    border: 2px solid rgba(255, 255, 255, .95);
+    box-shadow:
+        0 0 0 2px rgba(196, 112, 236, .22),
+        0 10px 24px rgba(112, 64, 140, .15);
+    transform: translateY(-2px) scale(1.04);
+}
+
+.character-option.is-active .character-name {
+    color: #5a2f7b;
+    font-weight: 900;
+}
+
+.character-option.is-upcoming {
+    cursor: default;
+    opacity: .58;
+}
+
+.character-option.is-upcoming .character-avatar::after {
+    content: "";
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    width: 6px;
+    height: 6px;
+    border: 1px solid rgba(255, 255, 255, .8);
+    border-radius: 50%;
+    background: rgba(101, 65, 136, .58);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .character-option:not(:disabled):hover .character-avatar {
+        transform: translateY(-3px) scale(1.04);
+        box-shadow: 0 12px 26px rgba(91, 54, 137, .15);
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Footer                                                                     */
+/* -------------------------------------------------------------------------- */
+
+.bottom {
+    position: absolute;
+    z-index: 20;
+    left: 4.5%;
+    right: 4.5%;
+    bottom: 12px;
+    display: flex;
+    justify-content: center;
+}
+
+.source {
+    color: rgba(89, 58, 116, .58);
+    font-size: 9px;
+    line-height: 1.4;
+    text-decoration: none;
+}
+
+.source:hover {
+    text-decoration: underline;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Landscape — desktop-style layout                                           */
+/* -------------------------------------------------------------------------- */
+
+@media (orientation: landscape) {
+    header {
+        height: clamp(44px, 9.5vh, 78px);
+        padding: clamp(10px, 2.2vh, 20px) 4.5% 4px;
+    }
+
+    .brand-image {
+        height: clamp(20px, 2.5vh, 28px);
+    }
+    .language {
+        font-size: clamp(9px, 1vw, 12px);
+    }
+
+    .main {
+        inset: clamp(48px, 9.5vh, 82px) 4.5% clamp(28px, 7vh, 60px);
+    }
+
+    .intro {
+        position: absolute;
+        left: 12%;
+        top: 41.5%;
+        width: 34%;
+        transform: translateY(-50%);
+        text-align: left;
+        z-index: 2;
+    }
+
+    .eyebrow {
+        justify-content: flex-start;
+        font-size: clamp(7px, .78vw, 12px);
+        letter-spacing: clamp(1.2px, .18vw, 3px);
+    }
+
+    .eyebrow::before {
+        width: clamp(13px, 1.8vw, 24px);
+    }
+
+    #headline {
+        margin: clamp(7px, 1.5vh, 15px) 0;
+        font-size: clamp(28px, 4.25vw, 66px);
+        line-height: .96;
+        letter-spacing: clamp(-2.6px, -.15vw, -1px);
+    }
+
+    :lang(ko) #headline,
+    :lang(ja) #headline,
+    :lang(zh) #headline {
+        font-size: clamp(27px, 3.95vw, 61px);
+    }
+
+    .intro p {
+        max-width: min(240px, 90%);
+        font-size: clamp(8px, 1.05vw, 15px);
+        line-height: 1.48;
+    }
+
+    .character {
+        left: 50%;
+        top: 45.5%;
+        width: min(43vw, 76vh);
+        height: 104%;
+        transform: translate(-50%, -50%);
+    }
+
+    .fox {
+        width: 108%;
+        height: 108%;
+    }
+
+    .fact {
+        right: 9%;
+        top: 60.5%;
+        width: clamp(150px, 22vw, 260px);
+        max-width: 260px;
+        padding: clamp(10px, 1.45vw, 18px);
+        border-radius: clamp(18px, 2vw, 26px);
+        transform: translateY(-50%) rotate(1.8deg);
+    }
+
+    .fact-top {
+        margin-bottom: clamp(5px, 1vh, 9px);
+        font-size: clamp(7px, .78vw, 10px);
+        letter-spacing: clamp(.8px, .1vw, 1.35px);
+    }
+
+    .fact h2 {
+        margin-bottom: clamp(5px, 1vh, 9px);
+        font-size: clamp(14px, 1.55vw, 21px);
+    }
+
+    .fact p {
+        font-size: clamp(8px, .98vw, 13px);
+        line-height: 1.42;
+    }
+
+    .paging {
+        margin-top: clamp(7px, 1.2vh, 12px);
+    }
+
+    .character-switcher {
+        bottom: clamp(-14px, -1vh, -4px);
+    }
+
+    .source {
+        font-size: clamp(6px, .65vw, 9px);
+    }
+}
+
+/* Desktop / large landscape: preserve the intentional overlap composition. */
+@media (orientation: landscape) and (min-width: 1101px) {
+    .intro {
+        left: 13%;
+        top: 39.5%;
+        width: 35%;
+    }
+    .character {
+        width: min(40vw, 70vh);
+        height: 100%;
+    }
+    .fox {
+        width: 104%;
+        height: 104%;
+    }
+    .fact {
+        right: 15.5%;
+        top: 60.8%;
+        width: clamp(230px, 22vw, 315px);
+        max-width: 315px;
+    }
+
+    .character-switcher {
+        bottom: -16px;
+    }
+
+    .character-option {
+        width: 56px;
+    }
+
+    .character-avatar {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+/* Tablet landscape. */
+@media (orientation: landscape) and (min-width: 701px) and (max-width: 1100px) {
+    .intro {
+        left: 8%;
+        top: 45%;
+        width: 34%;
+    }
+    .fact {
+        right: 8%;
+        top: 66%;
+    }
+}
+
+/* Phone landscape / very short windows: same desktop idea, compact scale. */
+@media (orientation: landscape) and (max-width: 700px),
+              (orientation: landscape) and (max-height: 520px) {
+    header {
+        height: 42px;
+        padding: 9px 4.5% 3px;
+    }
+    .brand-image {
+        height: 20px;
+    }
+    .main {
+        inset: 44px 4.5% 24px;
+    }
+    .intro {
+        left: 6%;
+        top: 40.5%;
+        width: 34%;
+    }
+    #headline {
+        font-size: clamp(23px, 4.5vw, 42px);
+    }
+    :lang(ko) #headline,
+    :lang(ja) #headline,
+    :lang(zh) #headline {
+        font-size: clamp(22px, 4.2vw, 39px);
+    }
+    .intro p {
+        font-size: clamp(7px, 1vw, 10px);
+    }
+    .character {
+        top: 41.5%;
+        width: min(40vw, 74vh);
+        height: 100%;
+    }
+    .fox {
+        width: 92%;
+        height: 98%;
+    }
+    .fact {
+        right: 4%;
+        top: 48.5%;
+        width: clamp(135px, 22vw, 185px);
+        padding: 8px 10px;
+    }
+    .fact-top {
+        font-size: 6.5px;
+    }
+    .fact h2 {
+        font-size: 12px;
+    }
+    .fact p {
+        font-size: 7.5px;
+        line-height: 1.32;
+    }
+
+    .character-switcher {
+        bottom: 2px;
+        gap: 2px;
+    }
+
+    .character-switcher-label {
+        display: none;
+    }
+
+    .character-options {
+        gap: 5px;
+    }
+
+    .character-option {
+        width: 34px;
+    }
+
+    .character-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 10px;
+    }
+
+    .character-name {
+        display: none;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Portrait phones / narrow portrait devices                                  */
+/* -------------------------------------------------------------------------- */
+
+@media (orientation: portrait) and (max-width: 699px) {
+    header {
+        height: 64px;
+        padding: 14px 20px;
+    }
+    .brand-image {
+        height: 22px;
+    }
+    .language {
+        font-size: 10px;
+    }
+
+    .main {
+        inset: 0;
+        --phone-anchor-y: 53dvh;
+        --phone-copy-gap: clamp(240px, min(80vw, 43dvh), 320px);
+        --phone-card-gap: clamp(158px, 42vw, 178px);
+        --phone-switcher-gap: clamp(266px, 71vw, 298px);
+    }
+
+    .intro {
+        position: absolute;
+        left: 50%;
+        top: calc(var(--phone-anchor-y) - var(--phone-copy-gap));
+        width: min(88vw, 340px);
+        transform: translateX(-50%);
+        text-align: center;
+    }
+
+    .eyebrow {
+        justify-content: center;
+        margin-bottom: 4px;
+        font-size: 9px;
+        letter-spacing: 1.7px;
+    }
+
+    .eyebrow::before {
+        width: 16px;
+    }
+
+    #headline {
+        margin: 10px 0 6px;
+        font-size: clamp(28px, 9.8vw, 44px);
+        line-height: .96;
+        letter-spacing: -1.8px;
+    }
+
+    :lang(ko) #headline,
+    :lang(ja) #headline,
+    :lang(zh) #headline {
+        font-size: clamp(27px, 9.1vw, 41px);
+    }
+
+    .intro p {
+        max-width: 245px;
+        margin: 8px auto 0;
+        font-size: 10px;
+        line-height: 1.42;
+    }
+
+    .character {
+        left: 50%;
+        top: var(--phone-anchor-y);
+        width: 100vw;
+        height: clamp(330px, 102vw, 400px);
+        transform: translate(-50%, -50%);
+    }
+
+    .fox {
+        width: 96%;
+        height: 102%;
+    }
+    .pose-frame {
+        --pose-slide-distance: clamp(34px, 12vw, 54px);
+    }
+
+    .character-switcher {
+        left: 50%;
+        top: calc(var(--phone-anchor-y) + var(--phone-switcher-gap));
+        bottom: auto;
+        width: min(76vw, 280px);
+        gap: 2px;
+    }
+
+    .character-switcher-label {
+        font-size: 6.5px;
+        letter-spacing: 1px;
+    }
+
+    .character-switcher-label::before,
+    .character-switcher-label::after {
+        width: 14px;
+    }
+
+    .character-options {
+        gap: 6px;
+    }
+
+    .character-option {
+        width: 42px;
+    }
+
+    .character-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+    }
+
+    .character-name {
+        margin-top: 3px;
+        font-size: 6px;
+    }
+
+    .fact {
+        left: 50%;
+        top: calc(var(--phone-anchor-y) + var(--phone-card-gap));
+        width: min(72vw, 275px);
+        padding: 13px 15px;
+        border-radius: 22px;
+        transform: translateX(-50%) rotate(1.3deg);
+    }
+
+    .fact-top {
+        margin-bottom: 6px;
+        font-size: 8px;
+        letter-spacing: 1.1px;
+    }
+    .fact h2 {
+        margin-bottom: 6px;
+        font-size: 17px;
+    }
+    .fact p {
+        font-size: 10px;
+        line-height: 1.4;
+    }
+
+    .paging {
+        margin-top: 8px;
+    }
+
+    .story-arrows {
+        display: none;
+    }
+
+    .hello {
+        top: 10%;
+        right: 8px;
+        max-width: min(150px, calc(100vw - 40px));
+        padding: 8px 10px;
+        border-radius: 16px;
+        font-size: 10px;
+    }
+
+    .hello[data-story="1"],
+    .hello[data-story="2"] {
+        left: 8px;
+        right: auto;
+        top: 10%;
+    }
+
+    .bottom {
+        bottom: 8px;
+    }
+    .source {
+        font-size: 7px;
+    }
+}
+
+/* Extra-small / short phones. */
+@media (orientation: portrait) and (max-width: 360px) {
+    .main {
+        --phone-anchor-y: 55dvh;
+        --phone-copy-gap: clamp(232px, 70vw, 270px);
+        --phone-card-gap: clamp(136px, 43vw, 148px);
+        --phone-switcher-gap: clamp(230px, 72vw, 250px);
+    }
+    .character {
+        height: clamp(300px, 98vw, 360px);
+    }
+    .fox {
+        width: 94%;
+        height: 100%;
+    }
+    .fact {
+        width: min(74vw, 238px);
+        padding: 11px 12px;
+    }
+
+    .character-option {
+        width: 36px;
+    }
+
+    .character-avatar {
+        width: 33px;
+        height: 33px;
+        border-radius: 10px;
+    }
+
+    .character-name {
+        display: none;
+    }
+}
+
+@media (orientation: portrait) and (max-width: 340px) and (max-height: 650px) {
+    .main {
+        --phone-anchor-y: 56dvh;
+        --phone-copy-gap: clamp(255px, 82vw, 275px);
+        --phone-card-gap: 128px;
+        --phone-switcher-gap: 216px;
+    }
+    .character {
+        height: clamp(280px, 90vw, 310px);
+    }
+    .fox {
+        width: 92%;
+        height: 98%;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Portrait tablets / iPads                                                   */
+/* -------------------------------------------------------------------------- */
+
+@media (orientation: portrait) and (min-width: 700px) and (max-width: 1100px) {
+    header {
+        height: 88px;
+        padding: 18px 24px;
+    }
+    .brand-image {
+        height: 26px;
+    }
+    .language {
+        font-size: 12px;
+    }
+
+    .main {
+        inset: 0;
+        --tablet-anchor-y: 52dvh;
+        --tablet-copy-gap: clamp(380px, 36.5dvh, 505px);
+        --tablet-switcher-gap: clamp(162px, 16dvh, 205px);
+        --tablet-card-gap: clamp(225px, 21dvh, 280px);
+    }
+
+    .intro {
+        position: absolute;
+        left: 50%;
+        top: calc(var(--tablet-anchor-y) - var(--tablet-copy-gap));
+        width: min(72vw, 480px);
+        transform: translateX(-50%);
+        text-align: center;
+    }
+
+    .eyebrow {
+        justify-content: center;
+        margin-bottom: 6px;
+        font-size: 11px;
+        letter-spacing: 2.2px;
+    }
+
+    .eyebrow::before {
+        width: 20px;
+    }
+
+    #headline {
+        margin: 12px 0 8px;
+        font-size: clamp(35px, 5vw, 50px);
+        line-height: 1.03;
+        letter-spacing: -1.8px;
+    }
+
+    :lang(ko) #headline,
+    :lang(ja) #headline,
+    :lang(zh) #headline {
+        font-size: clamp(33px, 4.7vw, 47px);
+    }
+
+    .intro p {
+        max-width: 310px;
+        margin: 10px auto 0;
+        font-size: 13px;
+        line-height: 1.45;
+    }
+
+    .character {
+        left: 50%;
+        top: var(--tablet-anchor-y);
+        width: min(82vw, 760px);
+        height: clamp(470px, 58vw, 620px);
+        transform: translate(-50%, -50%);
+    }
+
+    .fox {
+        width: 92%;
+        height: 104%;
+    }
+
+    .character-switcher {
+        left: 50%;
+        top: calc(var(--tablet-anchor-y) + var(--tablet-switcher-gap));
+        bottom: auto;
+        gap: 5px;
+    }
+
+    .character-option {
+        width: 58px;
+    }
+
+    .character-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+    }
+
+    .character-name {
+        font-size: 7.5px;
+    }
+
+    .fact {
+        left: 50%;
+        top: calc(var(--tablet-anchor-y) + var(--tablet-card-gap));
+        width: min(54vw, 400px);
+        max-width: 400px;
+        padding: 17px 19px;
+        border-radius: 24px;
+        transform: translateX(-50%) rotate(1.2deg);
+    }
+
+    .fact-top {
+        margin-bottom: 7px;
+        font-size: 10px;
+        letter-spacing: 1.4px;
+    }
+    .fact h2 {
+        margin-bottom: 7px;
+        font-size: 22px;
+    }
+    .fact p {
+        font-size: 14px;
+        line-height: 1.45;
+    }
+
+    .paging {
+        margin-top: 10px;
+    }
+
+    .hello {
+        top: 13%;
+        right: 7%;
+        max-width: 170px;
+        padding: 9px 12px;
+        font-size: 12px;
+    }
+
+    .hello[data-story="1"],
+    .hello[data-story="2"] {
+        left: 7%;
+        right: auto;
+        top: 13%;
+    }
+}
+
+@media (orientation: portrait) and (min-width: 900px) and (max-width: 1100px) {
+    .main {
+        --tablet-anchor-y: 55dvh;
+        --tablet-copy-gap: clamp(430px, 36.5dvh, 520px);
+        --tablet-switcher-gap: clamp(194px, 16dvh, 228px);
+        --tablet-card-gap: clamp(260px, 20dvh, 310px);
+    }
+    .intro {
+        width: min(64vw, 520px);
+    }
+    .character {
+        width: min(76vw, 780px);
+        height: clamp(560px, 58vw, 680px);
+    }
+    .fox {
+        width: 90%;
+        height: 103%;
+    }
+    .fact {
+        width: min(40vw, 380px);
+        max-width: 380px;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Very wide portrait screens                                                 */
+/* -------------------------------------------------------------------------- */
+
+@media (orientation: portrait) and (min-width: 1101px) {
+    .main {
+        inset: 100px 5% 90px;
+        display: grid;
+        grid-template-columns: 1fr 1.2fr 1fr;
+        align-items: center;
+        gap: 18px;
+    }
+
+    .intro {
+        grid-column: 1;
+        align-self: center;
+    }
+    .character {
+        left: 50%;
+        top: 50%;
+        width: min(44vw, 68vh);
+        height: 80%;
+        transform: translate(-50%, -50%);
+    }
+    .fox {
+        width: 108%;
+        height: 108%;
+    }
+    .fact {
+        right: 2%;
+        top: 55%;
+        width: min(29vw, 340px);
+        transform: translateY(-50%) rotate(1.8deg);
+    }
+
+    .character-switcher {
+        bottom: 2%;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Accessibility                                                              */
+/* -------------------------------------------------------------------------- */
+
+@media (hover: none) {
+    .story-arrows {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Character themes                                                           */
+/* -------------------------------------------------------------------------- */
+
+body[data-character="hogi"] {
+    --ink: #34516b;
+    --ink-strong: #28556f;
+    --page-left: #8dd9d0;
+    --page-mid: #c7afea;
+    --page-blue: #8ccfd7;
+    --page-pink: #d4f7ec;
+}
+
+body[data-character="hogi"] .halo {
+    background: radial-gradient(circle, rgba(222, 255, 247, .68), transparent 68%);
+}
+
+body[data-character="hogi"] .fox {
+    filter: drop-shadow(0 25px 17px rgba(48, 115, 113, .16));
+}
+
+body[data-character="hogi"] .character-option.is-active .character-avatar {
+    box-shadow:
+        0 0 0 2px rgba(70, 187, 171, .24),
+        0 10px 24px rgba(52, 112, 109, .16);
+}
+
+body[data-character="hogi"] .character-option.is-active .character-name {
+    color: #2c6771;
+}
+
+body[data-character="jeni"] {
+    --ink: #6d3f55;
+    --ink-strong: #8b4f31;
+    --page-left: #f8c968;
+    --page-mid: #f5a9bd;
+    --page-blue: #f6b46c;
+    --page-pink: #fff0b8;
+}
+
+body[data-character="jeni"] .halo {
+    background: radial-gradient(circle, rgba(255, 247, 199, .74), transparent 68%);
+}
+
+body[data-character="jeni"] .fox {
+    filter: drop-shadow(0 25px 17px rgba(164, 103, 52, .17));
+}
+
+body[data-character="jeni"] .character-option.is-active .character-avatar {
+    box-shadow:
+        0 0 0 2px rgba(255, 184, 72, .28),
+        0 10px 24px rgba(143, 88, 48, .16);
+}
+
+body[data-character="jeni"] .character-option.is-active .character-name {
+    color: #91522f;
+}
+
+/* Three active Wonderstar characters: keep the switcher clear and readable. */
+@media (orientation: portrait) and (max-width: 699px) {
+    .character-options {
+        gap: 7px;
+    }
+
+    .character-option {
+        width: 44px;
+    }
+
+    .character-avatar {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* v94 — three-character visual normalization                                 */
+/* -------------------------------------------------------------------------- */
+
+/*
+ * Thumbnail files are purpose-built square portraits. Display the whole file
+ * instead of cropping it in CSS.
+ */
+.character-avatar img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+    object-position: 50% 50%;
+    transform: none;
 }
 
 /*
-  LANDSCAPE IS ALWAYS HORIZONTAL.
-  This final rule intentionally ignores old width/height breakpoint combinations.
-  Browser zoom and short windows can change CSS pixel sizes, but as long as the
-  viewport is landscape the card remains in its dedicated right-hand zone.
-*/
-@media (orientation:landscape){
-  html,body{overflow:hidden}
-  .world{height:100dvh;min-height:0;overflow:hidden}
-
-  header{
-    height:clamp(50px,10vh,78px);
-    padding:clamp(12px,2.5vh,22px) 4.5% 6px;
-  }
-  .brand{font-size:clamp(17px,1.8vw,25px)}
-  .language{font-size:clamp(9px,1vw,12px)}
-
-  .main{
-    position:absolute!important;
-    inset:clamp(52px,10vh,82px) 4.5% clamp(30px,7vh,60px)!important;
-    display:block!important;
-    width:auto!important;
-    max-width:none!important;
-    transform:none!important;
-  }
-
-  .intro{
-    position:absolute!important;
-    left:0!important;
-    top:50%!important;
-    width:29%!important;
-    max-width:none!important;
-    margin:0!important;
-    padding:0!important;
-    transform:translateY(-50%)!important;
-    text-align:left!important;
-    z-index:5!important;
-  }
-  .eyebrow{
-    justify-content:flex-start!important;
-    font-size:clamp(7px,.78vw,12px)!important;
-    letter-spacing:clamp(1.2px,.18vw,3px)!important;
-  }
-  .eyebrow:before{width:clamp(13px,1.8vw,24px)!important}
-
-  #headline,
-  :lang(id) #headline,
-  :lang(en) #headline{
-    margin:clamp(7px,1.5vh,15px) 0!important;
-    font-size:clamp(28px,4.25vw,66px)!important;
-    line-height:.96!important;
-    letter-spacing:clamp(-2.6px,-.15vw,-1px)!important;
-  }
-  :lang(ko) #headline,
-  :lang(ja) #headline,
-  :lang(zh) #headline{
-    font-size:clamp(27px,3.95vw,61px)!important;
-  }
-  .intro p{
-    max-width:min(240px,90%)!important;
-    margin:0!important;
-    font-size:clamp(8px,1.05vw,15px)!important;
-    line-height:1.48!important;
-  }
-
-  /* True canvas center; text/card dimensions cannot move the mascot. */
-  .character{
-    position:absolute!important;
-    left:50%!important;
-    top:50%!important;
-    width:min(46vw,82vh)!important;
-    height:108%!important;
-    min-height:0!important;
-    margin:0!important;
-    transform:translate(-50%,-50%)!important;
-    z-index:3!important;
-  }
-  .halo{width:94%!important}
-  .fox{
-    position:relative!important;
-    left:0!important;
-    width:116%!important;
-    height:116%!important;
-    margin:0!important;
-  }
-  .fox img{
-    transform:none!important;
-    object-position:50% 50%!important;
-  }
-
-  /* Dedicated right safe zone. Never participates in grid flow in landscape. */
-  .fact{
-    position:absolute!important;
-    right:0!important;
-    top:50%!important;
-    grid-column:auto!important;
-    grid-row:auto!important;
-    justify-self:auto!important;
-    width:clamp(180px,21vw,285px)!important;
-    max-width:285px!important;
-    min-height:0!important;
-    padding:clamp(13px,1.6vw,21px)!important;
-    border-radius:clamp(18px,2vw,28px)!important;
-    transform:translateY(-50%) rotate(1.8deg)!important;
-    transform-origin:center center!important;
-    z-index:5!important;
-  }
-  .fact-top{
-    margin-bottom:clamp(6px,1vh,10px)!important;
-    font-size:clamp(7px,.78vw,10px)!important;
-    line-height:1.12!important;
-    letter-spacing:clamp(.8px,.1vw,1.35px)!important;
-  }
-  .fact h2{
-    margin:0 0 clamp(6px,1vh,10px)!important;
-    font-size:clamp(15px,1.55vw,21px)!important;
-    line-height:1.08!important;
-  }
-  .fact p{
-    min-height:0!important;
-    padding:0!important;
-    font-size:clamp(9px,.98vw,13px)!important;
-    line-height:1.42!important;
-  }
-  .paging{
-    position:static!important;
-    margin-top:clamp(7px,1.2vh,12px)!important;
-  }
-  .dots{display:flex!important}
-
-  .bottom{bottom:clamp(5px,1.5vh,14px)!important}
-  .source{font-size:clamp(6px,.65vw,9px)!important}
-}
-
-/* Narrow landscape: shrink card/mascot before they can collide. */
-@media (orientation:landscape) and (max-width:900px){
-  .intro{width:30%!important}
-  .character{
-    width:min(43vw,76vh)!important;
-    height:106%!important;
-  }
-  .fox{width:113%!important;height:113%!important}
-  .fact{
-    width:clamp(145px,23vw,205px)!important;
-    max-width:205px!important;
-    min-height:0!important;
-    padding:clamp(9px,1.7vw,14px)!important;
-  }
-  .fact h2{font-size:clamp(12px,1.8vw,17px)!important}
-  .fact p{font-size:clamp(7.5px,1.18vw,10.5px)!important}
-}
-
-/* Very short landscape windows (e.g. browser chrome + zoom). */
-@media (orientation:landscape) and (max-height:520px){
-  header{height:42px;padding:9px 4.5% 3px}
-  .main{inset:44px 4.5% 24px!important}
-  #headline,
-  :lang(id) #headline,
-  :lang(en) #headline{font-size:clamp(23px,4.5vw,42px)!important}
-  :lang(ko) #headline,
-  :lang(ja) #headline,
-  :lang(zh) #headline{font-size:clamp(22px,4.2vw,39px)!important}
-  .intro p{font-size:clamp(7px,1vw,10px)!important}
-  .character{width:min(40vw,74vh)!important}
-  .fact{
-    width:clamp(135px,22vw,185px)!important;
-    padding:8px 10px!important;
-  }
-  .fact-top{font-size:6.5px!important}
-  .fact h2{font-size:12px!important}
-  .fact p{font-size:7.5px!important;line-height:1.32!important}
-}
-
-/* PORTRAIT keeps the vertical composition and the same playful card tilt. */
-@media (orientation:portrait) and (max-width:900px){
-  #headline,
-  :lang(id) #headline,
-  :lang(en) #headline{
-    font-size:clamp(28px,9.8vw,44px)!important;
-    line-height:.96!important;
-  }
-  :lang(ko) #headline,
-  :lang(ja) #headline,
-  :lang(zh) #headline{
-    font-size:clamp(27px,9.1vw,41px)!important;
-  }
-  #headline .headline-lead{font-size:.9em!important}
-  #headline .headline-secondary{font-size:.72em!important}
-
-  .fact{
-    transform:rotate(1.8deg)!important;
-    transform-origin:center center!important;
-  }
-}
-
-
-
-/* v13: slightly reduce mascot scale on desktop only */
-@media (orientation:landscape) and (min-width:1101px){
-  .character{
-    width:min(42vw,74vh)!important;
-    height:104%!important;
-  }
-  .fox{
-    width:109%!important;
-    height:109%!important;
-  }
-}
-
-
-/* v14: content-fit story card, no forced empty vertical space */
-.fact{
-  height:auto!important;
-  min-height:0!important;
-  max-height:none!important;
-}
-.fact p{
-  min-height:0!important;
-  margin:0!important;
-}
-
-@media (orientation:landscape){
-  .fact{
-    width:clamp(190px,20vw,280px)!important;
-    max-width:280px!important;
-    min-height:0!important;
-    height:auto!important;
-    padding:clamp(13px,1.45vw,20px)!important;
-  }
-  .paging{
-    margin-top:clamp(8px,1.2vh,13px)!important;
-  }
-}
-
-@media (orientation:landscape) and (max-width:900px){
-  .fact{
-    width:clamp(150px,22vw,205px)!important;
-    height:auto!important;
-    min-height:0!important;
-  }
-}
-
-@media (orientation:portrait) and (max-width:900px){
-  .fact{
-    width:min(75%,360px)!important;
-    max-width:360px!important;
-    min-height:0!important;
-    height:auto!important;
-    padding:14px 16px!important;
-  }
-  .paging{margin-top:10px!important}
-}
-
-
-/* v15: replace website character assets and slightly reduce desktop mascot size */
-@media (orientation:landscape) and (min-width:1101px){
-  .character{
-    width:min(40vw,70vh)!important;
-    height:100%!important;
-  }
-  .fox{
-    width:104%!important;
-    height:104%!important;
-  }
-}
-
-
-/* v18: popup clearance + mobile navbar breathing room */
-/* Keep the speech bubble away from Pinkfong's head. */
-@media (orientation:landscape) and (min-width:901px){
-  .hello{
-    right:-8%!important;
-    top:10%!important;
-  }
-}
-
-@media (orientation:landscape) and (max-width:900px){
-  .hello{
-    right:-4%!important;
-    top:8%!important;
-  }
-}
-
-@media (orientation:portrait) and (max-width:900px){
-  .hello{
-    right:-2%!important;
-    top:10%!important;
-  }
-}
-
-/* Give the brand and language control more room from phone edges. */
-@media (max-width:600px){
-  header{
-    padding-left:20px!important;
-    padding-right:20px!important;
-  }
-}
-
-@media (max-width:700px) and (orientation:landscape){
-  header{
-    padding-left:16px!important;
-    padding-right:16px!important;
-  }
-}
-
-
-/* v22: mobile-safe speech bubble + updated popup spacing */
-@media (max-width:700px){
-  .hello{
-    box-sizing:border-box!important;
-    max-width:calc(100vw - 40px)!important;
-    white-space:normal!important;
-    overflow-wrap:break-word!important;
-    text-align:center!important;
-  }
-}
-
-@media (orientation:portrait) and (max-width:600px){
-  .hello{
-    left:auto!important;
-    right:8px!important;
-    top:10%!important;
-    max-width:min(160px, calc(100vw - 40px))!important;
-  }
-}
-
-@media (orientation:landscape) and (max-width:700px){
-  .hello{
-    right:0!important;
-    max-width:min(130px, calc(100vw - 32px))!important;
-  }
-}
-
-
-/* v27: story 2 speech bubble lives on Pinkfong's left side */
-.hello[data-story="2"]{
-  left:-7%!important;
-  right:auto!important;
-  top:12%!important;
-  transform-origin:88% 100%!important;
-}
-
-.hello[data-story="2"]::after{
-  left:auto!important;
-  right:12px!important;
-  border-left:2px solid transparent!important;
-  border-right:7px solid transparent!important;
-  transform:rotate(-10deg)!important;
-  transform-origin:top right!important;
-}
-
-.hello[data-story="2"].is-visible{
-  animation:speech-pop-in-from-left .36s cubic-bezier(.2,1.35,.45,1) both!important;
-}
-.hello[data-story="2"].is-hiding{
-  animation:speech-pop-out-to-left .22s cubic-bezier(.55,.05,.7,.35) both!important;
-}
-
-@keyframes speech-pop-in-from-left{
-  0%{opacity:0;transform:translate(16px,13px) rotate(2deg) scale(.58)}
-  62%{opacity:1;transform:translate(-2px,-2px) rotate(-7deg) scale(1.06)}
-  100%{opacity:1;transform:translate(0,0) rotate(-6deg) scale(1)}
-}
-@keyframes speech-pop-out-to-left{
-  0%{opacity:1;transform:translate(0,0) rotate(-6deg) scale(1)}
-  100%{opacity:0;transform:translate(11px,9px) rotate(-1deg) scale(.72)}
-}
-
-/* Keep the special left bubble safely inside small screens. */
-@media (orientation:portrait) and (max-width:600px){
-  .hello[data-story="2"]{
-    left:8px!important;
-    right:auto!important;
-    top:10%!important;
-    max-width:min(160px, calc(100vw - 40px))!important;
-  }
-}
-
-@media (orientation:landscape) and (max-width:700px){
-  .hello[data-story="2"]{
-    left:0!important;
-    right:auto!important;
-    top:8%!important;
-    max-width:min(130px, calc(100vw - 32px))!important;
-  }
-}
-
-
-/* v31: story 1 speech bubble also lives on Pinkfong's left side */
-.hello[data-story="1"]{
-  left:-7%!important;
-  right:auto!important;
-  top:9%!important;
-  transform-origin:88% 100%!important;
-}
-
-.hello[data-story="1"]::after{
-  left:auto!important;
-  right:12px!important;
-  border-left:2px solid transparent!important;
-  border-right:7px solid transparent!important;
-  transform:rotate(-10deg)!important;
-  transform-origin:top right!important;
-}
-
-.hello[data-story="1"].is-visible{
-  animation:speech-pop-in-from-left .36s cubic-bezier(.2,1.35,.45,1) both!important;
-}
-.hello[data-story="1"].is-hiding{
-  animation:speech-pop-out-to-left .22s cubic-bezier(.55,.05,.7,.35) both!important;
-}
-
-@media (orientation:portrait) and (max-width:600px){
-  .hello[data-story="1"]{
-    left:8px!important;
-    right:auto!important;
-    top:10%!important;
-    max-width:min(160px, calc(100vw - 40px))!important;
-  }
-}
-
-@media (orientation:landscape) and (max-width:700px){
-  .hello[data-story="1"]{
-    left:0!important;
-    right:auto!important;
-    top:8%!important;
-    max-width:min(130px, calc(100vw - 32px))!important;
-  }
-}
-
-
-/* v36: speech bubbles use fully rounded corners; the separate tip is enough */
-.hello{
-  border-radius:20px!important;
-}
-
-@media (max-width:700px){
-  .hello{border-radius:16px!important;}
-}
-
-
-/* v38 wordmark image logo */
-.brand{display:inline-flex;align-items:center;line-height:1}
-.brand-image{display:block;height:28px;width:auto;max-width:none;object-fit:contain}
-.brand-image-loader{height:34px}
-@media (max-width:1024px){.brand-image{height:26px}.brand-image-loader{height:32px}}
-@media (max-width:640px){.brand-image{height:22px}.brand-image-loader{height:28px}}
-.site-loader-brand{display:flex;align-items:center;justify-content:center}
-.site-loader-brand span{color:inherit}
-
-
-/* v41 theme-aware wordmark */
-.brand-picture{display:inline-flex;align-items:center;line-height:1}
-.brand-picture source, .brand-picture img{display:block}
-
-
-/* v43: wordmark color follows the actually rendered headline accent via JS */
-.brand-theme-sync{transition:opacity .12s ease}
-
-/* v50: desktop editorial overlap — copy behind Pinkfong, story card lower-left */
-@media (orientation:landscape) and (min-width:1101px){
-  /* Move the hero copy toward Pinkfong and let the mascot overlap it. */
-  .intro{
-    left:16%!important;
-    top:44%!important;
-    z-index:2!important;
-  }
-
-  /* Keep Pinkfong above the copy. */
-  .character{
-    z-index:3!important;
-  }
-
-  /* Shift the story card closer to Pinkfong and noticeably lower. */
-  .fact{
-    right:8%!important;
-    top:70%!important;
-    z-index:5!important;
-  }
-}
-
-/* v51: fine-tune desktop overlap from annotated preview */
-@media (orientation:landscape) and (min-width:1101px){
-  /* Nudge the editorial copy a little farther left, while keeping it behind Pinkfong. */
-  .intro{
-    left:13.5%!important;
-    z-index:2!important;
-  }
-
-  /* Keep mascot above the copy. */
-  .character{
-    z-index:3!important;
-  }
-
-  /* Pull the story card slightly toward Pinkfong and place it in front of the mascot. */
-  .fact{
-    right:12.5%!important;
-    top:70%!important;
-    z-index:6!important;
-  }
-}
-
-
-/* v52: swipe navigation + directional slide/fade pose transition */
-.fox{
-  touch-action:pan-y;
-}
-
-.pose-frame{
-  --pose-slide-distance:clamp(48px,6vw,88px);
-  display:block;
-  width:100%;
-  height:100%;
-  opacity:1;
-  transform:translate3d(0,0,0) scale(1);
-  transition:
-    opacity .22s ease,
-    transform .28s cubic-bezier(.22,.72,.2,1);
-  will-change:opacity,transform;
-}
-
-.pose-frame.pose-no-transition{
-  transition:none!important;
-}
-
-/* Next: old pose exits left, incoming pose starts at the right. */
-.pose-frame.pose-exit-next{
-  opacity:0;
-  transform:translate3d(calc(var(--pose-slide-distance) * -1),0,0) scale(.985);
-}
-.pose-frame.pose-enter-next{
-  opacity:0;
-  transform:translate3d(var(--pose-slide-distance),0,0) scale(.985);
-}
-
-/* Previous: mirror the direction. */
-.pose-frame.pose-exit-prev{
-  opacity:0;
-  transform:translate3d(var(--pose-slide-distance),0,0) scale(.985);
-}
-.pose-frame.pose-enter-prev{
-  opacity:0;
-  transform:translate3d(calc(var(--pose-slide-distance) * -1),0,0) scale(.985);
-}
-
-@media(max-width:600px){
-  .pose-frame{--pose-slide-distance:clamp(34px,12vw,54px)}
-}
-
-@media(prefers-reduced-motion:reduce){
-  .pose-frame{transition:none!important}
-}
-
-
-/* v53: hover card arrows, robust swipe/click separation, tablet editorial layout */
-.fact{
-  overflow:visible!important;
-}
-
-.story-arrows{
-  position:absolute;
-  inset:0;
-  z-index:8;
-  pointer-events:none;
-}
-.story-arrow{
-  position:absolute;
-  top:50%;
-  display:grid;
-  place-items:center;
-  width:38px;
-  height:38px;
-  padding:0;
-  border:1px solid #ffffffb8;
-  border-radius:999px;
-  background:#fffdf0;
-  color:#603780;
-  box-shadow:0 10px 26px #663c9828;
-  backdrop-filter:blur(12px);
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .18s ease,transform .22s cubic-bezier(.2,.72,.2,1),background-color .18s ease;
-}
-.story-arrow span{
-  display:block;
-  font-size:20px;
-  line-height:1;
-  transform:translateY(-1px);
-}
-.story-arrow-prev{
-  left:-19px;
-  transform:translate(-7px,-50%) scale(.92);
-}
-.story-arrow-next{
-  right:-19px;
-  transform:translate(7px,-50%) scale(.92);
-}
-
-@media (hover:hover) and (pointer:fine){
-  .fact:hover .story-arrow,
-  .fact:focus-within .story-arrow{
-    opacity:1;
-    pointer-events:auto;
-  }
-  .fact:hover .story-arrow-prev,
-  .fact:focus-within .story-arrow-prev{
-    transform:translate(0,-50%) scale(1);
-  }
-  .fact:hover .story-arrow-next,
-  .fact:focus-within .story-arrow-next{
-    transform:translate(0,-50%) scale(1);
-  }
-  .story-arrow:hover{background:#fff}
-}
-.story-arrow:focus-visible{
-  opacity:1;
-  pointer-events:auto;
-}
-@media (hover:none){
-  .story-arrows{display:none}
-}
-
-/* Tablet landscape gets the same overlapping editorial treatment as desktop. */
-@media (orientation:landscape) and (min-width:701px) and (max-width:1100px){
-  .intro{
-    left:12%!important;
-    top:45%!important;
-    width:34%!important;
-    z-index:2!important;
-  }
-  .character{
-    z-index:3!important;
-  }
-  .fact{
-    right:7.5%!important;
-    top:69%!important;
-    z-index:6!important;
-  }
-}
-
-/* Tablet portrait keeps the vertical composition, but carries over the same
-   leftward copy/card tuning and foreground card hierarchy. */
-@media (orientation:portrait) and (min-width:601px) and (max-width:900px){
-  .intro{
-    position:relative!important;
-    left:-4%!important;
-    z-index:2!important;
-  }
-  .character{
-    z-index:3!important;
-  }
-  .fact{
-    position:relative!important;
-    left:-5%!important;
-    top:-2.5vh!important;
-    z-index:6!important;
-  }
-}
-
-/* Larger portrait tablets (e.g. 10–13 inch class) use a dedicated vertical
-   layout instead of falling back to the desktop three-column grid. */
-@media (orientation:portrait) and (min-width:901px) and (max-width:1100px){
-  .main{
-    position:absolute!important;
-    inset:90px 7% 88px!important;
-    display:block!important;
-  }
-  .intro{
-    position:absolute!important;
-    left:3%!important;
-    top:3%!important;
-    width:62%!important;
-    max-width:none!important;
-    padding:0!important;
-    text-align:left!important;
-    z-index:2!important;
-  }
-  .character{
-    position:absolute!important;
-    left:50%!important;
-    top:51%!important;
-    width:min(70vw,58vh)!important;
-    height:68%!important;
-    transform:translate(-50%,-50%)!important;
-    z-index:3!important;
-  }
-  .fact{
-    position:absolute!important;
-    left:42%!important;
-    right:auto!important;
-    bottom:0!important;
-    top:auto!important;
-    width:min(56%,360px)!important;
-    max-width:360px!important;
-    transform:translateX(-50%) rotate(1.8deg)!important;
-    z-index:6!important;
-  }
-}
-
-
-/* v54: stronger card/mascot overlap + chevron controls that are desktop/tablet only */
-.story-arrow .story-chevron{
-  display:block;
-  width:9px;
-  height:9px;
-  border-right:2px solid currentColor;
-  border-bottom:2px solid currentColor;
-  font-size:0;
-  line-height:0;
-}
-.story-arrow-prev .story-chevron{
-  transform:translateX(2px) rotate(135deg);
-}
-.story-arrow-next .story-chevron{
-  transform:translateX(-2px) rotate(-45deg);
-}
-
-/* Controls are intentionally unavailable on phone layouts. Tablets keep the
-   controls in the DOM so a mouse/trackpad can reveal them, while touch users
-   continue to navigate with swipe. */
-@media (max-width:600px){
-  .story-arrows{display:none!important}
-}
-@media (min-width:601px){
-  .story-arrows{display:block!important}
-}
-
-/* On desktop/tablet pointer devices, reveal controls only while the cursor is
-   actually over the card/control area. `any-*` also covers tablet trackpads. */
-@media (min-width:601px) and (any-hover:hover) and (any-pointer:fine){
-  .story-arrow{
-    opacity:0;
-    pointer-events:none;
-  }
-  .fact:hover .story-arrow{
-    opacity:1;
-    pointer-events:auto;
-  }
-  .fact:hover .story-arrow-prev{
-    transform:translate(0,-50%) scale(1);
-  }
-  .fact:hover .story-arrow-next{
-    transform:translate(0,-50%) scale(1);
-  }
-  .fact:not(:hover) .story-arrow:not(:focus-visible){
-    opacity:0!important;
-    pointer-events:none!important;
-  }
-}
-
-/* Desktop: move the story card a little farther toward the mascot so the
-   card visibly overlaps Pinkfong while remaining above the character layer. */
-@media (orientation:landscape) and (min-width:1101px){
-  .fact{
-    right:15.5%!important;
-    z-index:6!important;
-  }
-}
-
-/* Landscape tablets get the same stronger overlap. */
-@media (orientation:landscape) and (min-width:701px) and (max-width:1100px){
-  .fact{
-    right:11%!important;
-    z-index:6!important;
-  }
-}
-
-/* Portrait tablet: pull the card a little farther left toward Pinkfong. */
-@media (orientation:portrait) and (min-width:601px) and (max-width:900px){
-  .fact{
-    left:-8%!important;
-    z-index:6!important;
-  }
-}
-
-/* Larger portrait tablets: same overlap treatment in the dedicated layout. */
-@media (orientation:portrait) and (min-width:901px) and (max-width:1100px){
-  .fact{
-    left:38%!important;
-    z-index:6!important;
-  }
-}
-
-/* v64: portrait phones keep a centered desktop-like composition across
-   different device heights, while square-ish portrait devices use desktop
-   layout even when standing upright. */
-@media (orientation:portrait) and (max-width:600px){
-  /* Bigger gap below the navbar so the top content breathes more. */
-  .main{
-    inset:84px 12px 26px!important;
-    gap:0!important;
-    grid-template-rows:1fr 1.34fr auto!important;
-  }
-
-  /* Center the headline block and pull it closer to Pinkfong. */
-  .intro{
-    position:relative!important;
-    top:34px!important;
-    width:min(88%,340px)!important;
-    margin-inline:auto!important;
-    justify-self:center!important;
-    align-self:start!important;
-    text-align:center!important;
-    padding-bottom:0!important;
-    z-index:2!important;
-  }
-  .eyebrow{
-    justify-content:center!important;
-    margin-bottom:5px!important;
-  }
-  #headline,
-  :lang(id) #headline,
-  :lang(en) #headline,
-  :lang(ko) #headline,
-  :lang(ja) #headline,
-  :lang(zh) #headline{
-    margin-top:12px!important;
-    margin-bottom:8px!important;
-  }
-  .intro p{
-    max-width:240px!important;
-    margin:10px auto 0!important;
-  }
-
-  /* Slightly smaller Pinkfong so the text/card can overlap more cleanly. */
-  .character{
-    grid-column:1 / -1!important;
-    grid-row:2!important;
-    position:relative!important;
-    top:-66px!important;
-    z-index:3!important;
-    align-self:center!important;
-    justify-self:center!important;
-  }
-  .fox{
-    width:97%!important;
-    height:103%!important;
-  }
-
-  /* Keep the card centered and much closer to the mascot, overlap allowed. */
-  .fact{
-    position:relative!important;
-    grid-column:1 / -1!important;
-    grid-row:3!important;
-    top:-100px!important;
-    width:min(74%,290px)!important;
-    margin-inline:auto!important;
-    justify-self:center!important;
-    align-self:end!important;
-    z-index:6!important;
-    transform:rotate(1.3deg)!important;
-  }
-}
-
-/* Medium/taller phones need a touch more vertical pull for the card. */
-@media (orientation:portrait) and (max-width:600px) and (min-height:780px){
-  .main{inset:90px 12px 28px!important}
-  .intro{top:38px!important}
-  .character{top:-76px!important}
-  .fact{top:-112px!important}
-}
-
-/* Very tall phones can afford slightly more spacing at the top while keeping
-   the card tucked close to Pinkfong. */
-@media (orientation:portrait) and (max-width:600px) and (min-height:900px){
-  .main{inset:98px 12px 30px!important}
-  .intro{top:42px!important}
-  .character{top:-84px!important}
-  .fact{top:-122px!important}
-}
-
-/* Shorter phones ease the overlap slightly to avoid crowding. */
-@media (orientation:portrait) and (max-width:600px) and (max-height:699px){
-  .main{inset:74px 10px 22px!important}
-  .intro{top:22px!important}
-  .character{top:-44px!important}
-  .fox{
-    width:94%!important;
-    height:100%!important;
-  }
-  .fact{
-    top:-76px!important;
-    width:min(78%,290px)!important;
-  }
-}
-
-/* Extra-small phones keep the same composition, just slightly gentler. */
-@media (orientation:portrait) and (max-width:360px){
-  .main{inset:70px 9px 20px!important}
-  .intro{
-    top:18px!important;
-    width:min(90%,320px)!important;
-  }
-  .character{top:-38px!important}
-  .fox{
-    width:92%!important;
-    height:98%!important;
-  }
-  .fact{
-    top:-62px!important;
-    width:min(80%,280px)!important;
-  }
-}
-
-/* Square-ish portrait devices (including iPad mini portrait) should use a
-   desktop-like three-column layout instead of the stacked mobile layout. */
-@media (orientation:portrait) and (min-aspect-ratio:3/5) and (max-width:1100px){
-  header{
-    height:90px!important;
-    padding:24px 4.5%!important;
-  }
-  .main{
-    inset:100px 4.5% 88px!important;
-    display:grid!important;
-    grid-template-columns:1fr 1.18fr 1fr!important;
-    grid-template-rows:none!important;
-    align-items:center!important;
-    gap:10px!important;
-  }
-  .intro{
-    grid-column:1!important;
-    grid-row:auto!important;
-    position:relative!important;
-    top:0!important;
-    width:auto!important;
-    margin:0!important;
-    justify-self:start!important;
-    align-self:center!important;
-    text-align:left!important;
-    padding:0 0 18px!important;
-    z-index:2!important;
-  }
-  .eyebrow{
-    justify-content:flex-start!important;
-  }
-  .intro p{
-    max-width:250px!important;
-    margin:14px 0 0!important;
-  }
-  .character{
-    grid-column:2!important;
-    grid-row:auto!important;
-    align-self:center!important;
-    justify-self:center!important;
-    z-index:3!important;
-  }
-  .fox{
-    width:118%!important;
-    height:110%!important;
-  }
-  .fact{
-    grid-column:3!important;
-    grid-row:auto!important;
-    position:relative!important;
-    top:0!important;
-    left:auto!important;
-    right:auto!important;
-    width:min(100%,300px)!important;
-    margin:0!important;
-    justify-self:end!important;
-    align-self:center!important;
-    z-index:6!important;
-    transform:rotate(2deg)!important;
-  }
-}
-
-/* Wider square portrait tablets can use a little more room while keeping the
-   desktop composition. */
-@media (orientation:portrait) and (min-aspect-ratio:3/5) and (min-width:700px){
-  .main{
-    inset:104px 5.5% 92px!important;
-    grid-template-columns:1fr 1.22fr 1fr!important;
-  }
-  .fact{width:min(100%,320px)!important}
-}
-
-
-/* v68: phone composition anchored to Pinkfong instead of viewport height.
-   The headline and story card now keep a fixed visual relationship to the
-   mascot across short and tall portrait phones. */
-@media (orientation:portrait) and (max-width:600px) and (max-aspect-ratio:599/1000){
-  .main{
-    inset:0!important;
-    display:block!important;
-    --pf-anchor-y:clamp(345px,45dvh,390px);
-    --pf-copy-gap:clamp(250px,68vw,286px);
-    --pf-card-gap:clamp(124px,34vw,146px);
-  }
-
-  /* Copy is anchored above the mascot. */
-  .intro{
-    position:absolute!important;
-    left:50%!important;
-    top:calc(var(--pf-anchor-y) - var(--pf-copy-gap))!important;
-    width:min(88vw,340px)!important;
-    margin:0!important;
-    padding:0!important;
-    transform:translateX(-50%)!important;
-    text-align:center!important;
-    z-index:2!important;
-  }
-  .eyebrow{
-    justify-content:center!important;
-    margin-bottom:4px!important;
-  }
-  #headline,
-  :lang(id) #headline,
-  :lang(en) #headline,
-  :lang(ko) #headline,
-  :lang(ja) #headline,
-  :lang(zh) #headline{
-    margin-top:10px!important;
-    margin-bottom:6px!important;
-  }
-  .intro p{
-    max-width:245px!important;
-    margin:8px auto 0!important;
-  }
-
-  /* Pinkfong is the anchor of the whole phone composition. */
-  .character{
-    position:absolute!important;
-    left:50%!important;
-    top:var(--pf-anchor-y)!important;
-    width:100vw!important;
-    height:clamp(330px,102vw,400px)!important;
-    margin:0!important;
-    transform:translate(-50%,-50%)!important;
-    z-index:3!important;
-  }
-  .fox{
-    width:96%!important;
-    height:102%!important;
-  }
-
-  /* Card is anchored below Pinkfong and intentionally overlaps the lower body. */
-  .fact{
-    position:absolute!important;
-    left:50%!important;
-    top:calc(var(--pf-anchor-y) + var(--pf-card-gap))!important;
-    width:min(65vw,250px)!important;
-    margin:0!important;
-    padding:13px 15px!important;
-    transform:translateX(-50%) rotate(1.3deg)!important;
-    z-index:6!important;
-  }
-  .fact h2{
-    margin-top:7px!important;
-  }
-  .fact p{
-    min-height:0!important;
-    padding-right:0!important;
-  }
-}
-
-/* Slightly narrower phones keep the same anchor model with a compact card. */
-@media (orientation:portrait) and (max-width:360px) and (max-aspect-ratio:599/1000){
-  .main{
-    --pf-anchor-y:clamp(330px,45dvh,360px);
-    --pf-copy-gap:clamp(232px,70vw,256px);
-    --pf-card-gap:clamp(112px,36vw,128px);
-  }
-  .character{
-    height:clamp(310px,105vw,365px)!important;
-  }
-  .fox{
-    width:94%!important;
-    height:100%!important;
-  }
-  .fact{
-    width:min(67vw,225px)!important;
-    padding:12px 14px!important;
-  }
-}
-
-
-/* v71: center the whole phone composition vertically and keep all three
-   anchored elements on the same horizontal centerline. The headline remains
-   only lightly overlapped by the mascot. */
-
-/* v72: keep the three-part phone composition centered as one visual group.
-   Pinkfong stays on the canvas centerline; copy is pushed much farther above
-   the mascot while the card keeps its existing distance below. */
-@media (orientation:portrait) and (max-width:600px) and (max-aspect-ratio:599/1000){
-  .main{
-    /* Character is the group anchor. Using viewport-relative center keeps the
-       whole composition visually centered on short and tall phones alike. */
-    --pf-anchor-y:53dvh!important;
-    /* Large but responsive separation: enough for the headline to remain
-       readable with only a very small visual overlap at the ears. */
-    --pf-copy-gap:clamp(240px, min(80vw, 43dvh), 320px)!important;
-  }
-
-  .intro,
-  .character,
-  .fact{
-    left:50%!important;
-  }
-
-  .intro{
-    width:min(88vw,340px)!important;
-    text-align:center!important;
-  }
-
-  .character{
-    transform:translate(-50%,-50%)!important;
-  }
-
-  .fact{
-    transform:translateX(-50%) rotate(1.3deg)!important;
-  }
-}
-
-/* On very short phones, preserve clear navbar breathing room while keeping
-   the same centered relationship between character and card. */
-@media (orientation:portrait) and (max-width:600px) and (max-aspect-ratio:599/1000) and (max-height:650px){
-  .main{
-    --pf-anchor-y:55dvh!important;
-    --pf-copy-gap:clamp(238px,76vw,270px)!important;
-  }
-}
-
-
-/* v73: iPad mini / iPad Pro portrait should follow the desktop composition,
-   not the stacked/mobile editorial experiments. This strong override restores
-   the classic three-column desktop layout and clears any overlap offsets. */
-@media (orientation:portrait) and (min-width:700px) and (max-width:1100px) and (min-aspect-ratio:3/5){
-  header{
-    height:90px!important;
-    padding:24px 4.5%!important;
-  }
-  .main{
-    position:absolute!important;
-    inset:90px 4.5% 91px!important;
-    display:grid!important;
-    grid-template-columns:1fr 1.25fr 1fr!important;
-    grid-template-rows:none!important;
-    align-items:center!important;
-    gap:12px!important;
-    transform:none!important;
-  }
-  .intro{
-    grid-column:1!important;
-    grid-row:1!important;
-    position:relative!important;
-    top:0!important;
-    left:auto!important;
-    width:auto!important;
-    margin:0!important;
-    padding:0 0 40px!important;
-    transform:none!important;
-    justify-self:start!important;
-    align-self:center!important;
-    text-align:left!important;
-    z-index:2!important;
-  }
-  .eyebrow{
-    justify-content:flex-start!important;
-    margin-bottom:0!important;
-  }
-  .intro p{
-    max-width:270px!important;
-    margin:20px 0 26px!important;
-  }
-  .character{
-    grid-column:2!important;
-    grid-row:1!important;
-    position:relative!important;
-    top:0!important;
-    left:auto!important;
-    width:100%!important;
-    height:100%!important;
-    margin:0!important;
-    transform:none!important;
-    align-self:center!important;
-    justify-self:center!important;
-    z-index:2!important;
-  }
-  .fox{
-    width:125%!important;
-    height:115%!important;
-  }
-  .fact{
-    grid-column:3!important;
-    grid-row:1!important;
-    position:relative!important;
-    top:0!important;
-    left:auto!important;
-    right:auto!important;
-    width:100%!important;
-    max-width:315px!important;
-    margin:0!important;
-    padding:27px!important;
-    transform:rotate(2deg)!important;
-    justify-self:end!important;
-    align-self:center!important;
-    z-index:3!important;
-  }
-  .fact-top{font-size:12px!important;letter-spacing:1.8px!important}
-  .fact h2{font-size:26px!important;margin:0 0 12px!important}
-  .fact p{font-size:16px!important;line-height:1.65!important;min-height:105px!important;padding-right:0!important}
-  .paging{position:static!important;right:auto!important;bottom:auto!important;margin-top:22px!important;gap:0!important}
-  .paging button:first-child,.dots{display:flex!important}
-  .paging button{width:37px!important;height:37px!important}
-  .hello{
-    top:9%!important;
-    right:-2%!important;
-    max-width:180px!important;
-    text-align:center!important;
-  }
-  .hello[data-story="2"]{
-    left:-5%!important;
-    right:auto!important;
-    top:11%!important;
-  }
-}
-
-/* Larger iPad Pro portrait gets a bit more room while staying desktop-like. */
-@media (orientation:portrait) and (min-width:900px) and (max-width:1100px) and (min-aspect-ratio:3/5){
-  .main{
-    inset:94px 5% 96px!important;
-    grid-template-columns:1fr 1.28fr 1fr!important;
-  }
-  .fact{max-width:330px!important}
-}
-
-/* v74: TABLET ORIENTATION SPLIT
-   Portrait iPad/tablet = centered stacked/mobile composition.
-   Landscape is intentionally untouched, so it keeps the desktop layout. */
-@media (orientation:portrait) and (min-width:601px) and (max-width:1100px){
-  header{
-    height:88px!important;
-    padding:22px 5%!important;
-  }
-
-  .main{
-    position:absolute!important;
-    inset:0!important;
-    display:block!important;
-    transform:none!important;
-    --pf-tab-anchor-y:52dvh;
-    --pf-tab-copy-gap:clamp(270px,24dvh,340px);
-    --pf-tab-card-gap:clamp(160px,15dvh,205px);
-  }
-
-  /* Top copy: centered, mobile-like, with clear breathing room. */
-  .intro{
-    position:absolute!important;
-    left:50%!important;
-    top:calc(var(--pf-tab-anchor-y) - var(--pf-tab-copy-gap))!important;
-    width:min(72vw,520px)!important;
-    margin:0!important;
-    padding:0!important;
-    transform:translateX(-50%)!important;
-    text-align:center!important;
-    justify-self:auto!important;
-    align-self:auto!important;
-    z-index:2!important;
-  }
-  .eyebrow{
-    justify-content:center!important;
-    margin-bottom:5px!important;
-    font-size:10px!important;
-    letter-spacing:2px!important;
-  }
-  #headline,
-  :lang(id) #headline,
-  :lang(en) #headline,
-  :lang(ko) #headline,
-  :lang(ja) #headline,
-  :lang(zh) #headline{
-    font-size:clamp(40px,5.5vw,58px)!important;
-    line-height:1.02!important;
-    margin:10px 0 8px!important;
-    letter-spacing:-2px!important;
-  }
-  .intro p{
-    max-width:360px!important;
-    margin:9px auto 0!important;
-    font-size:clamp(13px,1.55vw,16px)!important;
-    line-height:1.5!important;
-  }
-
-  /* Pinkfong becomes the visual anchor in the center, like the phone layout. */
-  .character{
-    position:absolute!important;
-    left:50%!important;
-    top:var(--pf-tab-anchor-y)!important;
-    width:min(76vw,650px)!important;
-    height:clamp(420px,52dvh,620px)!important;
-    margin:0!important;
-    transform:translate(-50%,-50%)!important;
-    grid-column:auto!important;
-    grid-row:auto!important;
-    align-self:auto!important;
-    justify-self:auto!important;
-    z-index:3!important;
-  }
-  .fox{
-    width:100%!important;
-    height:100%!important;
-  }
-
-  /* Story card stays centered below Pinkfong instead of becoming a tall side card. */
-  .fact{
-    position:absolute!important;
-    left:50%!important;
-    top:calc(var(--pf-tab-anchor-y) + var(--pf-tab-card-gap))!important;
-    right:auto!important;
-    width:min(54vw,380px)!important;
-    max-width:380px!important;
-    margin:0!important;
-    padding:16px 19px!important;
-    transform:translateX(-50%) rotate(1.3deg)!important;
-    grid-column:auto!important;
-    grid-row:auto!important;
-    justify-self:auto!important;
-    align-self:auto!important;
-    border-radius:23px!important;
-    z-index:6!important;
-  }
-  .fact-top{
-    font-size:10px!important;
-    letter-spacing:1.4px!important;
-    margin-bottom:7px!important;
-  }
-  .fact h2{
-    font-size:clamp(20px,2.5vw,25px)!important;
-    margin:0 0 7px!important;
-  }
-  .fact p{
-    font-size:clamp(12px,1.55vw,15px)!important;
-    line-height:1.45!important;
-    min-height:0!important;
-    padding-right:0!important;
-  }
-  .paging{
-    position:static!important;
-    margin-top:10px!important;
-    justify-content:center!important;
-  }
-
-  /* Keep the speech bubble close to the mascot on portrait tablets. */
-  .hello{
-    top:10%!important;
-    right:2%!important;
-    left:auto!important;
-    max-width:180px!important;
-  }
-  .hello[data-story="2"]{
-    left:1%!important;
-    right:auto!important;
-    top:12%!important;
-  }
-}
-
-/* iPad mini portrait: slightly tighter scale. */
-@media (orientation:portrait) and (min-width:601px) and (max-width:850px){
-  .main{
-    --pf-tab-anchor-y:52dvh;
-    --pf-tab-copy-gap:clamp(250px,23dvh,290px);
-    --pf-tab-card-gap:clamp(145px,15dvh,170px);
-  }
-  .character{
-    width:min(80vw,580px)!important;
-    height:clamp(390px,50dvh,520px)!important;
-  }
-  .fact{
-    width:min(58vw,350px)!important;
-  }
-}
-
-/* iPad Pro portrait: allow a little more scale without changing composition. */
-@media (orientation:portrait) and (min-width:851px) and (max-width:1100px){
-  .main{
-    --pf-tab-anchor-y:51dvh;
-    --pf-tab-copy-gap:clamp(310px,24dvh,350px);
-    --pf-tab-card-gap:clamp(180px,15dvh,210px);
-  }
-  .character{
-    width:min(72vw,670px)!important;
-    height:clamp(500px,52dvh,660px)!important;
-  }
-}
-
-
-/* v75: portrait tablets (iPad mini / iPad Pro standing) should mimic the
-   polished mobile-stacked composition from the phone reference, not the
-   narrow desktop nor the stretched broken tablet stack. This block is kept
-   last so it cleanly overrides earlier portrait experiments. */
-@media (orientation:portrait) and (min-width:700px) and (max-width:1100px){
-  header{
-    height:88px!important;
-    padding:18px 22px!important;
-  }
-  .brand{font-size:24px!important}
-  .language{font-size:13px!important;padding:10px 12px!important}
-
-  .main{
-    position:absolute!important;
-    inset:0!important;
-    display:block!important;
-    transform:none!important;
-    --pf-tab-anchor-y:clamp(470px, 48dvh, 600px);
-    --pf-tab-copy-gap:clamp(290px, 30dvh, 350px);
-    --pf-tab-card-gap:clamp(155px, 16dvh, 195px);
-  }
-
-  .intro{
-    position:absolute!important;
-    left:50%!important;
-    top:calc(var(--pf-tab-anchor-y) - var(--pf-tab-copy-gap))!important;
-    width:min(72vw, 460px)!important;
-    margin:0!important;
-    padding:0!important;
-    transform:translateX(-50%)!important;
-    text-align:center!important;
-    justify-self:auto!important;
-    align-self:auto!important;
-    z-index:2!important;
-  }
-  .eyebrow{
-    justify-content:center!important;
-    margin-bottom:6px!important;
-    font-size:11px!important;
-    letter-spacing:2.2px!important;
-  }
-  .eyebrow:before{width:20px!important}
-  #headline,
-  :lang(id) #headline,
-  :lang(en) #headline,
-  :lang(ko) #headline,
-  :lang(ja) #headline,
-  :lang(zh) #headline{
-    font-size:clamp(34px, 5vw, 48px)!important;
-    line-height:1.03!important;
-    letter-spacing:-1.8px!important;
-    margin:12px 0 8px!important;
-  }
-  .intro p{
-    max-width:290px!important;
-    margin:10px auto 0!important;
-    font-size:13px!important;
-    line-height:1.45!important;
-  }
-
-  .character{
-    position:absolute!important;
-    left:50%!important;
-    top:var(--pf-tab-anchor-y)!important;
-    width:100%!important;
-    height:clamp(430px, 55vw, 560px)!important;
-    margin:0!important;
-    transform:translate(-50%, -50%)!important;
-    justify-content:center!important;
-    align-items:center!important;
-    z-index:3!important;
-  }
-  .fox{
-    width:88%!important;
-    height:106%!important;
-    max-width:none!important;
-  }
-
-  .fact{
-    position:absolute!important;
-    left:50%!important;
-    top:calc(var(--pf-tab-anchor-y) + var(--pf-tab-card-gap))!important;
-    width:min(50vw, 340px)!important;
-    max-width:340px!important;
-    margin:0!important;
-    padding:18px 20px!important;
-    transform:translateX(-50%) rotate(1.2deg)!important;
-    border-radius:24px!important;
-    justify-self:auto!important;
-    align-self:auto!important;
-    z-index:6!important;
-  }
-  .fact-top{font-size:10px!important;letter-spacing:1.4px!important;margin-bottom:8px!important}
-  .fact h2{font-size:22px!important;margin:0 0 8px!important;letter-spacing:-.6px!important}
-  .fact p{font-size:14px!important;line-height:1.5!important;min-height:0!important;padding-right:0!important}
-  .paging{
-    position:static!important;
-    margin-top:14px!important;
-    justify-content:center!important;
-  }
-  .paging button:first-child{display:none!important}
-  .paging button:last-child{display:none!important}
-  .dots{display:flex!important}
-
-  .hello{
-    right:4%!important;
-    top:14%!important;
-    left:auto!important;
-    max-width:170px!important;
-    font-size:12px!important;
-    padding:9px 12px!important;
-    white-space:normal!important;
-    text-align:center!important;
-    transform:rotate(6deg)!important;
-  }
-  .hello[data-story="2"]{
-    left:8%!important;
-    right:auto!important;
-    top:14%!important;
-    transform:rotate(-5deg)!important;
-  }
-
-  .bottom{
-    left:5%!important;
-    right:5%!important;
-    bottom:18px!important;
-    justify-content:center!important;
-  }
-  .source,.hint{font-size:10px!important}
-}
-
-/* 13-inch portrait iPad can breathe a little more while keeping the same look. */
-@media (orientation:portrait) and (min-width:900px) and (max-width:1100px){
-  .main{
-    --pf-tab-anchor-y:clamp(520px, 49dvh, 660px);
-    --pf-tab-copy-gap:clamp(320px, 31dvh, 390px);
-    --pf-tab-card-gap:clamp(168px, 16dvh, 210px);
-  }
-  .intro{width:min(66vw, 500px)!important}
-  .fact{width:min(42vw, 360px)!important;max-width:360px!important}
-  .fox{width:84%!important;height:104%!important}
-}
-
-/* v76 responsive QA pass --------------------------------------------------
-   Final breakpoint contract:
-   - portrait phones: mobile/stacked composition
-   - portrait tablets/iPads: scaled mobile/stacked composition
-   - landscape tablets + desktop: existing desktop composition
-   This block intentionally comes last to neutralize older experimental rules. */
-
-/* Never let an inherited `bottom` stretch an absolutely-positioned story card. */
-@media (orientation:portrait) and (max-width:1100px){
-  .fact{
-    bottom:auto!important;
-    height:auto!important;
-    min-height:0!important;
-    max-height:none!important;
-  }
-}
-
-/* Portrait tablets: one clean stacked layout for iPad mini through iPad Pro. */
-@media (orientation:portrait) and (min-width:700px) and (max-width:1100px){
-  header{
-    height:88px!important;
-    padding:18px 24px!important;
-  }
-
-  .main{
-    position:absolute!important;
-    inset:0!important;
-    display:block!important;
-    transform:none!important;
-    --pf-tab-anchor-y:50dvh;
-    --pf-tab-copy-gap:clamp(285px,29dvh,365px);
-    --pf-tab-card-gap:clamp(160px,15.5dvh,210px);
-  }
-
-  .intro{
-    position:absolute!important;
-    left:50%!important;
-    top:calc(var(--pf-tab-anchor-y) - var(--pf-tab-copy-gap))!important;
-    width:min(72vw,480px)!important;
-    margin:0!important;
-    padding:0!important;
-    transform:translateX(-50%)!important;
-    text-align:center!important;
-    justify-self:auto!important;
-    align-self:auto!important;
-    z-index:2!important;
-  }
-  .eyebrow{
-    justify-content:center!important;
-    margin-bottom:6px!important;
-    font-size:11px!important;
-    letter-spacing:2.2px!important;
-  }
-  .eyebrow:before{width:20px!important}
-  #headline,
-  :lang(id) #headline,
-  :lang(en) #headline,
-  :lang(ko) #headline,
-  :lang(ja) #headline,
-  :lang(zh) #headline{
-    font-size:clamp(35px,5vw,50px)!important;
-    line-height:1.03!important;
-    letter-spacing:-1.8px!important;
-    margin:12px 0 8px!important;
-  }
-  .intro p{
-    max-width:310px!important;
-    margin:10px auto 0!important;
-    font-size:13px!important;
-    line-height:1.45!important;
-  }
-
-  .character{
-    position:absolute!important;
-    left:50%!important;
-    top:var(--pf-tab-anchor-y)!important;
-    width:min(82vw,760px)!important;
-    height:clamp(470px,58vw,620px)!important;
-    margin:0!important;
-    transform:translate(-50%,-50%)!important;
-    grid-column:auto!important;
-    grid-row:auto!important;
-    align-self:auto!important;
-    justify-self:auto!important;
-    z-index:3!important;
-  }
-  .fox{
-    width:92%!important;
-    height:104%!important;
-    max-width:none!important;
-  }
-
-  .fact{
-    position:absolute!important;
-    left:50%!important;
-    right:auto!important;
-    top:calc(var(--pf-tab-anchor-y) + var(--pf-tab-card-gap))!important;
-    bottom:auto!important;
-    width:min(50vw,360px)!important;
-    max-width:360px!important;
-    height:auto!important;
-    min-height:0!important;
-    max-height:none!important;
-    margin:0!important;
-    padding:17px 19px!important;
-    transform:translateX(-50%) rotate(1.2deg)!important;
-    border-radius:24px!important;
-    grid-column:auto!important;
-    grid-row:auto!important;
-    justify-self:auto!important;
-    align-self:auto!important;
-    z-index:6!important;
-  }
-  .fact-top{font-size:10px!important;letter-spacing:1.4px!important;margin-bottom:7px!important}
-  .fact h2{font-size:22px!important;margin:0 0 7px!important;letter-spacing:-.6px!important}
-  .fact p{font-size:14px!important;line-height:1.45!important;min-height:0!important;padding-right:0!important}
-  .paging{
-    position:static!important;
-    right:auto!important;
-    bottom:auto!important;
-    margin-top:12px!important;
-    justify-content:center!important;
-  }
-  .paging button:first-child,.paging button:last-child{display:none!important}
-  .dots{display:flex!important}
-
-  .hello{
-    left:auto!important;
-    right:7%!important;
-    top:13%!important;
-    max-width:170px!important;
-    font-size:12px!important;
-    padding:9px 12px!important;
-    white-space:normal!important;
-    text-align:center!important;
-  }
-  .hello[data-story="2"]{
-    left:7%!important;
-    right:auto!important;
-    top:13%!important;
-  }
-}
-
-/* Larger portrait iPads scale up, but keep exactly the same stacked geometry. */
-@media (orientation:portrait) and (min-width:900px) and (max-width:1100px){
-  .main{
-    --pf-tab-anchor-y:50dvh;
-    --pf-tab-copy-gap:clamp(340px,28dvh,390px);
-    --pf-tab-card-gap:clamp(190px,15dvh,220px);
-  }
-  .intro{width:min(64vw,520px)!important}
-  .character{
-    width:min(76vw,780px)!important;
-    height:clamp(560px,58vw,680px)!important;
-  }
-  .fox{width:90%!important;height:103%!important}
-  .fact{width:min(40vw,380px)!important;max-width:380px!important}
-}
-
-/* v76.1 tablet copy clearance: keep the headline visibly separated from
-   Pinkfong while preserving the stacked portrait composition. */
-@media (orientation:portrait) and (min-width:700px) and (max-width:1100px){
-  .main{--pf-tab-copy-gap:clamp(380px,36.5dvh,505px)!important}
-}
-@media (orientation:portrait) and (min-width:900px) and (max-width:1100px){
-  .main{--pf-tab-copy-gap:clamp(430px,36.5dvh,520px)!important}
-}
-
-/* v76.2 tiny-phone clearance: avoid covering the intro on very short screens. */
-@media (orientation:portrait) and (max-width:340px) and (max-height:650px){
-  .main{
-    --pf-anchor-y:56dvh!important;
-    --pf-copy-gap:clamp(255px,82vw,270px)!important;
-  }
-  .character{
-    height:clamp(280px,90vw,310px)!important;
-  }
-  .fox{
-    width:92%!important;
-    height:98%!important;
-  }
-}
-
-/* v76.3 compact landscape: keep the desktop composition but reduce mascot
-   overlap on short landscape phones/small tablets. */
-@media (orientation:landscape) and (min-width:700px) and (max-width:1000px) and (max-height:520px){
-  .fox{
-    width:84%!important;
-    height:96%!important;
-  }
-}
-
-/* v76.4 final vertical centering for portrait tablets. */
-@media (orientation:portrait) and (min-width:700px) and (max-width:899px){
-  .main{--pf-tab-anchor-y:52dvh!important}
-}
-@media (orientation:portrait) and (min-width:900px) and (max-width:1100px){
-  .main{--pf-tab-anchor-y:55dvh!important}
+ * Hogi and Jeni pose files now use the same portrait canvas as Pinkfong.
+ * Keep character positioning simple and centered; avoid per-slide nudges.
+ */
+body[data-character="hogi"] .pose-frame img,
+body[data-character="jeni"] .pose-frame img {
+    object-position: 50% 50%;
+    transform: none;
+}
+
+/* Keep the three-character switcher readable but visually compact. */
+@media (orientation: landscape) and (min-width: 701px) {
+    .character-options {
+        gap: 11px;
+    }
+
+    .character-option {
+        width: 60px;
+    }
+
+    .character-avatar {
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+    }
+}
+
+@media (orientation: portrait) and (max-width: 699px) {
+    .character-options {
+        gap: 8px;
+    }
+
+    .character-option {
+        width: 46px;
+    }
+
+    .character-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+    }
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* v96 composition adjustment                                                 */
+/* -------------------------------------------------------------------------- */
+/*
+ * Main landscape content is intentionally lifted above the character switcher.
+ * The switcher remains near the bottom so it does not overlap the hero.
+ */
+
+/* -------------------------------------------------------------------------- */
+/* v97 — larger hero + pose-aware speech placement                            */
+/* -------------------------------------------------------------------------- */
+
+/*
+ * Each story owns its speech position so the bubble stays visually attached
+ * to the current pose instead of sharing one generic coordinate.
+ */
+.hello[data-story="1"] {
+    left: 10%;
+    right: auto;
+    top: 10%;
+    transform-origin: 88% 100%;
+}
+
+.hello[data-story="2"] {
+    left: auto;
+    right: 13%;
+    top: 8%;
+    transform-origin: 12% 100%;
+}
+
+.hello[data-story="3"] {
+    left: auto;
+    right: 10%;
+    top: 24%;
+    transform-origin: 12% 100%;
+}
+
+/* Story 1 sits left of the character, therefore its pointer faces right. */
+.hello[data-story="1"]::after {
+    left: auto;
+    right: 12px;
+    border-left: 2px solid transparent;
+    border-right: 7px solid transparent;
+    transform: rotate(-10deg);
+    transform-origin: top right;
+}
+
+/* Stories 2 and 3 sit on the right, so restore the default left pointer. */
+.hello[data-story="2"]::after,
+.hello[data-story="3"]::after {
+    left: 12px;
+    right: auto;
+    border-left: 7px solid transparent;
+    border-right: 2px solid transparent;
+    transform: rotate(10deg);
+    transform-origin: top left;
+}
+
+.hello[data-story="1"].is-visible {
+    animation-name: speech-pop-in-left;
+}
+
+.hello[data-story="1"].is-hiding {
+    animation-name: speech-pop-out-left;
+}
+
+.hello[data-story="2"].is-visible,
+.hello[data-story="3"].is-visible {
+    animation-name: speech-pop-in;
+}
+
+.hello[data-story="2"].is-hiding,
+.hello[data-story="3"].is-hiding {
+    animation-name: speech-pop-out;
+}
+
+/* A slightly fuller hero creates the intended overlap with copy and card. */
+@media (orientation: landscape) {
+    .character {
+        width: min(46vw, 82vh);
+        height: 110%;
+    }
+
+    .fox {
+        width: 112%;
+        height: 112%;
+    }
+}
+
+@media (orientation: landscape) and (min-width: 1101px) {
+    .character {
+        width: min(42vw, 74vh);
+        height: 106%;
+    }
+
+    .fox {
+        width: 109%;
+        height: 109%;
+    }
+}
+
+/* Character-specific nudges keep the speech bubble close to each silhouette. */
+body[data-character="hogi"] .hello[data-story="1"] {
+    left: 12%;
+    top: 12%;
+}
+
+body[data-character="hogi"] .hello[data-story="2"] {
+    right: 15%;
+    top: 10%;
+}
+
+body[data-character="hogi"] .hello[data-story="3"] {
+    right: 12%;
+    top: 23%;
+}
+
+body[data-character="jeni"] .hello[data-story="1"] {
+    left: 11%;
+    top: 13%;
+}
+
+body[data-character="jeni"] .hello[data-story="2"] {
+    right: 14%;
+    top: 10%;
+}
+
+body[data-character="jeni"] .hello[data-story="3"] {
+    right: 11%;
+    top: 22%;
+}
+
+/* Phone portrait: larger hero, with compact pose-specific speech positions. */
+@media (orientation: portrait) and (max-width: 699px) {
+    .character {
+        height: clamp(345px, 106vw, 418px);
+    }
+
+    .fox {
+        width: 100%;
+        height: 106%;
+    }
+
+    .hello[data-story="1"] {
+        left: 10%;
+        right: auto;
+        top: 8%;
+    }
+
+    .hello[data-story="2"] {
+        left: auto;
+        right: 10%;
+        top: 10%;
+    }
+
+    .hello[data-story="3"] {
+        left: auto;
+        right: 9%;
+        top: 22%;
+    }
+
+    body[data-character="hogi"] .hello[data-story="1"],
+    body[data-character="jeni"] .hello[data-story="1"] {
+        left: 10%;
+        top: 9%;
+    }
+
+    body[data-character="hogi"] .hello[data-story="2"],
+    body[data-character="jeni"] .hello[data-story="2"] {
+        right: 10%;
+        top: 11%;
+    }
+
+    body[data-character="hogi"] .hello[data-story="3"],
+    body[data-character="jeni"] .hello[data-story="3"] {
+        right: 9%;
+        top: 22%;
+    }
+}
+
+/* Portrait tablet/iPad: retain the stacked layout but let the hero breathe. */
+@media (orientation: portrait) and (min-width: 700px) and (max-width: 1100px) {
+    .character {
+        width: min(86vw, 790px);
+        height: clamp(495px, 61vw, 650px);
+    }
+
+    .fox {
+        width: 96%;
+        height: 108%;
+    }
+
+    .hello[data-story="1"] {
+        left: 11%;
+        right: auto;
+        top: 11%;
+    }
+
+    .hello[data-story="2"] {
+        left: auto;
+        right: 12%;
+        top: 10%;
+    }
+
+    .hello[data-story="3"] {
+        left: auto;
+        right: 11%;
+        top: 24%;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* v99 — raise the main landscape composition                                 */
+/* -------------------------------------------------------------------------- */
+/*
+ * Move only the three primary hero components upward. The character switcher
+ * intentionally stays near the bottom so the hero has more breathing room.
+ */
+@media (orientation: landscape) {
+    .intro {
+        top: 36%;
+    }
+
+    .character {
+        top: 40%;
+    }
+
+    .fact {
+        top: 55%;
+    }
+}
+
+@media (orientation: landscape) and (min-width: 1101px) {
+    .intro {
+        top: 34%;
+    }
+
+    .character {
+        top: 39.5%;
+    }
+
+    .fact {
+        top: 55%;
+    }
+}
+
+/* Short desktop/laptop windows need a little more lift. */
+@media (orientation: landscape) and (min-width: 900px) and (max-height: 760px) {
+    .intro {
+        top: 32.5%;
+    }
+
+    .character {
+        top: 38%;
+    }
+
+    .fact {
+        top: 53.5%;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* v100 — larger hero character                                               */
+/* -------------------------------------------------------------------------- */
+/* Keep the same center point; only increase the visible hero scale. */
+@media (orientation: landscape) {
+    .character {
+        width: min(49vw, 88vh);
+        height: 116%;
+    }
+
+    .fox {
+        width: 116%;
+        height: 116%;
+    }
+}
+
+@media (orientation: landscape) and (min-width: 1101px) {
+    .character {
+        width: min(45vw, 80vh);
+        height: 112%;
+    }
+
+    .fox {
+        width: 114%;
+        height: 114%;
+    }
+}
+
+/* Short laptop windows benefit from a little extra presence. */
+@media (orientation: landscape) and (min-width: 900px) and (max-height: 760px) {
+    .character {
+        width: min(47vw, 84vh);
+        height: 115%;
+    }
+
+    .fox {
+        width: 116%;
+        height: 116%;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* v102 — pose-specific speech placement + white navbar wordmark              */
+/* -------------------------------------------------------------------------- */
+/*
+ * Speech bubbles are tuned per character and per pose. Keep these overrides
+ * together so future adjustments stay easy to find and do not affect layout.
+ */
+
+.brand-image {
+    filter: none;
+}
+
+/* Pinkfong */
+body[data-character="pinkfong"][data-story="1"] .hello {
+    left: 18%;
+    right: auto;
+    top: 7%;
+}
+
+body[data-character="pinkfong"][data-story="2"] .hello {
+    left: auto;
+    right: 5%;
+    top: 5%;
+}
+
+body[data-character="pinkfong"][data-story="3"] .hello {
+    left: auto;
+    right: 4%;
+    top: 17%;
+}
+
+/* Hogi */
+body[data-character="hogi"][data-story="1"] .hello {
+    left: 17%;
+    right: auto;
+    top: 8%;
+}
+
+body[data-character="hogi"][data-story="2"] .hello {
+    left: auto;
+    right: 12%;
+    top: 4%;
+}
+
+body[data-character="hogi"][data-story="3"] .hello {
+    left: auto;
+    right: 6%;
+    top: 15%;
+}
+
+/* Jeni */
+body[data-character="jeni"][data-story="1"] .hello {
+    left: 18%;
+    right: auto;
+    top: 6%;
+}
+
+body[data-character="jeni"][data-story="2"] .hello {
+    left: auto;
+    right: 8%;
+    top: 3%;
+}
+
+body[data-character="jeni"][data-story="3"] .hello {
+    left: auto;
+    right: 6%;
+    top: 15%;
+}
+
+/* Phone portrait — keep the same pose logic but pull bubbles inward. */
+@media (orientation: portrait) and (max-width: 699px) {
+    body[data-character="pinkfong"][data-story="1"] .hello {
+        left: 13%;
+        top: 8%;
+    }
+
+    body[data-character="pinkfong"][data-story="2"] .hello {
+        right: 5%;
+        top: 8%;
+    }
+
+    body[data-character="pinkfong"][data-story="3"] .hello {
+        right: 5%;
+        top: 18%;
+    }
+
+    body[data-character="hogi"][data-story="1"] .hello {
+        left: 12%;
+        top: 9%;
+    }
+
+    body[data-character="hogi"][data-story="2"] .hello {
+        right: 7%;
+        top: 8%;
+    }
+
+    body[data-character="hogi"][data-story="3"] .hello {
+        right: 5%;
+        top: 18%;
+    }
+
+    body[data-character="jeni"][data-story="1"] .hello {
+        left: 12%;
+        top: 8%;
+    }
+
+    body[data-character="jeni"][data-story="2"] .hello {
+        right: 7%;
+        top: 7%;
+    }
+
+    body[data-character="jeni"][data-story="3"] .hello {
+        right: 5%;
+        top: 17%;
+    }
+}
+
+/* Portrait tablets / iPads — slightly more breathing room than phones. */
+@media (orientation: portrait) and (min-width: 700px) and (max-width: 1100px) {
+    body[data-character="pinkfong"][data-story="1"] .hello,
+    body[data-character="hogi"][data-story="1"] .hello,
+    body[data-character="jeni"][data-story="1"] .hello {
+        left: 15%;
+        right: auto;
+        top: 9%;
+    }
+
+    body[data-character="pinkfong"][data-story="2"] .hello,
+    body[data-character="hogi"][data-story="2"] .hello,
+    body[data-character="jeni"][data-story="2"] .hello {
+        left: auto;
+        right: 9%;
+        top: 7%;
+    }
+
+    body[data-character="pinkfong"][data-story="3"] .hello,
+    body[data-character="hogi"][data-story="3"] .hello,
+    body[data-character="jeni"][data-story="3"] .hello {
+        left: auto;
+        right: 7%;
+        top: 19%;
+    }
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* v103 — mobile card/switcher spacing + short-screen lock                    */
+/* -------------------------------------------------------------------------- */
+/*
+ * Normal portrait phones keep the switcher a little farther below the card.
+ * Short portrait screens use bottom anchors so the card and switcher never
+ * drift into the footer or hug the bottom edge as viewport height changes.
+ */
+@media (orientation: portrait) and (max-width: 699px) and (max-height: 720px) {
+    .fact {
+        top: auto;
+        bottom: clamp(122px, 21dvh, 148px);
+    }
+
+    .character-switcher {
+        top: auto;
+        bottom: clamp(46px, 8dvh, 62px);
+    }
+
+    .bottom {
+        bottom: 7px;
+    }
+}
+
+/* Very short phones: keep both controls comfortably above the footer. */
+@media (orientation: portrait) and (max-width: 360px) and (max-height: 620px) {
+    .fact {
+        bottom: 118px;
+    }
+
+    .character-switcher {
+        bottom: 44px;
+    }
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* v104 — slightly smaller mobile hero + tighter character overlap            */
+/* -------------------------------------------------------------------------- */
+/*
+ * Pinkfong was touching the top on narrow portrait screens. Reduce only the
+ * mobile hero scale, then pull the intro and story card closer to the character
+ * so the layered composition still feels intentional.
+ */
+@media (orientation: portrait) and (max-width: 699px) {
+    .main {
+        --phone-copy-gap: clamp(218px, min(73vw, 39dvh), 292px);
+        --phone-card-gap: clamp(145px, 38vw, 162px);
+    }
+
+    .character {
+        width: 94vw;
+        height: clamp(310px, 95vw, 372px);
+    }
+
+    .fox {
+        width: 92%;
+        height: 98%;
+    }
+}
+
+/* Narrow phones need the same relationship at a slightly smaller scale. */
+@media (orientation: portrait) and (max-width: 360px) {
+    .main {
+        --phone-copy-gap: clamp(216px, 66vw, 250px);
+        --phone-card-gap: clamp(128px, 39vw, 140px);
+    }
+
+    .character {
+        width: 92vw;
+        height: clamp(286px, 91vw, 338px);
+    }
+
+    .fox {
+        width: 90%;
+        height: 96%;
+    }
+}
+
+/* On short screens the card is bottom-anchored by v103; lift it a little so
+ * it still overlaps the smaller hero instead of drifting too far below it. */
+@media (orientation: portrait) and (max-width: 699px) and (max-height: 720px) {
+    .fact {
+        bottom: clamp(132px, 22.5dvh, 158px);
+    }
+}
+
+@media (orientation: portrait) and (max-width: 360px) and (max-height: 620px) {
+    .fact {
+        bottom: 128px;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* v105 — closer speech bubbles + slightly smaller character                  */
+/* -------------------------------------------------------------------------- */
+/* Keep the speech close to the pose silhouette instead of floating near the
+ * outer edge of the character stage. The character is reduced only slightly. */
+
+/* Desktop / landscape: slightly smaller hero. */
+@media (orientation: landscape) {
+    .character {
+        width: min(41.5vw, 73vh);
+        height: 100%;
+    }
+
+    .fox {
+        width: 103%;
+        height: 103%;
+    }
+
+    body[data-character="pinkfong"][data-story="1"] .hello {
+        left: 25%;
+        top: 11%;
+    }
+
+    body[data-character="pinkfong"][data-story="2"] .hello {
+        right: 14%;
+        top: 9%;
+    }
+
+    body[data-character="pinkfong"][data-story="3"] .hello {
+        right: 13%;
+        top: 20%;
+    }
+
+    body[data-character="hogi"][data-story="1"] .hello {
+        left: 24%;
+        top: 12%;
+    }
+
+    body[data-character="hogi"][data-story="2"] .hello {
+        right: 18%;
+        top: 10%;
+    }
+
+    body[data-character="hogi"][data-story="3"] .hello {
+        right: 14%;
+        top: 19%;
+    }
+
+    body[data-character="jeni"][data-story="1"] .hello {
+        left: 24%;
+        top: 11%;
+    }
+
+    body[data-character="jeni"][data-story="2"] .hello {
+        right: 16%;
+        top: 9%;
+    }
+
+    body[data-character="jeni"][data-story="3"] .hello {
+        right: 14%;
+        top: 19%;
+    }
+}
+
+/* Phone portrait: reduce the hero another small step and pull speech inward. */
+@media (orientation: portrait) and (max-width: 699px) {
+    .character {
+        width: 90vw;
+        height: clamp(300px, 91vw, 356px);
+    }
+
+    .fox {
+        width: 89%;
+        height: 95%;
+    }
+
+    body[data-character="pinkfong"][data-story="1"] .hello {
+        left: 23%;
+        top: 14%;
+    }
+
+    body[data-character="pinkfong"][data-story="2"] .hello {
+        right: 14%;
+        top: 13%;
+    }
+
+    body[data-character="pinkfong"][data-story="3"] .hello {
+        right: 13%;
+        top: 23%;
+    }
+
+    body[data-character="hogi"][data-story="1"] .hello {
+        left: 22%;
+        top: 15%;
+    }
+
+    body[data-character="hogi"][data-story="2"] .hello {
+        right: 16%;
+        top: 13%;
+    }
+
+    body[data-character="hogi"][data-story="3"] .hello {
+        right: 13%;
+        top: 23%;
+    }
+
+    body[data-character="jeni"][data-story="1"] .hello {
+        left: 22%;
+        top: 14%;
+    }
+
+    body[data-character="jeni"][data-story="2"] .hello {
+        right: 16%;
+        top: 12%;
+    }
+
+    body[data-character="jeni"][data-story="3"] .hello {
+        right: 13%;
+        top: 22%;
+    }
+}
+
+@media (orientation: portrait) and (max-width: 360px) {
+    .character {
+        width: 88vw;
+        height: clamp(278px, 87vw, 324px);
+    }
+
+    .fox {
+        width: 87%;
+        height: 93%;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* v106 — deterministic responsive composition + QA matrix                    */
+/* -------------------------------------------------------------------------- */
+/*
+ * Wide screens no longer position intro/card as percentages of the viewport.
+ * They are attached to the character stage in a fixed three-column cluster.
+ * This keeps the visual distance consistent from laptop through desktop.
+ */
+
+/* Stable laptop / desktop / landscape-tablet composition. */
+@media (min-width: 900px) and (min-height: 560px) and (min-aspect-ratio: 5/4) {
+    .main {
+        --cluster-intro-width: clamp(220px, 20vw, 280px);
+        --cluster-character-width: clamp(400px, 36vw, 510px);
+        --cluster-card-width: clamp(220px, 20vw, 280px);
+
+        top: clamp(62px, 8vh, 82px);
+        right: auto;
+        bottom: clamp(56px, 7vh, 76px);
+        left: 50%;
+        width: max-content;
+        max-width: calc(100vw - 48px);
+        display: grid;
+        grid-template-columns:
+            var(--cluster-intro-width)
+            var(--cluster-character-width)
+            var(--cluster-card-width);
+        align-items: center;
+        justify-content: center;
+        column-gap: 0;
+        transform: translateX(-50%);
+    }
+
+    .intro {
+        position: relative;
+        z-index: 2;
+        top: auto;
+        right: auto;
+        bottom: auto;
+        left: auto;
+        width: var(--cluster-intro-width);
+        transform: translate(28px, -28px);
+        text-align: left;
+    }
+
+    .character {
+        position: relative;
+        z-index: 3;
+        top: auto;
+        right: auto;
+        bottom: auto;
+        left: auto;
+        width: var(--cluster-character-width);
+        height: min(72vh, 600px);
+        transform: translateY(-20px);
+    }
+
+    .fox {
+        width: 100%;
+        height: 100%;
+    }
+
+    .fact {
+        position: relative;
+        z-index: 6;
+        top: auto;
+        right: auto;
+        bottom: auto;
+        left: auto;
+        width: var(--cluster-card-width);
+        max-width: var(--cluster-card-width);
+        transform: translate(-28px, 34px) rotate(1.6deg);
+    }
+
+    .character-switcher {
+        top: auto;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+/* Compact square windows: keep the same side-by-side relationship, scaled. */
+@media (min-width: 720px) and (min-height: 700px) and (min-aspect-ratio: 4/5) and (max-aspect-ratio: 5/4) {
+    .main {
+        --square-intro-width: clamp(180px, 23vw, 220px);
+        --square-character-width: clamp(350px, 43vw, 420px);
+        --square-card-width: clamp(190px, 23vw, 230px);
+
+        top: 66px;
+        right: auto;
+        bottom: 62px;
+        left: 50%;
+        width: max-content;
+        max-width: calc(100vw - 28px);
+        display: grid;
+        grid-template-columns:
+            var(--square-intro-width)
+            var(--square-character-width)
+            var(--square-card-width);
+        align-items: center;
+        justify-content: center;
+        column-gap: 0;
+        transform: translateX(-50%);
+    }
+
+    .intro {
+        position: relative;
+        top: auto;
+        right: auto;
+        bottom: auto;
+        left: auto;
+        width: var(--square-intro-width);
+        transform: translate(18px, -22px);
+        text-align: left;
+    }
+
+    .eyebrow {
+        justify-content: flex-start;
+        font-size: clamp(7px, 1vw, 10px);
+        letter-spacing: 1.5px;
+    }
+
+    #headline,
+    :lang(ko) #headline,
+    :lang(ja) #headline,
+    :lang(zh) #headline {
+        margin: 10px 0 8px;
+        font-size: clamp(30px, 4.7vw, 43px);
+        line-height: .97;
+        letter-spacing: -1.5px;
+    }
+
+    .intro p {
+        max-width: 210px;
+        margin: 0;
+        font-size: clamp(9px, 1.25vw, 12px);
+        line-height: 1.45;
+    }
+
+    .character {
+        position: relative;
+        top: auto;
+        right: auto;
+        bottom: auto;
+        left: auto;
+        width: var(--square-character-width);
+        height: min(58vh, 440px);
+        transform: translateY(-16px);
+    }
+
+    .fox {
+        width: 100%;
+        height: 100%;
+    }
+
+    .fact {
+        position: relative;
+        top: auto;
+        right: auto;
+        bottom: auto;
+        left: auto;
+        width: var(--square-card-width);
+        max-width: var(--square-card-width);
+        padding: 14px 16px;
+        transform: translate(-18px, 26px) rotate(1.4deg);
+    }
+
+    .fact-top {
+        font-size: 8px;
+    }
+
+    .fact h2 {
+        font-size: 17px;
+    }
+
+    .fact p {
+        font-size: 10px;
+        line-height: 1.4;
+    }
+
+    .character-switcher {
+        top: auto;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+/* Portrait tablets stay stacked, but the switcher now follows the card rather
+ * than floating back over the character. */
+@media (orientation: portrait) and (min-width: 700px) and (max-width: 1100px) and (max-aspect-ratio: 799/1000) {
+    .character-switcher {
+        top: calc(var(--tablet-anchor-y) + var(--tablet-card-gap) + 155px);
+        bottom: auto;
+    }
+}
+
+/* Small landscape devices are the explicit compact exception. Keep the hero
+ * below the navbar and reduce the chance of clipping its ears/head. */
+@media (orientation: landscape) and (max-width: 899px) {
+    .intro {
+        top: 46%;
+    }
+
+    .character {
+        top: 49%;
+        width: min(39vw, 64vh);
+        height: 88%;
+    }
+
+    .fox {
+        width: 96%;
+        height: 96%;
+    }
+
+    .fact {
+        top: 54%;
+    }
+}
+
+/* Popup guardrails. The per-character/per-pose coordinates above still own
+ * the direction; these rules only prevent a bubble from drifting far away. */
+@media (min-width: 900px) and (min-height: 560px) {
+    .hello {
+        max-width: 170px;
+    }
+
+    body[data-character="pinkfong"][data-story="1"] .hello,
+    body[data-character="hogi"][data-story="1"] .hello,
+    body[data-character="jeni"][data-story="1"] .hello {
+        left: 18%;
+        right: auto;
+    }
+
+    body[data-character="pinkfong"][data-story="2"] .hello,
+    body[data-character="hogi"][data-story="2"] .hello,
+    body[data-character="jeni"][data-story="2"] .hello {
+        left: auto;
+        right: 10%;
+    }
+
+    body[data-character="pinkfong"][data-story="3"] .hello,
+    body[data-character="hogi"][data-story="3"] .hello,
+    body[data-character="jeni"][data-story="3"] .hello {
+        left: auto;
+        right: 8%;
+    }
+}
+
+/* Final QA correction: Hogi's thinking pose has a narrower silhouette, so its
+ * speech bubble needs a slightly stronger inward anchor than the other poses. */
+@media (min-width: 900px) and (min-height: 560px) {
+    body[data-character="hogi"][data-story="2"] .hello {
+        right: 14%;
+    }
+}
+
+@media (min-width: 720px) and (max-width: 899px) and (min-height: 700px) and (min-aspect-ratio: 4/5) and (max-aspect-ratio: 5/4) {
+    body[data-character="hogi"][data-story="2"] .hello {
+        right: 20%;
+    }
+}
+
+/* QA final: lower Hogi's thinking bubble to remove the last tablet gap. */
+@media (min-width: 720px) and (min-height: 560px) {
+    body[data-character="hogi"][data-story="2"] .hello {
+        top: 15%;
+    }
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* v109 — clean, rounded focus states                                          */
+/* -------------------------------------------------------------------------- */
+
+/*
+ * Keep keyboard focus visible without drawing large rectangular outlines
+ * around transparent/oversized interactive areas.
+ */
+.brand:focus-visible,
+.language:focus-visible,
+.fox:focus-visible,
+.character-option:focus-visible {
+    outline: none;
+}
+
+/* Navbar logo: compact rounded focus ring. */
+.brand {
+    border-radius: 12px;
+}
+
+.brand:focus-visible {
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, .82),
+        0 0 0 4px rgba(102, 55, 146, .5);
+}
+
+/* Language selector: pill-shaped focus instead of a square browser outline. */
+.language {
+    border-radius: 999px;
+    transition:
+        background-color .18s ease,
+        box-shadow .18s ease;
+}
+
+.language:focus-visible {
+    background: rgba(255, 255, 255, .18);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, .78),
+        0 0 0 4px rgba(102, 55, 146, .48);
+}
+
+/*
+ * Main character button occupies a large rectangular hit-area.
+ * Highlight the visible PNG silhouette instead of that entire rectangle.
+ */
+.fox:focus-visible .pose-frame img {
+    filter:
+        drop-shadow(0 0 2px rgba(255, 255, 255, .95))
+        drop-shadow(0 0 7px rgba(102, 55, 146, .72));
+}
+
+/* Character switcher: focus only the avatar tile. */
+.character-option:focus-visible .character-avatar {
+    border-color: rgba(255, 255, 255, .95);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, .88),
+        0 0 0 4px rgba(102, 55, 146, .52),
+        0 10px 24px rgba(91, 54, 137, .14);
+    transform: translateY(-2px) scale(1.04);
+}
+
+/* Hogi/Jeni retain their own accent while focused. */
+body[data-character="hogi"] .character-option:focus-visible .character-avatar {
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, .88),
+        0 0 0 4px rgba(43, 145, 137, .55),
+        0 10px 24px rgba(52, 112, 109, .15);
+}
+
+body[data-character="jeni"] .character-option:focus-visible .character-avatar {
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, .88),
+        0 0 0 4px rgba(229, 139, 47, .58),
+        0 10px 24px rgba(160, 91, 40, .14);
+}
+
+/* Small links can keep a normal accessible ring, but make it rounded. */
+.source:focus-visible {
+    outline: none;
+    border-radius: 999px;
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, .72),
+        0 0 0 4px rgba(102, 55, 146, .42);
 }
